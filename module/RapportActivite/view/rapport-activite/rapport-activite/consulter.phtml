@@ -55,7 +55,7 @@ $canGen =
 ?>
 
 <?php $this->headTitle($this->translate($title = (string)$rapport))
-    ->prepend($rapport->getThese()->getDoctorant()->getIndividu()->getNomUsuel()) ?>
+    ->prepend($rapport->getThese()->getDoctorant()->getIndividu()->getNomPatronymique()) ?>
 
 <h1 class="page-header">
     <?php echo $this->translate($title); ?>
@@ -596,13 +596,13 @@ $canGen =
 
 <script>
     $(function () {
-        public const avisComplemsModal = document.getElementById('avisComplemsModal')
+        const avisComplemsModal = document.getElementById('avisComplemsModal')
         avisComplemsModal.addEventListener('show.bs.modal', function (event) {
             // Button that triggered the modal
-            public const button = event.relatedTarget;
-            public const logFullContent = $(button).parent().siblings(".log-full-content").html();
+            const button = event.relatedTarget;
+            const logFullContent = $(button).parent().siblings(".log-full-content").html();
             // Update the modal's content.
-            public const modalBody = avisComplemsModal.querySelector('.modal-body');
+            const modalBody = avisComplemsModal.querySelector('.modal-body');
             $(modalBody).html(logFullContent);
         });
 

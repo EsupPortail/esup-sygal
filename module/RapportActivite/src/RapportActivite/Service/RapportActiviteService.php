@@ -387,7 +387,7 @@ class RapportActiviteService extends BaseService
 
         // doctorant
         if ($these->getDoctorant()) {
-            $exportData->doctorant = strtoupper($these->getDoctorant()->getIndividu()->getNomCompletFormatter()->avecCivilite()->f());
+            $exportData->doctorant = strtoupper($these->getDoctorant()->getIndividu()->getNomCompletFormatter()->avecCivilite()->avecNomPatronymique()->f());
         }
 
         // structures

@@ -62,7 +62,7 @@ class DocumentController extends AbstractActionController
                         $fileDetail = ["files" => $fileDetail];
                         $fichier = $this->fichierService->createFichiersFromUpload($fileDetail, $nature, $version);
                         $fichier = array_pop($fichier);
-                        $fichier->setNom($admission->getIndividu()->getNomUsuel().'-'.$fichier->getShortUuid().'-'.$fichier->getNature()->getCode().'.'.$fileDetail["extension"]);
+                        $fichier->setNom($admission->getIndividu()->getNomPatronymique().'-'.$fichier->getShortUuid().'-'.$fichier->getNature()->getCode().'.'.$fileDetail["extension"]);
                         $this->documentService->createDocumentFromUpload($admission, $fichier);
                         return new JsonModel(['success' => 'Document téléversé avec succès']);
                     } catch (Exception $die) {

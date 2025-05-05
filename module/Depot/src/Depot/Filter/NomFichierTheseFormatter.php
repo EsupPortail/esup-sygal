@@ -26,7 +26,7 @@ class NomFichierTheseFormatter extends AbstractNomFichierFormatter
         $date = $fichierThese->getThese()->getDateSoutenance() ?: null;
         $parts['annee'] = $date ? $date->format('Y') : date('Y');
 
-        $parts['nomDoctorant']    = $this->normalizedString($doctorant->getIndividu()->getNomUsuel());
+        $parts['nomDoctorant']    = $this->normalizedString($doctorant->getIndividu()->getNomPatronymique());
         $parts['prenomDoctorant'] = $this->normalizedString($doctorant->getIndividu()->getPrenom());
 
         // on inclue un id unique car il peut y avoir plusieurs fichiers de même nature déposés, exemples :

@@ -68,7 +68,7 @@ class DoctorantTemplateVariable extends AbstractTemplateVariable
      */
     public function getDenominationPatronymique(): string
     {
-        return $this->doctorant->getIndividu()->getNomComplet();
+        return $this->doctorant->getIndividu()->getNomCompletFormatter()->avecNomPatronymique()->f();
     }
 
 }

@@ -25,7 +25,7 @@ use These\Entity\Db\These;
         <tr class="these" id="<?php echo $these->getId(); ?>">
             <td>
                 <?php echo $these->getDoctorant()->getIndividu()->getPrenom1(); ?>
-                <?php echo $these->getDoctorant()->getIndividu()->getNomUsuel(); ?>
+                <?php echo $these->getDoctorant()->getIndividu()->getNomPatronymique(); ?>
             </td>
             <td>
                 <?php echo $these->getUniteRecherche()->getStructure()->getSigle(); ?>

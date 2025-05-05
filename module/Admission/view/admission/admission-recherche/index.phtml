@@ -158,7 +158,7 @@ echo $this->partial('admission/admission/partial/header', []); ?>
             <?php /** @var Admission $admission */
             foreach ($admissions as $admission): ?>
                 <tr>
-                    <td><?php echo $admission->getIndividu()->getNomComplet() ?></td>
+                    <td><?php echo $admission->getIndividu()->getNomCompletFormatter()->avecNomPatronymique()->f() ?></td>
                     <td >
                         <div class="d-flex align-items-center">
                             <?php echo $this->etatHelper($admission->getEtat(), null, "") ?>

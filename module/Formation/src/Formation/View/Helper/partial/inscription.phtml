@@ -51,7 +51,7 @@ $these = current($doctorant->getTheses());
         </div>
 
         <div class="doctorant-info flex-grow-1">
-            <div class="doctorant-name"><?php echo $doctorant->getIndividu()->getNomComplet(); ?></div>
+            <div class="doctorant-name"><?php echo $doctorant; ?></div>
             <div class="doctorant-details">
                 <span>
                     <?php foreach ($doctorant->getTheses() as $these) {
@@ -100,21 +100,21 @@ $these = current($doctorant->getTheses());
                     <a
                         <?php /** @see \Formation\Controller\InscriptionController::passerListePrincipaleAction() */?>
                             href="<?php echo $this->url('formation/inscription/passer-liste-principale', ['inscription' => $inscription->getId()], ['query' => ['retour' => $this->url('formation/session/afficher', ['session' => $session->getId()])]], true); ?>"
-                            title="Passer <?php echo $doctorant->getIndividu()->getNomComplet(); ?> en liste principale" data-bs-toggle="tooltip" data-bs-html="true"
+                            title="Passer <?php echo $doctorant; ?> en liste principale" data-bs-toggle="tooltip" data-bs-html="true"
                     >
                         <strong>P</strong></a>
                 <?php endif; ?>
                 <?php if ($inscription->estNonHistorise() AND $actionListeComplementaire) : ?>
                     <a <?php /** @see \Formation\Controller\InscriptionController::passerListeComplementaireAction() */?>
                             href="<?php echo $this->url('formation/inscription/passer-liste-complementaire', ['inscription' => $inscription->getId()], ['query' => ['retour' => $this->url('formation/session/afficher', ['session' => $session->getId()])]], true); ?>"
-                            title="Passer <?php echo $doctorant->getIndividu()->getNomComplet(); ?> en liste complémentaire" data-bs-toggle="tooltip" data-bs-html="true"
+                            title="Passer <?php echo $doctorant; ?> en liste complémentaire" data-bs-toggle="tooltip" data-bs-html="true"
                     >
                         <strong>C</strong></a>
                 <?php endif; ?>
                 <?php if (($inscription->getListe() !== null) AND $inscription->getListe()) : ?>
                     <a <?php /** @see \Formation\Controller\InscriptionController::retirerListeAction() */?>
                             href="<?php echo $this->url('formation/inscription/retirer-liste', ['inscription' => $inscription->getId()], ['query' => ['retour' => $this->url('formation/session/afficher', ['session' => $session->getId()])]], true); ?>"
-                            title="Mettre <?php echo $doctorant->getIndividu()->getNomComplet(); ?> dans la liste des non-classés" data-bs-toggle="tooltip" data-bs-html="true"
+                            title="Mettre <?php echo $doctorant; ?> dans la liste des non-classés" data-bs-toggle="tooltip" data-bs-html="true"
                     >
                         <strong>∅</strong></a>
                 <?php endif; ?>
@@ -123,14 +123,14 @@ $these = current($doctorant->getTheses());
                         <?php /** @see \Formation\Controller\InscriptionController::historiserAction() */ ?>
                         <a href="<?php echo $this->url('formation/inscription/historiser', ['inscription' => $inscription->getId()], ['query' => ['retour' => $this->url('formation/session/afficher', ['session' => $session->getId()])]], true); ?>"
                            data-bs-toggle="tooltip"
-                           title="Historiser l'inscription de <?php echo $doctorant->getIndividu()->getNomComplet(); ?> pour cette session"
+                           title="Historiser l'inscription de <?php echo $doctorant->getIndividu(); ?> pour cette session"
                         >
                             <span class="fa fa-trash"></span></a>
                     <?php else : ?>
                         <?php /** @see \Formation\Controller\InscriptionController::restaurerAction() */ ?>
                         <a href="<?php echo $this->url('formation/inscription/restaurer', ['inscription' => $inscription->getId()], ['query' => ['retour' => $this->url('formation/session/afficher', ['session' => $session->getId()])]], true); ?>"
                            data-bs-toggle="tooltip"
-                           title="Restaurer l'inscription de <?php echo $doctorant->getIndividu()->getNomComplet(); ?> pour cette session"
+                           title="Restaurer l'inscription de <?php echo $doctorant->getIndividu(); ?> pour cette session"
                         >
                             <span class="fa fa-trash-restore"></span>
                         </a>
@@ -141,7 +141,7 @@ $these = current($doctorant->getTheses());
                            data-event="modification"
                            href="<?php echo $this->url('formation/inscription/accorder-sursis', ['inscription' => $inscription->getId()], true); ?>"
                            data-bs-toggle="tooltip"
-                           title="Accorder un sursis à <?php echo $doctorant->getIndividu()->getNomComplet(); ?> pour la saisie de l'enquête"
+                           title="Accorder un sursis à <?php echo $doctorant->getIndividu(); ?> pour la saisie de l'enquête"
                         >
                             <span class="fa fa-clock"></span>
                         </a>
@@ -152,7 +152,7 @@ $these = current($doctorant->getTheses());
                     <a href="<?php echo $this->url('formation/inscription/supprimer', ['inscription' => $inscription->getId()], [], true); ?>"
                        class="ajax-modal" data-event="modification"
                        data-bs-toggle="tooltip"
-                       title="Supprimer l'inscription de <?php echo $doctorant->getIndividu()->getNomComplet(); ?> pour cette session"
+                       title="Supprimer l'inscription de <?php echo $doctorant->getIndividu(); ?> pour cette session"
                     >
                         <span class="fa fa-bomb text-danger"></span></a>
                 <?php endif; ?>

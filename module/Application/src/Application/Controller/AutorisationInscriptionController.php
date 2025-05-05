@@ -32,7 +32,7 @@ class AutorisationInscriptionController extends AbstractController
         $form->bind($autorisationInscription);
         $form->setAttribute('action', $this->url()->fromRoute('autoriser-inscription/ajouter', ['rapport' => $rapport->getId()], [], true));
         $viewModel = new ViewModel([
-            'title' => "Autorisation d'inscription pour l'année ".$autorisationInscription->getAnneeUniv()->getAnneeUnivToString()." de ".$these->getDoctorant()->getIndividu(),
+            'title' => "Autorisation d'inscription pour l'année ".$autorisationInscription->getAnneeUniv()->getAnneeUnivToString()." de ".$these->getDoctorant(),
             'form' => $form,
         ]);
 

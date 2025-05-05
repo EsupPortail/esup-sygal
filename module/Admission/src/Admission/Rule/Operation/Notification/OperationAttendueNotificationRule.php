@@ -74,7 +74,7 @@ class OperationAttendueNotificationRule implements RuleInterface
 
         $this->subject = sprintf("%s de %s",
             $this->operationAttendue->getAdmission(),
-            $admission->getIndividu()->getNomComplet(),
+            $admission->getIndividu()->getNomCompletFormatter()->avecNomPatronymique()->f(),
         );
     }
 

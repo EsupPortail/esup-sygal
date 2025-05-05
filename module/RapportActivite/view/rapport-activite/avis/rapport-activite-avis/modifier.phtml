@@ -10,7 +10,7 @@ $form->prepare();
 
 <?php $this->headTitle($this->translate($title))
     ->prepend("Avis")
-    ->prepend($rapport->getThese()->getDoctorant()->getIndividu()->getNomUsuel()) ?>
+    ->prepend($rapport->getThese()->getDoctorant()->getIndividu()->getNomPatronymique()) ?>
 
 <h1 class="page-header"><?php echo $title ?></h1>
 

@@ -57,7 +57,7 @@ class DomaineHalSaisieController extends AbstractActionController
 
         $viewModel = new ViewModel();
         $viewModel->setTemplate('these/domaine-hal/saisie');
-        $viewModel->setVariable('title', "Saisie des domaines HAL pour la thèse de " . $these->getDoctorant()->getIndividu()->getPrenom() . " " . $these->getDoctorant()->getIndividu()->getNomUsuel());
+        $viewModel->setVariable('title', "Saisie des domaines HAL pour la thèse de " . $these->getDoctorant());
         $viewModel->setVariable('form', $form);
 
         return $viewModel;

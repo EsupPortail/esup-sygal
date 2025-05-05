@@ -17,8 +17,8 @@ $canConfigurerModule = $this->isAllowed(AdmissionPrivileges::getResourceId(Admis
 ?>
 <div class="header-admission">
     <?php
-        $individu = isset($individu) ? " de ".$individu->getNomComplet() : null;
-        $individu = isset($admission) ? " de ".$admission->getIndividu()->getNomComplet() : $individu;
+        $individu = isset($individu) ? " de ".$individu->getNomCompletFormatter()->avecNomPatronymique()->f() : null;
+        $individu = isset($admission) ? " de ".$admission->getIndividu()->getNomCompletFormatter()->avecNomPatronymique()->f() : $individu;
         $this->headTitle($this->translate($title = "Admission".$individu))
     ?>
 

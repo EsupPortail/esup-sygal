@@ -31,7 +31,7 @@ class RapportActiviteValidationAjouteeNotification extends Notification
             throw new RuntimeException("Anomalie bloquante : aucune adresse mail disponible pour le doctorant {$these->getDoctorant()}");
         }
 
-        $this->setTo([$email => $these->getDoctorant()->getIndividu()->getNomComplet()]);
+        $this->setTo([$email => (string) $these->getDoctorant()]);
         $this->setCc($these->getDirecteursTheseEmails());
         $this->setSubject(sprintf(
             "%s de %s validé",

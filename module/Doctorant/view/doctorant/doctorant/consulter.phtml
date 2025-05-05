@@ -17,11 +17,11 @@ $canModifier = false;//$this->isAllowed($doctorant, DoctorantPrivileges::DOCTORA
 $canSupprimer = false;//$this->isAllowed($doctorant, DoctorantPrivileges::DOCTORANT_SUPPRIMER);
 ?>
 
-<?php $this->headTitle($this->translate("Doctorant"))->append($doctorant->getIndividu()->getNomComplet()) ?>
+<?php $this->headTitle($this->translate("Doctorant"))->append($doctorant->getIndividu()) ?>
 
 <h1 class="page-header">
     <span class="<?php echo $doctorant->estHistorise() ? 'historise' : '' ?>">
-        Doctorant &laquo; <?php echo $doctorant->getIndividu()->getNomComplet() ?> &raquo;
+        Doctorant &laquo; <?php echo $doctorant ?> &raquo;
     </span>
 </h1>
 

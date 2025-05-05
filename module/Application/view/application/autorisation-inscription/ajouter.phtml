@@ -13,7 +13,7 @@ $autorisationInscription = $form->getObject();
 
 <?php $this->headTitle($this->translate($title = "Rapport CSI"))
     ->prepend("Autorisation d'inscription")
-    ->prepend($autorisationInscription->getThese()->getDoctorant()->getIndividu()->getNomUsuel()) ?>
+    ->prepend($autorisationInscription->getThese()->getDoctorant()->getIndividu()->getNomPatronymique()) ?>
 
 <?php echo $this->form()->openTag($form) ?>
     <div class="row">

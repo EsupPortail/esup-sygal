@@ -560,7 +560,7 @@ class PropositionTheseController extends PropositionController
             'libelle' => $this->propositionService->generateLibelleSignaturePresidence($this->entity),
             'nbCodirecteur' => count($codirecteurs),
         ]);
-        $exporter->export('Document_pour_signature_-_' . $this->entity->getId() . '_-_' . str_replace(' ', '_', $this->entity->getApprenant()->getIndividu()->getNomComplet()) . '.pdf');
+        $exporter->export('Document_pour_signature_-_' . $this->entity->getId() . '_-_' . str_replace(' ', '_', (string) $this->entity->getApprenant()) . '.pdf');
         exit;
     }
 

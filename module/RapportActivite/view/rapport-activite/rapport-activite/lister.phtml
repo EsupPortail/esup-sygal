@@ -35,7 +35,7 @@ $campagneDepotDateFin = $campagneDepotDates[RapportActiviteParametres::CAMPAGNE_
 ?>
 
 <?php $this->headTitle($this->translate($title = "Rapports d'activité"))
-    ->prepend($these->getDoctorant()->getIndividu()->getNomUsuel()) ?>
+    ->prepend($these->getDoctorant()->getIndividu()->getNomPatronymique()) ?>
 
 <h1 class="page-header">
     <?php echo $this->translate($title); ?>

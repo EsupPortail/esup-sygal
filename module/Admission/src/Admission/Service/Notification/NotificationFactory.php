@@ -58,7 +58,7 @@ class NotificationFactory extends NF
         ];
 
         $rendu = $this->getRenduService()->generateRenduByTemplateCode(MailTemplates::NOTIFICATION_DOSSIER_INCOMPLET, $vars);
-        $notif->setTo([$email => $admission->getIndividu()->getNomComplet()])
+        $notif->setTo([$email => $admission->getIndividu()->getNomCompletFormatter()->avecNomPatronymique()->f()])
             ->setSubject($rendu->getSujet())
             ->setBody($rendu->getCorps());
 
@@ -97,7 +97,7 @@ class NotificationFactory extends NF
         $rendu = $this->getRenduService()->generateRenduByTemplateCode(MailTemplates::VALIDATION_AJOUTEE, $vars);
 
         $notif = new Notification();
-        $notif->setTo([$email => $admission->getIndividu()->getNomComplet()])
+        $notif->setTo([$email => $admission->getIndividu()->getNomCompletFormatter()->avecNomPatronymique()->f()])
             ->setSubject($rendu->getSujet())
             ->setBody($rendu->getCorps());
 
@@ -144,7 +144,7 @@ class NotificationFactory extends NF
         $rendu = $this->getRenduService()->generateRenduByTemplateCode(MailTemplates::VALIDATION_SUPPRIMEE, $vars);
 
         $notif = new Notification();
-        $notif->setTo([$email => $admission->getIndividu()->getNomComplet()])
+        $notif->setTo([$email => $admission->getIndividu()->getNomCompletFormatter()->avecNomPatronymique()->f()])
             ->setSubject($rendu->getSujet())
             ->setBody($rendu->getCorps());
 
@@ -257,7 +257,7 @@ class NotificationFactory extends NF
         }
 
         $notif = new Notification();
-        $notif->setTo([$email => $admission->getIndividu()->getNomComplet()])
+        $notif->setTo([$email => $admission->getIndividu()->getNomCompletFormatter()->avecNomPatronymique()->f()])
             ->setSubject($rendu->getSujet())
             ->setBody($rendu->getCorps())
             ->setCc($cc);
@@ -332,7 +332,7 @@ class NotificationFactory extends NF
         }
 
         $notif = new Notification();
-        $notif->setTo([$email => $admission->getIndividu()->getNomComplet()])
+        $notif->setTo([$email => $admission->getIndividu()->getNomCompletFormatter()->avecNomPatronymique()->f()])
             ->setSubject($rendu->getSujet())
             ->setBody($rendu->getCorps())
             ->setCc($cc);
@@ -382,7 +382,7 @@ class NotificationFactory extends NF
         $rendu = $this->getRenduService()->generateRenduByTemplateCode(MailTemplates::AVIS_SUPPRIME, $vars);
 
         $notif = new Notification();
-        $notif->setTo([$email => $admission->getIndividu()->getNomComplet()])
+        $notif->setTo([$email => $admission->getIndividu()->getNomCompletFormatter()->avecNomPatronymique()->f()])
             ->setSubject($rendu->getSujet())
             ->setBody($rendu->getCorps());
 

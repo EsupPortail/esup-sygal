@@ -164,7 +164,7 @@ $canAddThese = $this->isAllowed(Privileges::getResourceId(ThesePrivileges::THESE
                     <?= $this->etatHelper($these->getEtatThese(), $these->getResultat(), $these->getResultatToString()) ?>
                 </td>
                 <td><?php echo $these->getDoctorant()->getNumeroEtudiant() ?></td>
-                <td><?php echo $these->getDoctorant()->getIndividu()->getNomComplet() ?></td>
+                <td><?php echo $these->getDoctorant() ?></td>
                 <td class="acteurs">
                     <?php
                         $acteursFormatterDirecteursAvecRole = clone $acteursFormatterDirecteurs;

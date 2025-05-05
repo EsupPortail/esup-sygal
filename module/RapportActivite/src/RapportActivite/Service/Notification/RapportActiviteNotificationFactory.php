@@ -42,7 +42,7 @@ class RapportActiviteNotificationFactory extends NotificationFactory
         $notif = new RapportActiviteSupprimeNotification();
         $notif->setRapportActivite($rapportActivite);
         $notif->setSubject("Rapport d'activité supprimé");
-        $notif->setTo([$email => $doctorant->getIndividu()->getNomComplet()]);
+        $notif->setTo([$email => (string) $doctorant]);
 
         return $notif;
     }

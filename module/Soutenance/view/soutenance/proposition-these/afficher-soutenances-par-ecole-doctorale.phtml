@@ -49,7 +49,7 @@ $count = count($soutenances);
         ?>
         <div class="card">
             <div class="card-header bg-dark text-white">
-                <h3>
+                <h3 style="border-left:none; padding-left: unset">
                 <a href="<?php echo $this->url('these/identite', [ 'these' => $soutenance->getThese()->getId() ], [], true); ?>"
                    title="Accéder aux données de la thèse"
                 >
@@ -62,7 +62,7 @@ $count = count($soutenances);
                     <div class="col-md-5">
                         <dl>
                             <dt> Doctorant&middot;e </dt>
-                            <dd> <?php echo $soutenance->getThese()->getDoctorant()->getIndividu()->getNomComplet(); ?> </dd>
+                            <dd> <?php echo $soutenance->getThese()->getDoctorant(); ?> </dd>
 
                             <dt> Direction de thèse </dt>
                             <dd>

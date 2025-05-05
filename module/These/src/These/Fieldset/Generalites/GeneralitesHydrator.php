@@ -25,7 +25,7 @@ class GeneralitesHydrator extends DoctrineObject
 
         $data['doctorant'] = ($object->getDoctorant()) ? [
             'id' => $object->getDoctorant()->getId(),
-            'label' => $object->getDoctorant()->getIndividu()->getPrenom() . ' ' . ($object->getDoctorant()->getIndividu()->getNomUsuel() ?? $object->getDoctorant()->getIndividu()->getNomPatronymique())
+            'label' => $object->getDoctorant()
         ] : null;
         $data['discipline'] = $object->getDiscipline()?->getId();
         $data["domaineHal"] = $object;

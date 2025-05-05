@@ -11,7 +11,7 @@
 <?php foreach ($logs as $log): ?>
 
     <li>
-        Thèse de <?php echo $log->getThese()->getDoctorant()->getIndividu()->getNomComplet() ?>
+        Thèse de <?php echo $log->getThese()->getDoctorant() ?>
         (<?php echo $log->getThese()->getId() ?>), le <?php echo $log->getStartedOnToString() ?> :
         <a href="<?php echo $this->url('step-star/log/consulter', ['log' => $log->getId()]) ?>">log</a>
     </li>

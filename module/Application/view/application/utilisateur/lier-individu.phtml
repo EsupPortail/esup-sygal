@@ -125,13 +125,13 @@ use UnicaenApp\Form\Element\SearchAndSelect;
                             <tr>
                                 <td>
                                     <a href="<?php echo $this->url('these/identite', ['these' => $acteur->getThese()->getId()], [], true); ?>"
-                                       title="<?php echo $acteur->getThese()->getDoctorant()->getIndividu()->getNomComplet(); ?> - <?php echo $acteur->getThese()->getTitre(); ?>"
+                                       title="<?php echo $acteur->getThese()->getDoctorant(); ?> - <?php echo $acteur->getThese()->getTitre(); ?>"
                                     >
                                         <?php echo $acteur->getThese()->getId(); ?>
                                     </a>
                                 </td>
                                 <td>
-                                    <?php echo $acteur->getThese()->getDoctorant()->getIndividu()->getNomComplet(); ?>
+                                    <?php echo $acteur->getThese()->getDoctorant(); ?>
                                 </td>
                                 <td>
                                     <?php echo $acteur->getRole()->getLibelle(); ?>

@@ -127,7 +127,7 @@ class CoEncadrantController extends AbstractActionController
         }
 
         return new ViewModel([
-            'title' => "Ajout d'un co-encadrant pour la thèse de " . $these->getDoctorant()->getIndividu()->getPrenom() . " " . $these->getDoctorant()->getIndividu()->getNomUsuel(),
+            'title' => "Ajout d'un co-encadrant pour la thèse de " . $these->getDoctorant(),
             'form' => $form,
         ]);
     }
@@ -187,7 +187,7 @@ class CoEncadrantController extends AbstractActionController
 
             $listing .= "<br>";
 
-            $listing .= $these->getDoctorant()->getIndividu()->getPrenom1() . " " . $these->getDoctorant()->getIndividu()->getNomUsuel();
+            $listing .= $these->getDoctorant()->getIndividu()->getPrenom1() . " " . $these->getDoctorant()->getIndividu()->getNomPatronymique();
             $listing .= " - ";
             $listing .= $these->getEtablissement()->getStructure()->getLibelle();
             $listing .= " - ";
@@ -242,7 +242,7 @@ class CoEncadrantController extends AbstractActionController
             $entry['Nombre d\'encadrements actuels'] = count($item['theses']);
             $entry['Listing'] = implode(';',
                 array_map(function (These $t) {
-                    return $t->getDoctorant()->getIndividu()->getPrenom1() . " " . $t->getDoctorant()->getIndividu()->getNomUsuel();
+                    return $t->getDoctorant()->getIndividu()->getPrenom1() . " " . $t->getDoctorant()->getIndividu()->getNomPatronymique();
                 }, $item['theses'])
             );
             $records[] = $entry;

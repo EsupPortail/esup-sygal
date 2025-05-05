@@ -40,7 +40,7 @@ class RapportActiviteNomFichierFormatter extends AbstractNomFichierFormatter
         $parts['etab'] = $these->getEtablissement()->getStructure()->getSourceCode();
         $parts['ed'] = 'ED' . $ed;
         $parts['ur'] = $ur;
-        $parts['nomDoctorant'] = $this->normalizedString($doctorant->getIndividu()->getNomUsuel());
+        $parts['nomDoctorant'] = $this->normalizedString($doctorant->getIndividu()->getNomPatronymique());
         $parts['prenomDoctorant'] = ucfirst(mb_strtolower($this->normalizedString($doctorant->getIndividu()->getPrenom())));
         $parts['id'] = $uid; // on inclue un id unique au cas où il y ait plusieurs fichiers de même nom déposés
 

@@ -13,7 +13,7 @@ $form->prepare();
 
 <?php $this->headTitle($this->translate($title))
     ->prepend("Nouvel avis")
-    ->prepend($admission->getIndividu()->getNomUsuel());
+    ->prepend($admission->getIndividu()->getNomPatronymique());
 ?>
 
 <h1 class="page-header"><?php echo $title ?></h1>

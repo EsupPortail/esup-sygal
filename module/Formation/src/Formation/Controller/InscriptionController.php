@@ -176,7 +176,7 @@ class InscriptionController extends AbstractController
         if ($inscription !== null) {
             $vm->setTemplate('formation/default/confirmation');
             $vm->setVariables([
-                'title' => "Suppression de l'inscription de " . $inscription->getDoctorant()->getIndividu()->getNomComplet(),
+                'title' => "Suppression de l'inscription de " . $inscription->getDoctorant(),
                 'text' => "La suppression est définitive êtes-vous sûr&middot;e de vouloir continuer ?",
                 'action' => $this->url()->fromRoute('formation/inscription/supprimer', ["inscription" => $inscription->getId()], [], true),
             ]);
@@ -457,7 +457,7 @@ class InscriptionController extends AbstractController
 
             $entry = [];
             $entry['Civilité'] = $individu ? $individu->getCivilite() : null;
-            $entry['Nom'] = $individu ? $individu->getNomComplet() : null;
+            $entry['Nom'] = $individu ? $individu->getNomPatronymique() : null;
             $entry['Prénom'] = $individu ? $individu->getPrenom() : null;
             $entry['Adresse électronique'] = $individu ? $individu->getEmailPro() : null;
             $entry['Année de thèse'] = $anneeThese;

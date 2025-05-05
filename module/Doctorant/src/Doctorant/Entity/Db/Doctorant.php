@@ -307,7 +307,7 @@ class Doctorant implements
      */
     public function __toString(): string
     {
-        return $this->getIndividu()->__toString();
+        return $this->getIndividu()->getNomCompletFormatter()->avecNomPatronymique()->f();
     }
 
     public function getIndividu(): ?Individu
@@ -378,7 +378,7 @@ class Doctorant implements
      */
     public function getDenominationPatronymique(): string
     {
-        return $this->getIndividu()->getNomCompletFormatter()->avecCivilite()->f();
+        return $this->getIndividu()->getNomCompletFormatter()->avecCivilite()->avecNomPatronymique()->f();
     }
 
 }

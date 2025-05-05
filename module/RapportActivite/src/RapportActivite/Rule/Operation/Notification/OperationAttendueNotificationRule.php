@@ -100,7 +100,7 @@ class OperationAttendueNotificationRule implements RuleInterface
         $this->cc = $cc;
         $this->subject = sprintf("%s de %s",
             $this->operationAttendue->getRapportActivite(),
-            $these->getDoctorant()->getIndividu()->getNomComplet(),
+            $these->getDoctorant(),
         );
     }
 

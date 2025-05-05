@@ -22,6 +22,8 @@ class NomCompletFormatter extends AbstractFilter
     private bool $avecCivilite = false;
     private bool $avecAutresPrenoms = false;
     private bool $avecNomUsage = false;
+    private bool $avecNomPatronymique = false;
+    private bool $avecNomPatroEtNomUsage = false;
     private string $avecNomUsageFormat = ", nom d'usage : %s";
 
     /**
@@ -90,10 +92,14 @@ class NomCompletFormatter extends AbstractFilter
         $nomPatro = mb_strtoupper($nomPatro);
         $civilite = $this->avecCivilite ? $civilite : null;
 
-        if ($this->avecNomUsage && $nomPatro !== $nomUsuel) {
+        if ($this->avecNomPatroEtNomUsage && $nomPatro !== $nomUsuel) {
             $nomComplet = "$nomPatro $prenom" . sprintf($this->avecNomUsageFormat, $nomUsuel);
-        } else {
+        } elseif ($this->avecNomPatronymique) {
             $nomComplet = "$nomPatro $prenom";
+        } elseif ($this->avecNomUsage) {
+            $nomComplet = "$nomUsuel $prenom";
+        } else {
+            $nomComplet = "$nomUsuel $prenom";
         }
 
         $parts = [
@@ -142,6 +148,32 @@ class NomCompletFormatter extends AbstractFilter
         $this->avecNomUsage = $avecNomUsage;
         if ($format !== null) {
             $this->avecNomUsageFormat = $format;
+        }
+
+        return $this;
+    }
+
+    /**
+     * Active ou non l'inclusion du nom patronymique, éventuellement selon le format spécifié.
+     */
+    public function avecNomPatronymique(bool $avecNomPatronymique = true, string $format = null): static
+    {
+        $this->avecNomPatronymique = $avecNomPatronymique;
+        if ($format !== null) {
+            $this->avecNomPatronymique = $format;
+        }
+
+        return $this;
+    }
+
+    /**
+     * Active ou non l'inclusion du nom patronymique ainsi que le nom d'usage, éventuellement selon le format spécifié.
+     */
+    public function avecNomPatroEtNomUsage(bool $avecNomPatroEtNomUsage = true, string $format = null): static
+    {
+        $this->avecNomPatroEtNomUsage = $avecNomPatroEtNomUsage;
+        if ($format !== null) {
+            $this->avecNomPatroEtNomUsage = $format;
         }
 
         return $this;

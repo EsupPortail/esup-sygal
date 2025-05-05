@@ -252,7 +252,7 @@ class DoctorantController extends AbstractController implements SearchController
             foreach ($doctorants as $doctorant) {
                 $result[] = array(
                     'id'    => $doctorant->getId(),
-                    'label' => $doctorant->getIndividu()->getPrenom(). " " . (($doctorant->getIndividu()->getNomUsuel())??$doctorant->getIndividu()->getNomPatronymique()),
+                    'label' => $doctorant,
                     'extra' => "<span class='badge' style='background-color: slategray;'>".$doctorant->getIne()."</span>",
                 );
             }

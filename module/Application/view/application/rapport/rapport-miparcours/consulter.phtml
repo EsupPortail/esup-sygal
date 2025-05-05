@@ -37,7 +37,7 @@ if (!$isTeleversementPossible) {
 ?>
 
 <?php $this->headTitle($this->translate($title = "Rapports mi-parcours"))
-    ->prepend($these->getDoctorant()->getIndividu()->getNomUsuel()) ?>
+    ->prepend($these->getDoctorant()->getIndividu()->getNomPatronymique()) ?>
 
 <h1 class="page-header">
     <?php echo $this->translate($title); ?>

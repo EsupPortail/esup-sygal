@@ -24,7 +24,7 @@ class RapportActiviteValidationSupprimeeNotification extends Notification
         $individu = $these->getDoctorant()->getIndividu();
         $email = $individu->getEmailContact() ?: $individu->getEmailPro() ?: $individu->getEmailUtilisateur();
 
-        $this->setTo([$email => $these->getDoctorant()->getIndividu()->getNomComplet()]);
+        $this->setTo([$email => (string) $these->getDoctorant()]);
 //        $this->setCc($these->getDirecteursTheseEmails());
         $this->setSubject(sprintf("Votre %s a été dévalidé", $this->rapportActiviteValidation));
 

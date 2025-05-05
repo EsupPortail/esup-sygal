@@ -40,7 +40,7 @@ class MissionEnseignementController extends AbstractController {
         }
 
         $vm = new ViewModel([
-            'title' => "Ajouter une mission d'enseignement pour ".$doctorant->getIndividu()->getNomComplet(),
+            'title' => "Ajouter une mission d'enseignement pour ".$doctorant,
             'form' => $form
         ]);
         $vm->setTemplate('default/default-form');

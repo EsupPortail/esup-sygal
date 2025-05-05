@@ -220,7 +220,7 @@ class TheseService extends BaseService
             $pdcData->setEtablissement($these->getEtablissement()->getStructure()->getLibelle());
         }
         if ($these->getDoctorant()) {
-            $pdcData->setDoctorant(mb_strtoupper($these->getDoctorant()->getIndividu()->getNomComplet()));
+            $pdcData->setDoctorant(mb_strtoupper((string) $these->getDoctorant()));
         }
         if ($proposition->getDate()) $pdcData->setDate($proposition->getDate()->format("d/m/Y"));
 //        if ($these->getDateSoutenance()) $pdcData->setDate($these->getDateSoutenance()->format("d/m/Y"));

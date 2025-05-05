@@ -3,6 +3,7 @@ Journal des modifications
 
 10.1.0
 ------
+- Utilisation du nom patronymique pour le doctorant, nom usuel pour les autres
 - Module Formation : Ajout de la fiche de formation sur le détail d'une session pour un doctorant
 - Module Formation : Ajout d'une colonne dans l'export des inscriptions du nombre d'heures effectif de suivi du doctorant (pour une session)
 - Module Formation : Possibilité de renseigner par le doctorant (depuis son tableau de bord), une formation externe avec attestation :

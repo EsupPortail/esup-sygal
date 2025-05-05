@@ -189,7 +189,7 @@ $acteursFormatterCodirecteurs->asSeparated()
             <td>
                 <a href="<?php echo $this->url('these/identite', ['these' => $these->getId()], [], true) ?>"
                    title="<?php echo $these->getTitre() ?>">
-                    <?php echo $these->getDoctorant()->getIndividu()->getNomComplet() ?>
+                    <?php echo $these->getDoctorant() ?>
                 </a>
             </td>
             <?php endif ?>
@@ -429,12 +429,12 @@ $acteursFormatterCodirecteurs->asSeparated()
     })
 
     $(function() {
-        public const avisComplemsModal = document.getElementById('commentairesAutorisationInscrModal')
+        const avisComplemsModal = document.getElementById('commentairesAutorisationInscrModal')
         avisComplemsModal.addEventListener('show.bs.modal', function (event) {
-            public const button = event.relatedTarget;
-            public const logFullContent = $(button).siblings(".log-full-content").html();
+            const button = event.relatedTarget;
+            const logFullContent = $(button).siblings(".log-full-content").html();
 
-            public const modalBody = avisComplemsModal.querySelector('.modal-body');
+            const modalBody = avisComplemsModal.querySelector('.modal-body');
             $(modalBody).html(logFullContent);
         });
     })

@@ -87,7 +87,7 @@ class AdmissionAvisController extends AbstractController
         return [
             'admission' => $admission,
             'form' => $this->form,
-            'title' => "Nouvel avis à propos du dossier d'admission de ".$admission->getIndividu()->getNomComplet(),
+            'title' => "Nouvel avis à propos du dossier d'admission de ".$admission->getIndividu()->getNomCompletFormatter()->avecNomPatronymique()->f(),
         ];
     }
 
@@ -133,7 +133,7 @@ class AdmissionAvisController extends AbstractController
         return [
             'admission' => $admission,
             'form' => $this->form,
-            'title' => "Modification d'un avis à propos du dossier d'admission de ".$individu->getNomComplet(),
+            'title' => "Modification d'un avis à propos du dossier d'admission de ".$individu->getNomCompletFormatter()->avecNomPatronymique()->f(),
         ];
     }
 

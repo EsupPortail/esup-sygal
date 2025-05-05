@@ -24,7 +24,7 @@ use Soutenance\Provider\Privilege\InterventionPrivileges;
  */
 
 if($typeProposition === Proposition::ROUTE_PARAM_PROPOSITION_THESE){
-    $this->headTitle("Intervention sur la soutenance de thèse de " . $object->getApprenant()->getIndividu()->getNomComplet());
+    $this->headTitle("Intervention sur la soutenance de thèse de " . $object->getApprenant());
 }else{
     $this->headTitle("Intervention sur la soutenance de HDR de " . $object->getApprenant()->getIndividu()->getNomComplet());
 }
@@ -49,7 +49,7 @@ $canModifier = $this->isAllowed($object, InterventionPrivileges::INTERVENTION_MO
 ?>
 
 <h1 class="page-header">
-    Intervention sur la soutenance de <?= $libelleEntite ?> de <?php echo  $object->getApprenant()->getIndividu()->getNomComplet(); ?>
+    Intervention sur la soutenance de <?= $libelleEntite ?> de <?php echo  $object->getApprenant(); ?>
 </h1>
 
 <?php if (!$canAfficher) : ?>

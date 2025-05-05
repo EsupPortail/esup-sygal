@@ -343,7 +343,7 @@ class ApplicationNavigationFactory extends NavigationFactory
                 $newPage['order'] = $newPage['order'] + $i;
             }
             // label
-            $newPage['label'] = Util::truncatedString($these->getDoctorant()->getIndividu()->getNomComplet(), 30);
+            $newPage['label'] = Util::truncatedString((string) $these->getDoctorant(), 30);
             // title
             $newPage['title'] = $these->getTitre();
             // injection du paramètre de route 'these' dans la page et ses filles

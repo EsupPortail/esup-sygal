@@ -29,7 +29,7 @@ class NomFichierFusionPdcEtTheseFormatter extends AbstractNomFichierFormatter
         $parts = [
             $this->prefix,
             $value->getId(),
-            $this->normalizedString($individuDoctorant->getNomUsuel()),
+            $this->normalizedString($individuDoctorant->getNomPatronymique()),
             $this->normalizedString($individuDoctorant->getPrenom()),
             uniqid(),
         ];

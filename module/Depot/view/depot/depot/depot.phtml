@@ -23,7 +23,7 @@ $divId = $versionCorrigee ? 'div-depot-corrige' : 'div-depot-initial';
 $h1 = $versionCorrigee ? "Téléversement version corrigée" : "Téléversement de la thèse";
 ?>
 
-<?php $this->headTitle("Dépôt thèse")->prepend($these->getDoctorant()->getIndividu()->getNomUsuel()) ?>
+<?php $this->headTitle("Dépôt thèse")->prepend($these->getDoctorant()->getIndividu()->getNomPatronymique()) ?>
 
 <div class="no-intranavigation">
 

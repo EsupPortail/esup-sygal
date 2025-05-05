@@ -69,7 +69,7 @@ switch ($these->getEtatThese()){
 }
 ?>
 
-<?php $this->headTitle($this->translate("Thèse"))->prepend($these->getDoctorant()->getIndividu()->getNomUsuel()) ?>
+<?php $this->headTitle($this->translate("Thèse"))->prepend($these->getDoctorant()->getIndividu()->getNomPatronymique()) ?>
 
 <?php echo $this->alertes()
     ->addAlertesFromDatabase()

@@ -467,7 +467,7 @@ class SessionController extends AbstractController
     private function triggerNotificationAbsencesInjustifieesSession(Session $session)
     {
         $inscriptions = $session->getListePrincipale();
-        usort($inscriptions, function(Inscription $a, Inscription $b) { return $a->getDoctorant()->getIndividu()->getNomComplet() > $b->getDoctorant()->getIndividu()->getNomComplet();});
+        usort($inscriptions, function(Inscription $a, Inscription $b) { return (string) $a->getDoctorant() > (string) $b->getDoctorant();});
         $seances = $session->getSeances()->toArray();
         $seances = array_filter($seances, function (Seance $a) { return $a->estNonHistorise();});
 
@@ -584,7 +584,7 @@ class SessionController extends AbstractController
             $nbInscription = ($these)?$these->getNbInscription():"---";
             $entry = [
                 'Liste' => $inscription->getListe(),
-                'Dénomination étudiant' => $doctorant->getIndividu()->getNomComplet(),
+                'Dénomination étudiant' => (string)$doctorant,
                 'Adresse électronique' => $doctorant->getIndividu()->getEmailUtilisateur(),
                 'Année de thèse' => $nbInscription,
                 'Établissement' => implode("/",$etablissements),

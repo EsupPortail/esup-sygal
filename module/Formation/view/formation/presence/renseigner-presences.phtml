@@ -22,7 +22,7 @@ $seances = array_filter($seances, function (Seance $a) { return $a->estNonHistor
 usort($seances, function(Seance $a, Seance $b) { return $a->getDebut() > $b->getDebut();});
 /** @var Inscription[] $inscriptions */
 $inscriptions = $session->getListePrincipale();
-usort($inscriptions, function(Inscription $a, Inscription $b) { return $a->getDoctorant()->getIndividu()->getNomComplet() > $b->getDoctorant()->getIndividu()->getNomComplet();});
+usort($inscriptions, function(Inscription $a, Inscription $b) { return (string) $a->getDoctorant() > (string) $b->getDoctorant();});
 
 $canPresenceModifier = $this->isAllowed(SeancePrivileges::getResourceId(SeancePrivileges::SEANCE_PRESENCE));
 
@@ -55,12 +55,12 @@ $this->headTitle($titrePage);
         <tr>
             <td class="inscrit">
                     <div style="float:left;">
-                            <strong><?php echo $inscription->getDoctorant()->getIndividu()->getNomComplet(); ?></strong>
+                            <strong><?php echo $inscription->getDoctorant(); ?></strong>
                     </div>
                     <div style="float:right;" style="padding-right: 1rem;">
                         <?php if ($canPresenceModifier) : ?>
-                            <span class="all_toggle icon icon-yes" id="on_<?php echo $inscription->getId(); ?>"           data-bs-toggle="tooltip" data-bs-html="true" title="Passer à présent toutes les journées de <span class='highlight agent'><?php echo $inscription->getDoctorant()->getIndividu()->getNomComplet(); ?></span>"></span>
-                            <span class="all_toggle icon icon-no" id="off_<?php echo $inscription->getId(); ?>"    data-bs-toggle="tooltip" data-bs-html="true" title="Passer à absent toutes les journées de <span class='highlight agent'><?php echo $inscription->getDoctorant()->getIndividu()->getNomComplet(); ?></span>"></span>
+                            <span class="all_toggle icon icon-yes" id="on_<?php echo $inscription->getId(); ?>"           data-bs-toggle="tooltip" data-bs-html="true" title="Passer à présent toutes les journées de <span class='highlight agent'><?php echo $inscription->getDoctorant(); ?></span>"></span>
+                            <span class="all_toggle icon icon-no" id="off_<?php echo $inscription->getId(); ?>"    data-bs-toggle="tooltip" data-bs-html="true" title="Passer à absent toutes les journées de <span class='highlight agent'><?php echo $inscription->getDoctorant(); ?></span>"></span>
                         <?php endif; ?>
                     </div>
             </td>

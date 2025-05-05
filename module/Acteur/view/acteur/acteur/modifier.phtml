@@ -102,7 +102,7 @@ if (!$form->getObject()->getId() && !$form->getObject()->getSource()->getImporta
     $(function() {
         $('select.selectpicker').selectpicker();
 
-        public const widget = ForcageWidget.create('etablissementForce');
+        const widget = ForcageWidget.create('etablissementForce');
         // surcharge nécessaire de la fonction "clearForcage()" car l'élément est un SearchAndSelect
         // widget.clearForcage = function() {
         //     $("#" + this.name).val('');

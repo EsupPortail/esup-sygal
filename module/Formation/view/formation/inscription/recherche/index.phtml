@@ -125,7 +125,7 @@ $queryParams = $this->queryParams();
                     <span class="<?php if ($inscription->estHistorise()) echo "historise text-danger"; ?>"
                           title="<?php echo $inscription->getDescription(); ?>" data-bs-toggle="tooltip" data-bs-html="true"
                     >
-                        <?php echo $inscription->getDoctorant()->getIndividu()->getNomComplet(); ?>
+                        <?php echo $inscription->getDoctorant(); ?>
                     </span>
                     <?php if ($session->getEtat()->getCode() === Etat::CODE_CLOTURER) : ?>
                         <?php if ($inscription->getValidationEnquete()) : ?>
@@ -185,7 +185,7 @@ $queryParams = $this->queryParams();
                         <?php /** @see \Formation\Controller\InscriptionController::supprimerAction() */?>
                         <a href="<?php echo $this->url('formation/inscription/supprimer',['inscription' => $inscription->getId()], [], true); ?>"
                            class="ajax-modal" data-event="modification"
-                           title="Suppression de l'inscription de <?php echo $inscription->getDoctorant()->getIndividu()->getNomComplet(); ?> <br>(Une confirmation avant la suppression vous sera demandée)" data-bs-toggle="tooltip" data-bs-html="true">
+                           title="Suppression de l'inscription de <?php echo $inscription->getDoctorant(); ?> <br>(Une confirmation avant la suppression vous sera demandée)" data-bs-toggle="tooltip" data-bs-html="true">
                             <span class="icon icon-detruire text-danger"></span>
                         </a>
                     <?php endif; ?>
