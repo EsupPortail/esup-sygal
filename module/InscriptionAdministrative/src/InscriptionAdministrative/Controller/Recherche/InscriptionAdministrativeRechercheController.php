@@ -3,9 +3,9 @@
 namespace InscriptionAdministrative\Controller\Recherche;
 
 use Application\Controller\AbstractController;
-use Application\Search\Controller\SearchControllerInterface;
-use Application\Search\Controller\SearchControllerTrait;
-use Application\Search\SearchServiceAwareTrait;
+use UnicaenSearch\Controller\SearchControllerInterface;
+use UnicaenSearch\Controller\SearchControllerTrait;
+use UnicaenSearch\SearchServiceAwareTrait;
 use Application\Service\AnneeUniv\AnneeUnivServiceAwareTrait;
 use Doctrine\ORM\AbstractQuery;
 use Laminas\Http\Response;
@@ -84,7 +84,7 @@ class InscriptionAdministrativeRechercheController extends AbstractController im
                 $ed = $roleEcoleDoctorale->getStructure()->getEcoleDoctorale();
                 $edFilter->setData([$ed]);
                 $edFilter->setDefaultValueAsObject($ed);
-                $edFilter->setAllowsEmptyOption(false);
+                $edFilter->setAllowsEmptyValueOption(false);
             }
         } else {
             throw new UnexpectedValueException(

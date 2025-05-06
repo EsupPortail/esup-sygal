@@ -3,13 +3,13 @@
 namespace InscriptionAdministrative\Service\Search;
 
 use Application\QueryBuilder\DefaultQueryBuilder;
-use Application\Search\Filter\CheckboxSearchFilter;
-use Application\Search\Filter\SearchFilter;
-use Application\Search\Filter\SelectSearchFilter;
-use Application\Search\Filter\StrReducedTextSearchFilter;
-use Application\Search\Filter\TextSearchFilter;
-use Application\Search\SearchService;
-use Application\Search\Sorter\SearchSorter;
+use UnicaenSearch\Filter\CheckboxSearchFilter;
+use UnicaenSearch\Filter\SearchFilter;
+use UnicaenSearch\Filter\SelectSearchFilter;
+use UnicaenSearch\Filter\StrReducedTextSearchFilter;
+use UnicaenSearch\Filter\TextSearchFilter;
+use UnicaenSearch\SearchService;
+use UnicaenSearch\Sorter\SearchSorter;
 use Doctrine\ORM\QueryBuilder;
 use InscriptionAdministrative\Service\InscriptionAdministrativeServiceAwareTrait;
 use InvalidArgumentException;
@@ -37,7 +37,7 @@ class InscriptionAdministrativeSearchService extends SearchService
 
     public function __construct()
     {
-        $this->ecoleDoctoraleSearchFilter = EcoleDoctoraleSearchFilter::newInstance();
+        $this->ecoleDoctoraleSearchFilter = new EcoleDoctoraleSearchFilter();
     }
 
     public function init(): void
