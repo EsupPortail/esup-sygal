@@ -11,6 +11,7 @@ use Fichier\Service\Fichier\FichierServiceAwareTrait;
 use Fichier\Service\Fichier\FichierStorageServiceAwareTrait;
 use Fichier\Service\Storage\Adapter\Exception\StorageAdapterException;
 use Laminas\Http\Request;
+use Laminas\Http\Response;
 use Laminas\View\Model\ViewModel;
 use Notification\Service\NotifierServiceAwareTrait;
 use Soutenance\Entity\Avis;
@@ -37,7 +38,7 @@ class AvisController extends AbstractSoutenanceController
 
     use AvisFormAwareTrait;
 
-    public function indexAction()
+    public function indexAction(): Response|ViewModel
     {
         $this->initializeFromType(true, false);
         $membre = $this->getMembreService()->getRequestedMembre($this, 'rapporteur');
@@ -46,7 +47,7 @@ class AvisController extends AbstractSoutenanceController
         $avis = $this->getAvisService()->getAvisByMembre($membre);
 
         if ($avis !== null) {
-            $this->redirect()->toRoute("soutenance_{$this->type}/avis-soutenance/afficher", ['id' => $this->entity->getId(), 'rapporteur' => $membre->getId()], [], true);
+            return $this->redirect()->toRoute("soutenance_{$this->type}/avis-soutenance/afficher", ['id' => $this->entity->getId(), 'rapporteur' => $membre->getId()], [], true);
         }
 
         /** @var AvisForm $form */
@@ -140,7 +141,7 @@ class AvisController extends AbstractSoutenanceController
                     }
                 }
 
-                $this->redirect()->toRoute("soutenance_{$this->type}/avis-soutenance/afficher", ['id' => $this->entity->getId(), 'membre' => $membre->getId()], [], true);
+                return $this->redirect()->toRoute("soutenance_{$this->type}/avis-soutenance/afficher", ['id' => $this->entity->getId(), 'membre' => $membre->getId()], [], true);
             }
         }
 
