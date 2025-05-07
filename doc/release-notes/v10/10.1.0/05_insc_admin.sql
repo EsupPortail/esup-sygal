@@ -573,6 +573,20 @@ create index inscription_administrative_doctorant_hmfk_idx
     on inscription_administrative_doctorant (histo_modificateur_id);
 
 
+
+/********************************************
+             these_annee_univ
+ ********************************************/
+
+alter table these_annee_univ
+    add inscription_administrative_id bigint
+        references inscription_administrative;
+alter table these_annee_univ
+    add est_1ere_annee_inscription boolean default false not null;
+
+
+
+
 -- --
 -- -- Création des sources de test correspondant à des instances pégase.
 -- --
