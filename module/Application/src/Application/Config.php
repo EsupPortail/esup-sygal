@@ -9,6 +9,9 @@ use Import\Filter\PrefixEtabColumnValueFilter;
  */
 class Config
 {
+    public const NAME_INSCRIPTIONS_ADMINISTRATIVES = 'inscr_admin-%s';
+    public const NAME_INSCRIPTIONS_ADMINISTRATIVES_APPRENANT = 'inscr_admin_apprenant-%s';
+
     /**
      * Il y a une déclinaison automatique des imports par établissement (pour pouvoir lancer l'import pour un
      * établissement précis) : cf. fonction {@see \generateConfigImportsForEtabs()} plus bas, appelée dans 'secret.local.php'.
@@ -635,6 +638,45 @@ class Config
      * Ce qui suit n'est que la config "commune".
      */
     public const CONFIG_SYNCHROS = [
+        ///////////////////////////////////////// Inscriptions administratives /////////////////////////////////////////
+        [
+            'name' => self::NAME_INSCRIPTIONS_ADMINISTRATIVES,
+            'order' => 5,
+            'source' => [
+                'name' => 'sygal',
+                'code' => 'app',
+                'table' => 'src_inscription_administrative',
+                'connection' => 'default',
+                'source_code_column' => 'source_code',
+            ],
+            'destination' => [
+                'name' => 'application',
+                'table' => 'inscription_administrative',
+                'connection' => 'default',
+                'source_code_column' => 'source_code',
+                'id_strategy' => 'SEQUENCE',
+                'id_sequence' => null,
+            ],
+        ],
+        [
+            'name' => self::NAME_INSCRIPTIONS_ADMINISTRATIVES_APPRENANT,
+            'order' => 6,
+            'source' => [
+                'name' => 'sygal',
+                'code' => 'app',
+                'table' => 'src_inscription_administrative_apprenant',
+                'connection' => 'default',
+                'source_code_column' => 'source_code',
+            ],
+            'destination' => [
+                'name' => 'application',
+                'table' => 'inscription_administrative_apprenant',
+                'connection' => 'default',
+                'source_code_column' => 'source_code',
+                'id_strategy' => 'SEQUENCE',
+                'id_sequence' => null,
+            ],
+        ],
         ////////////////////////////////////////////// STRUCTURE //////////////////////////////////////////////
         [
             ////// STRUCTURE : sans doublons non historisés.

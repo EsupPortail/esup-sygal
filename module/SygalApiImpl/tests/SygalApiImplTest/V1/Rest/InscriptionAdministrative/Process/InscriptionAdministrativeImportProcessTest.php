@@ -1,0 +1,347 @@
+<?php
+
+namespace SygalApiImplTest\V1\Rest\InscriptionAdministrative\Process;
+
+use Application\Entity\Db\Repository\SourceRepository;
+use Application\Entity\Db\Source;
+use Application\SourceCodeStringHelper;
+use Doctrine\DBAL\Connection;
+use Doctrine\ORM\EntityManager;
+use Exception;
+use Faker\Factory;
+use Import\Filter\PrefixEtabColumnValueFilter;
+use InscriptionAdministrative\Entity\Db\InscriptionAdministrative;
+use InvalidArgumentException;
+use Laminas\EventManager\EventManagerInterface;
+use Locale;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
+use stdClass;
+use Structure\Entity\Db\Etablissement;
+use SygalApiImpl\Event\InscriptionAdministrativeImportEvent;
+use SygalApiImpl\Exception\ErrorDuringImportException;
+use SygalApiImpl\V1\Extractor\InscriptionAdministrativeApprenantExtractor;
+use SygalApiImpl\V1\Extractor\InscriptionAdministrativeExtractor;
+use SygalApiImpl\V1\Process\InscriptionAdministrativeImportProcess;
+use SygalApiImplTest\V1\Rest\InscriptionAdministrative\InscriptionAdministrativeJsonDataProvider;
+use UnicaenAuthentification\Event\EventManager;
+use UnicaenDbImport\Domain\Import;
+use UnicaenDbImport\Domain\ImportResult;
+use UnicaenDbImport\Domain\Synchro;
+use UnicaenDbImport\Service\Exception\DatabaseServiceException;
+use UnicaenDbImport\Service\ImportService;
+use UnicaenDbImport\Service\SynchroService;
+
+class InscriptionAdministrativeImportProcessTest extends TestCase
+{
+    static protected InscriptionAdministrativeJsonDataProvider $jsonDataProvider;
+
+    const anneeUniv1 = 2022;
+    const anneeUniv2 = 2023;
+    const anneeUniv3 = 2024;
+
+    private string $instancePegase = 'PEGAZZZ';
+    protected string $jsonOriginalFileName = 'inscr_admin';
+
+    private InscriptionAdministrativeImportProcess|MockObject $iaProcess;
+
+    private EntityManager|MockObject $entityManager;
+    private EventManager|MockObject $eventManager;
+    private ImportService|MockObject $importService;
+    private SynchroService|MockObject $synchroService;
+    private Connection|MockObject $connection;
+    private SourceRepository|MockObject $sourceRepository;
+    private SourceCodeStringHelper|MockObject $sourceCodeHelper;
+    private InscriptionAdministrativeExtractor|MockObject $inscriptionAdministrativeExtractor;
+    private InscriptionAdministrativeApprenantExtractor|MockObject $inscriptionAdministrativeApprenantExtractor;
+
+    public static function setUpBeforeClass(): void
+    {
+        self::$jsonDataProvider = new InscriptionAdministrativeJsonDataProvider(__DIR__ . '/../json');
+    }
+
+    private function createImportProcess(): void
+    {
+        $this->iaProcess = new InscriptionAdministrativeImportProcess();
+
+        $this->entityManager = $this->createMock(EntityManager::class);
+        $this->entityManager->method('getConnection')->willReturn($this->createStub(Connection::class));
+        $this->iaProcess->setEntityManager($this->entityManager);
+
+        $this->importService = $this->createMock(ImportService::class);
+        $this->iaProcess->setImportService($this->importService);
+
+        $this->synchroService = $this->createMock(SynchroService::class);
+        $this->iaProcess->setSynchroService($this->synchroService);
+
+        $this->connection = $this->createMock(Connection::class);
+        $this->iaProcess->setDestinationConnection($this->connection);
+
+        $this->sourceRepository = $this->createMock(SourceRepository::class);
+        $this->iaProcess->setSourceRepository($this->sourceRepository);
+
+        $this->sourceCodeHelper = $this->createMock(SourceCodeStringHelper::class);
+        $this->iaProcess->setSourceCodeStringHelper($this->sourceCodeHelper);
+
+        $this->eventManager = $this->createMock(EventManagerInterface::class);
+        $this->iaProcess->setEventManager($this->eventManager);
+
+        $this->inscriptionAdministrativeExtractor = $this->createMock(InscriptionAdministrativeExtractor::class);
+        $this->iaProcess->setInscriptionAdministrativeExtractor($this->inscriptionAdministrativeExtractor);
+
+        $this->inscriptionAdministrativeApprenantExtractor = $this->createMock(InscriptionAdministrativeApprenantExtractor::class);
+        $this->iaProcess->setInscriptionAdministrativeApprenantExtractor($this->inscriptionAdministrativeApprenantExtractor);
+    }
+
+    public function getInitialContext(): array
+    {
+        $faker = Factory::create(Locale::getDefault());
+
+        return [
+            'instancePegase' => $this->instancePegase,
+            'codeApprenant' => rand(10000, 99999),
+            'noCandidat' => 'SYG' . rand(1000, 9999),
+            'ine' => rand(100000000, 999999999),
+            'annee' => static::anneeUniv1,
+            'statutInscription' => InscriptionAdministrative::STATUT_INSCRIPTION_VALIDE,
+            'nom' => $faker->lastName(),
+            'prenom' => $faker->firstName(),
+        ];
+    }
+
+    public function test_exception_is_thrown_when_source_does_not_exist()
+    {
+        $this->createImportProcess();
+
+        $templateParams = $this->getInitialContext();
+        $data = self::$jsonDataProvider->generateJsonData($templateParams);
+
+        $this->inscriptionAdministrativeExtractor->method('extractSourceId')->willReturn($this->instancePegase);
+
+        // source introuvable
+        $this->sourceRepository->expects(self::once())->method('findOneByCode')->with($this->instancePegase)->willReturn(null);
+
+        $this->expectException(InvalidArgumentException::class);
+
+        try {
+            $this->iaProcess->import($data);
+        } catch (ErrorDuringImportException $e) {
+
+        }
+    }
+
+    public function test_triggers_event_after_import_process()
+    {
+        $this->createImportProcess();
+
+        $templateParams = $this->getInitialContext();
+        $data = self::$jsonDataProvider->generateJsonData($templateParams);
+
+        $preparedData = ['source_id' => $this->instancePegase, '...'];
+        $this->inscriptionAdministrativeExtractor->method('extract')->willReturn($preparedData);
+        $this->inscriptionAdministrativeExtractor->method('extractSourceId')->willReturn($this->instancePegase);
+
+        $this->inscriptionAdministrativeApprenantExtractor->expects(self::once())->method('extract')->willReturn($preparedData);
+
+        $etablissement = $this->createMock(Etablissement::class);
+        $etablissement->method('getSourceCode')->willReturn('UCN');
+        $source = $this->createStub(Source::class);
+        $source->method('getEtablissement')->willReturn($etablissement);
+        $this->sourceRepository->expects(self::once())->method('findOneByCode')->with($this->instancePegase)->willReturn($source);
+
+        $this->importService->expects(self::exactly(2))->method('runImport')->with(self::isInstanceOf(Import::class));
+        $this->synchroService->expects(self::exactly(2))->method('runSynchro')->with(self::isInstanceOf(Synchro::class));
+
+        $sourceCodeIA = 'PEGASE_UCN::ETAB97@7810166@LICENCE_MAI&gt;LICENCE-MAI-L1@PER-2019';
+        $this->inscriptionAdministrativeExtractor->method('extractSourceCode')->willReturn($sourceCodeIA);
+
+        $this->eventManager->expects(self::once())->method('triggerEvent')->with(self::callback(fn($event) =>
+            $event instanceof InscriptionAdministrativeImportEvent &&
+            $event->getInscriptionAdministrativeSourceCode() === $sourceCodeIA
+        ));
+
+        try {
+            $this->iaProcess->import($data);
+        } catch (ErrorDuringImportException $e) {
+
+        }
+    }
+
+    public function test_throws_Exception_when_import_service_throws_DatabaseServiceException()
+    {
+        $this->createImportProcess();
+
+        $this->inscriptionAdministrativeExtractor->method('extractSourceId')->willReturn($this->instancePegase);
+
+        // etablissement UCN
+        $etablissement = $this->createMock(Etablissement::class);
+        $etablissement->method('getSourceCode')->willReturn('UCN');
+        // source associée à l'etab UCN
+        $source = $this->createStub(Source::class);
+        $source->method('getEtablissement')->willReturn($etablissement);
+        $this->sourceRepository->method('findOneByCode')->with($this->instancePegase)->willReturn($source);
+
+        // si le service d'import lève une erreur DatabaseServiceException (erreur bdd non gérable)...
+        $this->importService->method('runImport')->willThrowException(new DatabaseServiceException());
+
+        $this->expectException(Exception::class);
+
+        try {
+            $this->iaProcess->import(new stdClass());
+        } catch (ErrorDuringImportException $e) {
+
+        }
+    }
+
+    public function test_throws_Exception_when_synchro_service_throws_DatabaseServiceException()
+    {
+        $this->createImportProcess();
+
+        $this->inscriptionAdministrativeExtractor->method('extractSourceId')->willReturn($this->instancePegase);
+
+        // etablissement UCN
+        $etablissement = $this->createMock(Etablissement::class);
+        $etablissement->method('getSourceCode')->willReturn('UCN');
+        // source associée à l'etab UCN
+        $source = $this->createStub(Source::class);
+        $source->method('getEtablissement')->willReturn($etablissement);
+        $this->sourceRepository->method('findOneByCode')->with($this->instancePegase)->willReturn($source);
+
+        // si le service de synchro lève une erreur DatabaseServiceException (erreur bdd non gérable)...
+        $this->synchroService->method('runSynchro')->willThrowException(new DatabaseServiceException());
+
+        $this->expectException(Exception::class);
+
+        try {
+            $this->iaProcess->import(new stdClass());
+        } catch (ErrorDuringImportException $e) {
+
+        }
+    }
+
+    public function test_throws_ErrorDuringImportException_when_import_result_contains_failure_exception()
+    {
+        $this->createImportProcess();
+
+        $this->inscriptionAdministrativeExtractor->method('extractSourceId')->willReturn($this->instancePegase);
+
+        // etablissement UCN
+        $etablissement = $this->createMock(Etablissement::class);
+        $etablissement->method('getSourceCode')->willReturn('UCN');
+        // source associée à l'etab UCN
+        $source = $this->createStub(Source::class);
+        $source->method('getEtablissement')->willReturn($etablissement);
+        $this->sourceRepository->expects(self::once())->method('findOneByCode')->with($this->instancePegase)->willReturn($source);
+
+        // le résultat de l'import indique un échec (failure exception)
+        $importResult = $this->createMock(ImportResult::class);
+        $importResult->expects(self::once())->method('getFailureException')->willReturn($this->createStub(Exception::class));
+        $this->importService->expects(self::once())->method('runImport')->willReturn($importResult);
+
+        $this->expectException(ErrorDuringImportException::class);
+
+        $this->iaProcess->import(new stdClass());
+    }
+
+    public function test_throws_ErrorDuringImportException_when_import_result_has_exception_in_results()
+    {
+        $this->createImportProcess();
+
+        $this->inscriptionAdministrativeExtractor->method('extractSourceId')->willReturn($this->instancePegase);
+
+        $etablissement = $this->createMock(Etablissement::class);
+        $etablissement->method('getSourceCode')->willReturn('UCN');
+        $source = $this->createStub(Source::class);
+        $source->method('getEtablissement')->willReturn($etablissement);
+        $this->sourceRepository->expects(self::once())->method('findOneByCode')->with($this->instancePegase)->willReturn($source);
+
+        // le résultat de l'import mentionne une exception
+        $importResult = $this->createMock(ImportResult::class);
+        $importResult->expects(self::once())->method('hasExceptionInResults')->willReturn(true);
+        $this->importService->expects(self::once())->method('runImport')->willReturn($importResult);
+
+        $this->expectException(ErrorDuringImportException::class);
+
+        $this->iaProcess->import(new stdClass());
+    }
+
+    public function test_commits_even_when_ErrorDuringImportException_is_thrown()
+    {
+        $this->createImportProcess();
+
+        $this->inscriptionAdministrativeExtractor->method('extractSourceId')->willReturn($this->instancePegase);
+
+        $etablissement = $this->createMock(Etablissement::class);
+        $etablissement->method('getSourceCode')->willReturn('UCN');
+        $source = $this->createStub(Source::class);
+        $source->method('getEtablissement')->willReturn($etablissement);
+        $this->sourceRepository->expects(self::once())->method('findOneByCode')->with($this->instancePegase)->willReturn($source);
+
+        // le résultat de l'import mentionne un échec
+        $importResult = $this->createMock(ImportResult::class);
+        $importResult->expects(self::once())->method('getFailureException')->willReturn($this->createStub(Exception::class));
+        $this->importService->expects(self::once())->method('runImport')->willReturn($importResult);
+
+        // un commit doit être effectué quand même (pour sauver les logs)
+        $this->connection->expects(self::once())->method('commit');
+        $this->connection->expects(self::never())->method('rollBack');
+
+        try {
+            $this->iaProcess->import(new stdClass());
+        } catch (ErrorDuringImportException $e) {
+
+        }
+    }
+
+    public function test_rollbacks_and_propagates_the_exception_when_any_other_Exception_is_thrown()
+    {
+        $this->createImportProcess();
+
+        $this->inscriptionAdministrativeExtractor->method('extractSourceId')->willReturn($this->instancePegase);
+
+        // source introuvable
+        $this->sourceRepository->expects(self::once())->method('findOneByCode')->with($this->instancePegase)->willReturn(null);
+
+        // un rollback doit être effectué
+        $this->connection->expects(self::once())->method('rollBack');
+        $this->connection->expects(self::never())->method('commit');
+
+        // l'exception doit être propagée
+        $this->expectException(InvalidArgumentException::class);
+
+        try {
+            $this->iaProcess->import(new stdClass());
+        } catch (ErrorDuringImportException $e) {
+
+        }
+    }
+
+    public function test_ecole_doct_id_is_prefixed_during_import_with_etab_from_source()
+    {
+        $this->createImportProcess();
+
+        $this->inscriptionAdministrativeExtractor->method('extractSourceId')->willReturn($this->instancePegase);
+
+        // etablissement UCN
+        $etablissement = $this->createMock(Etablissement::class);
+        $etablissement->method('getSourceCode')->willReturn('UCN');
+        // source associée à l'etab UCN
+        $source = $this->createStub(Source::class);
+        $source->method('getEtablissement')->willReturn($etablissement);
+        $this->sourceRepository->method('findOneByCode')->with($this->instancePegase)->willReturn($source);
+        //
+        $this->inscriptionAdministrativeApprenantExtractor->method('extract')->willReturn(['source_id' => 'qqchose']);
+
+        /** @var PrefixEtabColumnValueFilter|\PHPUnit\Framework\MockObject\Stub $prefixEtabColumnValueFilter */
+        $prefixEtabColumnValueFilter = $this->createMock(PrefixEtabColumnValueFilter::class);
+        $prefixEtabColumnValueFilter->method('setParams')->with(self::callback(fn($params) =>
+            is_array($params) && $params['column'] === 'ecole_doct_id' && $params[PrefixEtabColumnValueFilter::PARAM_CODE_ETABLISSEMENT] === 'UCN'
+        ));
+
+        try {
+            $this->iaProcess->import(new stdClass());
+        } catch (ErrorDuringImportException $e) {
+
+        }
+    }
+}

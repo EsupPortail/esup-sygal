@@ -2,19 +2,22 @@
 
 namespace Individu\Service;
 
-use Structure\Entity\Db\Etablissement;
 use Application\Entity\Db\Utilisateur;
 use Application\Service\BaseService;
+use Application\Service\Pays\PaysServiceAwareTrait;
 use Application\SourceCodeStringHelperAwareTrait;
 use Doctrine\ORM\Exception\ORMException;
 use Individu\Entity\Db\Individu;
 use Individu\Entity\Db\Repository\IndividuRepository;
+use InscriptionAdministrative\Entity\Db\InscriptionAdministrativeApprenant;
 use Laminas\Mvc\Controller\AbstractActionController;
+use Structure\Entity\Db\Etablissement;
 use UnicaenApp\Exception\RuntimeException;
 
 class IndividuService extends BaseService
 {
     use SourceCodeStringHelperAwareTrait;
+    use PaysServiceAwareTrait;
 
     /**
      * @return IndividuRepository
@@ -94,6 +97,92 @@ class IndividuService extends BaseService
             'email' => $utilisateur->getEmail(),
             'sourceCode' => $this->sourceCodeStringHelper->addDefaultPrefixTo($utilisateur->getUsername()),
         ]);
+    }
+
+    /**
+     * Instancie un Individu, à partir des données fournies.
+     */
+    public function newIndividuFromApprenant(InscriptionAdministrativeApprenant $apprenant, ?Utilisateur $createur = null): Individu
+    {
+        $individu = new Individu();
+        $this->initIndividuFromApprenant($individu, $apprenant);
+
+        $individu->setSource($apprenant->getsource());
+        $individu->setSourceCode($apprenant->getSourceCode());
+
+        $individu->setHistoCreateur($createur);
+
+        return $individu;
+    }
+
+    /**
+     * Met à jour les attributs de l'Individu spécifié, à partir des données Apprenant fournies.
+     */
+    public function updateIndividuFromApprenant(
+        Individu $individu,
+        InscriptionAdministrativeApprenant $iaa,
+        ?Utilisateur $modificateur = null): void
+    {
+        $this->initIndividuFromApprenant($individu, $iaa);
+
+        $individu->setHistoModificateur($modificateur);
+    }
+
+    private function initIndividuFromApprenant(Individu $individu, InscriptionAdministrativeApprenant $apprenant): void
+    {
+        $paysNationalite = $this->paysService->getRepository()->findOneByCodeIsoAlpha2($apprenant->getPaysDeNaissance());
+
+        $individu->setCivilite($apprenant->getGenre());
+        $individu->setNomPatronymique($apprenant->getNomDeNaissance());
+        $individu->setNomUsuel($apprenant->getNomUsuel());
+        $individu->setPrenom1($apprenant->getPrenom());
+        $individu->setPrenom2($apprenant->getDeuxiemePrenom());
+        $individu->setPrenom3($apprenant->getTroisiemePrenom());
+//        $individu->set($apprenant->getPrenomUsage());
+//        $individu->set($apprenant->getMailPersonnel());
+//        $individu->set($apprenant->getMailUrgence());
+//        $individu->set($apprenant->getTelephonePersonnel());
+//        $individu->set($apprenant->getTelephoneUrgence());
+//        $individu->set($apprenant->getCommuneDeNaissance());
+//        $individu->set($apprenant->getCommuneDeNaissanceEtranger());
+//        $individu->set($apprenant->getDateDObtentionDeLaDeuxiemeNationalite());
+//        $individu->set($apprenant->getDateDObtentionDeLaDeuxiemeNationaliteToString());
+        $individu->setDateNaissance($apprenant->getDateDeNaissance());
+//        $individu->set($apprenant->getDeuxiemeNationalite());
+//        $individu->set($apprenant->getLibelleCommuneDeNaissance());
+//        $individu->set($apprenant->getLibelleDeuxiemeNationalite());
+//        $individu->set($apprenant->getLibelleNationalite());
+//        $individu->set($apprenant->getLibellePaysDeNaissance());
+//        $individu->set($apprenant->getNationalite());
+        $individu->setPaysNationalite($paysNationalite);
+    }
+
+    /**
+     * Détermine si l'individu spécifié possède des attributs dont la valeur pourrait être mise à jour
+     * à partir de ceux de l'apprenant spécifié.
+     */
+    public function diffIndividuFromApprenant(
+        Individu $individu,
+        InscriptionAdministrativeApprenant $apprenant,
+        ?array $fieldNames = null): array
+    {
+        $individuFromApprenant = new Individu();
+        $this->initIndividuFromApprenant($individuFromApprenant, $apprenant);
+
+        if ($fieldNames === null) {
+            $fieldNames = [
+                'civilite',
+                'nomPatronymique',
+                'nomUsuel',
+                'prenom1',
+                'prenom2',
+                'prenom3',
+                'dateNaissance',
+                'paysNationalite',
+            ];
+        }
+
+        return $this->computeEntityDiff($individu, $individuFromApprenant, $fieldNames);
     }
 
     /**

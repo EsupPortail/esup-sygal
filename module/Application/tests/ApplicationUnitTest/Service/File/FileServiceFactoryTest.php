@@ -7,7 +7,7 @@ use Fichier\Service\Fichier\FichierStorageServiceFactory;
 use UnicaenApp\Exception\RuntimeException;
 use Interop\Container\ContainerInterface;
 
-class FileServiceFactoryTest extends \PHPUnit_Framework_TestCase
+class FileServiceFactoryTest extends \PHPUnit\Framework\TestCase
 {
     /** @var ContainerInterface|\PHPUnit_Framework_MockObject_MockObject */
     private $container;
@@ -15,7 +15,7 @@ class FileServiceFactoryTest extends \PHPUnit_Framework_TestCase
     /** @var string */
     private $rootDirPath;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->container = $this->createMock(ContainerInterface::class);
         $this->rootDirPath = '/tmp/' . uniqid('sygal_test_');

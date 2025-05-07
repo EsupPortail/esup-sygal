@@ -5,6 +5,7 @@ namespace Structure\Search\Etablissement;
 use UnicaenSearch\Filter\SelectSearchFilter;
 use Doctrine\ORM\QueryBuilder;
 use Structure\Entity\Db\Etablissement;
+use Webmozart\Assert\Assert;
 
 /**
  * Filtre de type "établissement lié" (attribut : `sourceCode`).
@@ -18,8 +19,9 @@ class EtablissementSearchFilter extends SelectSearchFilter
 
     protected function applyToQueryBuilderUsingWhereFields(QueryBuilder $qb): void
     {
-        // il ne peut y avoir qu'un seul champ pour ce filtre
-        $whereField = current($this->whereFields);
+        Assert::maxCount($this->whereFields, 1,
+            sprintf("La classe %s n'autorise qu'un seul 'where field'", get_class($this))
+        );
 
         /**
          * Pas de jointure en dur ici. Désormais, il faut :
@@ -27,13 +29,13 @@ class EtablissementSearchFilter extends SelectSearchFilter
          * - spécifier le champ sur lequel doit porter le 'where' via {@see \UnicaenSearch\Filter\SearchFilter::setWhereField()}
          */
         $qb
-            ->andWhere($whereField . " = :etab_sourceCode")
+            ->andWhere($this->whereFields[0] . " = :etab_sourceCode")
             ->setParameter('etab_sourceCode', $this->getValue());
 
         if ($this->data !== null) {
             // garantit que l'étab éventuellement spécifié via $this->data est autorisé
             $sourceCodes = array_map(function(Etablissement $entity) { return $entity->getSourceCode(); }, $this->data);
-            $qb->andWhere($qb->expr()->in($whereField, $sourceCodes));
+            $qb->andWhere($qb->expr()->in($this->whereFields[0], $sourceCodes));
         }
     }
 }

@@ -407,7 +407,8 @@ td .text-structure {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05); }
   .alert .icon {
     float: left;
-    padding-right: 6px; }
+    padding-right: 6px;
+    min-height: 40px; }
 
 .alert.alert-info {
   color: #055160;

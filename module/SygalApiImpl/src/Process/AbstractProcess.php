@@ -1,0 +1,96 @@
+<?php
+
+namespace SygalApiImpl\Process;
+
+use Doctrine\DBAL\Connection;
+use Exception;
+use RuntimeException;
+use stdClass;
+use UnicaenDbImport\Domain\Import;
+use UnicaenDbImport\Domain\ImportResult;
+use UnicaenDbImport\Domain\Synchro;
+use UnicaenDbImport\Domain\SynchroResult;
+use UnicaenDbImport\Service\Exception\DatabaseServiceException;
+use UnicaenDbImport\Service\ImportService;
+use UnicaenDbImport\Service\SynchroService;
+
+abstract class AbstractProcess extends \Application\Process\AbstractProcess
+{
+    protected Connection $destinationConnection;
+    protected ImportService $importService;
+    protected SynchroService $synchroService;
+
+    public function setImportService(ImportService $importService): void
+    {
+        $this->importService = $importService;
+    }
+
+    public function setSynchroService(SynchroService $synchroService): void
+    {
+        $this->synchroService = $synchroService;
+    }
+
+    public function setDestinationConnection(Connection $destinationConnection): void
+    {
+        $this->destinationConnection = $destinationConnection;
+    }
+
+    /**
+     * @throws \Exception
+     */
+    abstract public function import(stdClass $data);
+
+    /**
+     * @throws \Exception
+     */
+    protected function runImport(Import $import): ImportResult
+    {
+        try {
+            return $this->importService->runImport($import);
+        } catch (DatabaseServiceException $e) {
+            throw new Exception("Une erreur est survenue lors de l'import : " . $e->getMessage(), 0, $e);
+        }
+    }
+
+    /**
+     * @throws \Exception
+     */
+    protected function runSynchro(Synchro $synchro): SynchroResult
+    {
+        try {
+            return $this->synchroService->runSynchro($synchro);
+        } catch (DatabaseServiceException $e) {
+            throw new Exception("Une erreur est survenue lors de la synchro : " . $e->getMessage(), 0, $e);
+        }
+    }
+
+    protected function beginTransaction(): void
+    {
+        try {
+            // Cf. https://www.doctrine-project.org/projects/doctrine-dbal/en/current/reference/transactions.html
+            $this->destinationConnection->setNestTransactionsWithSavepoints(true);
+            $this->destinationConnection->beginTransaction();
+        } catch (\Doctrine\DBAL\Exception $e) {
+            throw new RuntimeException("Echec de l'ouverture d'une transaction en bdd", 0, $e);
+        }
+    }
+
+    protected function commit(): void
+    {
+        try {
+            $this->destinationConnection->commit();
+        } catch (\Doctrine\DBAL\Exception $e) {
+            $exception = new RuntimeException("Echec du commit en bdd, rollback.", 0, $e);
+            $this->rollback($exception);
+        }
+    }
+
+    protected function rollback(?Exception $reason = null): void
+    {
+        try {
+            $this->destinationConnection->rollback();
+        } catch (\Doctrine\DBAL\Exception $e) {
+            throw new RuntimeException("Echec du rollback en bdd" . ($reason ? sprintf(" (raison du rollback : %s)", $reason->getMessage()) : ""), 0, $e);
+        }
+    }
+}

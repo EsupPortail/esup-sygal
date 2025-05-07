@@ -8,13 +8,13 @@ use DateTime;
 use Prophecy\Prophecy\ObjectProphecy;
 use Prophecy\Prophet;
 
-class NotificationDepotVersionCorrigeeAttenduRuleTest extends \PHPUnit_Framework_TestCase
+class NotificationDepotVersionCorrigeeAttenduRuleTest extends \PHPUnit\Framework\TestCase
 {
     public function test_retourne_date_null_si_date_butoire_null()
     {
         $correctionAutorisee = These::$CORRECTION_AUTORISEE_FACULTATIVE;
 
-        $these = $this->theseMock($correctionAutorisee, $dateButoir = null);
+        $these = $this->theseMock($correctionAutorisee);
 
         $rule = new NotificationDepotVersionCorrigeeAttenduRule();
         $rule->setThese($these);
@@ -25,15 +25,15 @@ class NotificationDepotVersionCorrigeeAttenduRuleTest extends \PHPUnit_Framework
         $this->assertTrue($rule->estPremiereNotif());
     }
 
-    public function getDataSetMineure()
+    static public function getDataSetMineure()
     {
-        $aujourdhui = $this->zeroTimeDate('05/03/2017');
+        $aujourdhui = self::zeroTimeDate('05/03/2017');
 
         return [
             'date butoir dépassée, 1ere notif' => [
                 $aujourdhui,
                 $dateDerniereNotif = null,
-                $dateButoir        = $this->zeroTimeDate('01/03/2017'),
+                $dateButoir        = self::zeroTimeDate('01/03/2017'),
                 //
                 $expectedDateProchaineNotif = null, // notif inutile
                 $expectedEstPremiereNotif = true,
@@ -41,8 +41,8 @@ class NotificationDepotVersionCorrigeeAttenduRuleTest extends \PHPUnit_Framework
 
             'date butoir dépassée, pas 1ere notif' => [
                 $aujourdhui,
-                $dateDerniereNotif = $this->zeroTimeDate('01/02/2017'),
-                $dateButoir        = $this->zeroTimeDate('01/03/2017'),
+                $dateDerniereNotif = self::zeroTimeDate('01/02/2017'),
+                $dateButoir        = self::zeroTimeDate('01/03/2017'),
                 //
                 $expectedDateProchaineNotif = null, // notif inutile
                 $expectedEstPremiereNotif = false,
@@ -51,7 +51,7 @@ class NotificationDepotVersionCorrigeeAttenduRuleTest extends \PHPUnit_Framework
             'date butoir non dépassée, 1ere notif' => [
                 $aujourdhui,
                 $dateDerniereNotif = null,
-                $dateButoir        = $this->zeroTimeDate('11/05/2017'),
+                $dateButoir        = self::zeroTimeDate('11/05/2017'),
                 //
                 $expectedDateProchaineNotif = $aujourdhui,
                 $expectedEstPremiereNotif = true,
@@ -59,8 +59,8 @@ class NotificationDepotVersionCorrigeeAttenduRuleTest extends \PHPUnit_Framework
 
             'date butoir non dépassée, pas 1ere notif' => [
                 $aujourdhui,
-                $dateDerniereNotif = $this->zeroTimeDate('01/02/2017'),
-                $dateButoir        = $this->zeroTimeDate('11/05/2017'),
+                $dateDerniereNotif = self::zeroTimeDate('01/02/2017'),
+                $dateButoir        = self::zeroTimeDate('11/05/2017'),
                 //
                 $expectedDateProchaineNotif = null,
                 $expectedEstPremiereNotif = false,
@@ -68,8 +68,8 @@ class NotificationDepotVersionCorrigeeAttenduRuleTest extends \PHPUnit_Framework
 
             'notif dejà faite' => [
                 $aujourdhui,
-                $dateDerniereNotif = $this->zeroTimeDate('01/03/2017'),
-                $dateButoir        = $this->zeroTimeDate('11/05/2017'),
+                $dateDerniereNotif = self::zeroTimeDate('01/03/2017'),
+                $dateButoir        = self::zeroTimeDate('11/05/2017'),
                 //
                 $expectedDateProchaineNotif = null, // plus de notif
                 $expectedEstPremiereNotif = false,
@@ -90,7 +90,8 @@ class NotificationDepotVersionCorrigeeAttenduRuleTest extends \PHPUnit_Framework
     {
         $correctionAutorisee = These::$CORRECTION_AUTORISEE_FACULTATIVE;
 
-        $these = $this->theseMock($correctionAutorisee, $dateButoir);
+        $these = $this->theseMock($correctionAutorisee);
+        $these->getDateButoirDepotVersionCorrigeeFromDateSoutenance($these->getDateSoutenance())->willReturn($dateButoir);
 
         $rule = new NotificationDepotVersionCorrigeeAttenduRule();
         $rule->setThese($these);
@@ -103,15 +104,14 @@ class NotificationDepotVersionCorrigeeAttenduRuleTest extends \PHPUnit_Framework
     }
 
     /**
-     * @param string    $correctionAutorisee
-     * @param DateTime $dateButoir
+     * @param string $correctionAutorisee
      * @return These
      */
-    private function theseMock($correctionAutorisee, $dateButoir)
+    private function theseMock($correctionAutorisee)
     {
         $theseProphecy = $this->theseProphecy();
         $theseProphecy->getCorrectionAutorisee()->willReturn($correctionAutorisee);
-        $theseProphecy->getDateButoirDepotVersionCorrigeeFromDateSoutenance($theseProphecy->getDateSoutenance())->willReturn($dateButoir);
+
         $these = $theseProphecy->reveal();
 
         return $these;
@@ -128,13 +128,13 @@ class NotificationDepotVersionCorrigeeAttenduRuleTest extends \PHPUnit_Framework
 
     public function getDataSetMajeure()
     {
-        $aujourdhui = $this->zeroTimeDate('05/03/2017');
+        $aujourdhui = self::zeroTimeDate('05/03/2017');
 
         return [
             'date butoir dépassée, 1ere notif' => [
                 $aujourdhui,
                 $dateDerniereNotif = null,
-                $dateButoir        = $this->zeroTimeDate('01/03/2017'),
+                $dateButoir        = self::zeroTimeDate('01/03/2017'),
                 //
                 $expectedDateProchaineNotif = null, // notif inutile
                 $expectedEstPremiereNotif = true,
@@ -142,8 +142,8 @@ class NotificationDepotVersionCorrigeeAttenduRuleTest extends \PHPUnit_Framework
 
             'date butoir dépassée, 1ere notif faite' => [
                 $aujourdhui,
-                $dateDerniereNotif = $this->zeroTimeDate('01/02/2017'),
-                $dateButoir        = $this->zeroTimeDate('01/03/2017'),
+                $dateDerniereNotif = self::zeroTimeDate('01/02/2017'),
+                $dateButoir        = self::zeroTimeDate('01/03/2017'),
                 //
                 $expectedDateProchaineNotif = null, // notif inutile
                 $expectedEstPremiereNotif = false,
@@ -152,7 +152,7 @@ class NotificationDepotVersionCorrigeeAttenduRuleTest extends \PHPUnit_Framework
             '1ere notif, aujourdhui < date de prochaine notif theorique' => [
                 $aujourdhui,
                 $dateDerniereNotif = null,
-                $dateButoir        = $this->zeroTimeDate('11/04/2017'),
+                $dateButoir        = self::zeroTimeDate('11/04/2017'),
                 //
                 $expectedDateProchaineNotif = $aujourdhui, // 1ere notif aujourdhui
                 $expectedEstPremiereNotif = true,
@@ -160,44 +160,44 @@ class NotificationDepotVersionCorrigeeAttenduRuleTest extends \PHPUnit_Framework
 
             '1ere notif faite, aujourdhui < date de prochaine notif theorique' => [
                 $aujourdhui,
-                $dateDerniereNotif = $this->zeroTimeDate('01/03/2017'),
-                $dateButoir        = $this->zeroTimeDate('11/04/2017'),
+                $dateDerniereNotif = self::zeroTimeDate('01/03/2017'),
+                $dateButoir        = self::zeroTimeDate('11/04/2017'),
                 //
-                $expectedDateProchaineNotif = $this->zeroTimeDate('11/03/2017'), // 1 mois avant la date butoire
+                $expectedDateProchaineNotif = self::zeroTimeDate('11/03/2017'), // 1 mois avant la date butoire
                 $expectedEstPremiereNotif = false,
             ],
 
             '1ere notif, aujourdhui == date de prochaine notif theorique' => [
-                $aujourdhui        = $this->zeroTimeDate('11/03/2017'),
+                $aujourdhui        = self::zeroTimeDate('11/03/2017'),
                 $dateDerniereNotif = null,
-                $dateButoir        = $this->zeroTimeDate('11/04/2017'),
+                $dateButoir        = self::zeroTimeDate('11/04/2017'),
                 //
                 $expectedDateProchaineNotif = $aujourdhui,
                 $expectedEstPremiereNotif = true,
             ],
 
             '1ere notif faite, aujourdhui == date de prochaine notif theorique' => [
-                $aujourdhui        = $this->zeroTimeDate('11/03/2017'),
-                $dateDerniereNotif = $this->zeroTimeDate('01/03/2017'),
-                $dateButoir        = $this->zeroTimeDate('11/04/2017'),
+                $aujourdhui        = self::zeroTimeDate('11/03/2017'),
+                $dateDerniereNotif = self::zeroTimeDate('01/03/2017'),
+                $dateButoir        = self::zeroTimeDate('11/04/2017'),
                 //
                 $expectedDateProchaineNotif = $aujourdhui,
                 $expectedEstPremiereNotif = false,
             ],
 
             '1ere notif, aujourdhui > date de prochaine notif theorique' => [
-                $aujourdhui        = $this->zeroTimeDate('20/03/2017'),
+                $aujourdhui        = self::zeroTimeDate('20/03/2017'),
                 $dateDerniereNotif = null,
-                $dateButoir        = $this->zeroTimeDate('11/04/2017'),
+                $dateButoir        = self::zeroTimeDate('11/04/2017'),
                 //
                 $expectedDateProchaineNotif = $aujourdhui,
                 $expectedEstPremiereNotif = true,
             ],
 
             '1ere notif faite, aujourdhui > date de prochaine notif theorique' => [
-                $aujourdhui        = $this->zeroTimeDate('20/03/2017'),
-                $dateDerniereNotif = $this->zeroTimeDate('01/03/2017'),
-                $dateButoir        = $this->zeroTimeDate('11/04/2017'),
+                $aujourdhui        = self::zeroTimeDate('20/03/2017'),
+                $dateDerniereNotif = self::zeroTimeDate('01/03/2017'),
+                $dateButoir        = self::zeroTimeDate('11/04/2017'),
                 //
                 $expectedDateProchaineNotif = null,
                 $expectedEstPremiereNotif = false,
@@ -218,7 +218,8 @@ class NotificationDepotVersionCorrigeeAttenduRuleTest extends \PHPUnit_Framework
     {
         $correctionAutorisee = These::$CORRECTION_AUTORISEE_OBLIGATOIRE;
 
-        $these = $this->theseMock($correctionAutorisee, $dateButoir);
+        $these = $this->theseMock($correctionAutorisee);
+        $these->getDateButoirDepotVersionCorrigeeFromDateSoutenance($these->getDateSoutenance())->willReturn($dateButoir);
 
         $rule = new \Depot\Rule\NotificationDepotVersionCorrigeeAttenduRule();
         $rule->setThese($these);
@@ -247,7 +248,7 @@ class NotificationDepotVersionCorrigeeAttenduRuleTest extends \PHPUnit_Framework
      * @param string|DateTime $date
      * @return DateTime|null
      */
-    private function zeroTimeDate($date)
+    static private function zeroTimeDate($date)
     {
         if ($date === null) {
             return null;

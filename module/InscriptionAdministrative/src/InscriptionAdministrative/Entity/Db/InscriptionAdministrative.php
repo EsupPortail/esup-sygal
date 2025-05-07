@@ -5,16 +5,45 @@ namespace InscriptionAdministrative\Entity\Db;
 use Application\Constants;
 use DateTime;
 use Doctorant\Entity\Db\Doctorant;
-use Laminas\Permissions\Acl\Resource\ResourceInterface;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Structure\Entity\Db\EcoleDoctorale;
+use UnicaenDbImport\Entity\Db\Traits\SourceAwareTrait;
 use UnicaenUtilisateur\Entity\Db\HistoriqueAwareInterface;
 use UnicaenUtilisateur\Entity\Db\HistoriqueAwareTrait;
-use UnicaenDbImport\Entity\Db\Traits\SourceAwareTrait;
 
-class InscriptionAdministrative implements HistoriqueAwareInterface, ResourceInterface
+/********************************************************************************************************************
+ * Inscriptions administratives en vrac reçues de Pégase.
+ ********************************************************************************************************************
+ *
+ * Données *non remaniées* issues de la synchro spécifiée dans la classe
+ * {@see \SygalApiImpl\V1\Process\InscriptionAdministrativeImportProcess}
+ *
+ * NB : l'id de l'inscription administrative est forgé (côté Pégase) à partir des attributs suivants :
+ * - la structure organisationnelle (code UAI, ex : 'ETAB00'),
+ * - l'apprenant (code apprenant, ex : '000001059'),
+ * - le chemin formation (ex : 'M-BIO-SANT>M1-BIO-SANT'),
+ * - le code période (ex : 'PER-2023').
+ *
+ * Ex d'id reçu : "ETAB00@000001059@M-BIO-SANT>M1-BIO-SANT@PER-2023"
+ *
+ * Cela pose problème : si l'inscription est modifiée dans Pégase (i.e. la valeur de l'un des attributs change),
+ * SyGAL crée une nouvelle inscription !
+ * On l'a signalé à PC-Scol mais aucune amélioration prévue de leur côté.
+ * On a donc décidé de créer {@see \InscriptionAdministrative\Entity\Db\InscriptionAdministrative}
+ *
+ */
+class InscriptionAdministrative implements HistoriqueAwareInterface
 {
     public const STATUT_INSCRIPTION_VALIDE = 'VALIDE';
     public const STATUT_INSCRIPTION_ANNULE = 'ANNULEE';
+    public const STATUTS_INSCRIPTION_VALIDES = [
+        self::STATUT_INSCRIPTION_VALIDE,
+        self::STATUT_INSCRIPTION_ANNULE,
+    ];
+
+    public const COMMENTAIRE_ANNEE_UNIV_PERIODE =
+        "Déduite de la date de début de période et du paramétrage définissant la date de début et de fin d'une année universitaire";
 
     use HistoriqueAwareTrait;
     use SourceAwareTrait;
@@ -39,8 +68,25 @@ class InscriptionAdministrative implements HistoriqueAwareInterface, ResourceInt
     private DateTime $periodeDateFin;
     private ?int $periodeAnneeUniversitaire = null;
 
-    private Doctorant $doctorant;
     private EcoleDoctorale $ecoleDoctorale;
+    private Collection $inscriptionAdministrativeApprenant;
+    private Collection $inscriptionAdministrativeDoctorant;
+
+    public function __construct()
+    {
+        $this->inscriptionAdministrativeApprenant = new ArrayCollection();
+        $this->inscriptionAdministrativeDoctorant = new ArrayCollection();
+    }
+
+    public function estValidee(): bool
+    {
+        return $this->getStatutInscription() === static::STATUT_INSCRIPTION_VALIDE;
+    }
+
+    public function estAnnulee(): bool
+    {
+        return $this->getStatutInscription() === static::STATUT_INSCRIPTION_ANNULE;
+    }
 
     public function getId(): int
     {
@@ -56,31 +102,11 @@ class InscriptionAdministrative implements HistoriqueAwareInterface, ResourceInt
     }
 
     /**
-     * @param string $sourceCode
-     * @return self
-     */
-    public function setSourceCode(string $sourceCode): self
-    {
-        $this->sourceCode = $sourceCode;
-        return $this;
-    }
-
-    /**
      * @return string
      */
     public function getNoCandidat(): string
     {
         return $this->noCandidat;
-    }
-
-    /**
-     * @param string $noCandidat
-     * @return self
-     */
-    public function setNoCandidat(string $noCandidat): self
-    {
-        $this->noCandidat = $noCandidat;
-        return $this;
     }
 
     /**
@@ -100,16 +126,6 @@ class InscriptionAdministrative implements HistoriqueAwareInterface, ResourceInt
     }
 
     /**
-     * @param \DateTime $dateInscription
-     * @return self
-     */
-    public function setDateInscription(DateTime $dateInscription): self
-    {
-        $this->dateInscription = $dateInscription;
-        return $this;
-    }
-
-    /**
      * @return \DateTime|null
      */
     public function getDateAnnulation(): ?DateTime
@@ -126,31 +142,11 @@ class InscriptionAdministrative implements HistoriqueAwareInterface, ResourceInt
     }
 
     /**
-     * @param \DateTime|null $dateAnnulation
-     * @return self
-     */
-    public function setDateAnnulation(?DateTime $dateAnnulation): self
-    {
-        $this->dateAnnulation = $dateAnnulation;
-        return $this;
-    }
-
-    /**
      * @return string
      */
     public function getCesure(): string
     {
         return $this->cesure;
-    }
-
-    /**
-     * @param string $cesure
-     * @return self
-     */
-    public function setCesure(string $cesure): self
-    {
-        $this->cesure = $cesure;
-        return $this;
     }
 
     /**
@@ -162,31 +158,11 @@ class InscriptionAdministrative implements HistoriqueAwareInterface, ResourceInt
     }
 
     /**
-     * @param string $chemin
-     * @return self
-     */
-    public function setChemin(string $chemin): self
-    {
-        $this->chemin = $chemin;
-        return $this;
-    }
-
-    /**
      * @return string
      */
     public function getCodeStructureEtablissementDuChemin(): string
     {
         return $this->codeStructureEtablissementDuChemin;
-    }
-
-    /**
-     * @param string $codeStructureEtablissementDuChemin
-     * @return self
-     */
-    public function setCodeStructureEtablissementDuChemin(string $codeStructureEtablissementDuChemin): self
-    {
-        $this->codeStructureEtablissementDuChemin = $codeStructureEtablissementDuChemin;
-        return $this;
     }
 
     /**
@@ -198,31 +174,11 @@ class InscriptionAdministrative implements HistoriqueAwareInterface, ResourceInt
     }
 
     /**
-     * @param string $formation
-     * @return self
-     */
-    public function setFormation(string $formation): self
-    {
-        $this->formation = $formation;
-        return $this;
-    }
-
-    /**
      * @return string
      */
     public function getMobilite(): string
     {
         return $this->mobilite;
-    }
-
-    /**
-     * @param string $mobilite
-     * @return self
-     */
-    public function setMobilite(string $mobilite): self
-    {
-        $this->mobilite = $mobilite;
-        return $this;
     }
 
     /**
@@ -234,31 +190,11 @@ class InscriptionAdministrative implements HistoriqueAwareInterface, ResourceInt
     }
 
     /**
-     * @param string $origine
-     * @return self
-     */
-    public function setOrigine(string $origine): self
-    {
-        $this->origine = $origine;
-        return $this;
-    }
-
-    /**
      * @return bool
      */
     public function isPrincipale(): bool
     {
         return $this->principale;
-    }
-
-    /**
-     * @param bool $principale
-     * @return self
-     */
-    public function setPrincipale(bool $principale): self
-    {
-        $this->principale = $principale;
-        return $this;
     }
 
     /**
@@ -270,31 +206,11 @@ class InscriptionAdministrative implements HistoriqueAwareInterface, ResourceInt
     }
 
     /**
-     * @param string|null $regimeInscriptionLibelle
-     * @return self
-     */
-    public function setRegimeInscriptionLibelle(?string $regimeInscriptionLibelle): self
-    {
-        $this->regimeInscriptionLibelle = $regimeInscriptionLibelle;
-        return $this;
-    }
-
-    /**
      * @return string
      */
     public function getStatutInscription(): string
     {
         return $this->statutInscription;
-    }
-
-    /**
-     * @param string $statutInscription
-     * @return self
-     */
-    public function setStatutInscription(string $statutInscription): self
-    {
-        $this->statutInscription = $statutInscription;
-        return $this;
     }
 
     /**
@@ -306,31 +222,11 @@ class InscriptionAdministrative implements HistoriqueAwareInterface, ResourceInt
     }
 
     /**
-     * @param string $periodeCode
-     * @return self
-     */
-    public function setPeriodeCode(string $periodeCode): self
-    {
-        $this->periodeCode = $periodeCode;
-        return $this;
-    }
-
-    /**
      * @return string
      */
     public function getPeriodeLibelle(): string
     {
         return $this->periodeLibelle;
-    }
-
-    /**
-     * @param string $periodeLibelle
-     * @return self
-     */
-    public function setPeriodeLibelle(string $periodeLibelle): self
-    {
-        $this->periodeLibelle = $periodeLibelle;
-        return $this;
     }
 
     /**
@@ -350,16 +246,6 @@ class InscriptionAdministrative implements HistoriqueAwareInterface, ResourceInt
     }
 
     /**
-     * @param \DateTime $periodeDateDebut
-     * @return self
-     */
-    public function setPeriodeDateDebut(DateTime $periodeDateDebut): self
-    {
-        $this->periodeDateDebut = $periodeDateDebut;
-        return $this;
-    }
-
-    /**
      * @return \DateTime
      */
     public function getPeriodeDateFin(): DateTime
@@ -376,16 +262,6 @@ class InscriptionAdministrative implements HistoriqueAwareInterface, ResourceInt
     }
 
     /**
-     * @param \DateTime $periodeDateFin
-     * @return self
-     */
-    public function setPeriodeDateFin(DateTime $periodeDateFin): self
-    {
-        $this->periodeDateFin = $periodeDateFin;
-        return $this;
-    }
-
-    /**
      * @return int|null
      */
     public function getPeriodeAnneeUniversitaire(): ?int
@@ -393,33 +269,10 @@ class InscriptionAdministrative implements HistoriqueAwareInterface, ResourceInt
         return $this->periodeAnneeUniversitaire;
     }
 
-    /**
-     * @param int|null $periodeAnneeUniversitaire
-     * @return self
-     */
-    public function setPeriodeAnneeUniversitaire(?int $periodeAnneeUniversitaire): self
-    {
-        $this->periodeAnneeUniversitaire = $periodeAnneeUniversitaire;
-        return $this;
-    }
-
-    /**
-     * @return \Doctorant\Entity\Db\Doctorant
-     */
-    public function getDoctorant(): Doctorant
-    {
-        return $this->doctorant;
-    }
-
-    /**
-     * @param \Doctorant\Entity\Db\Doctorant $doctorant
-     * @return self
-     */
-    public function setDoctorant(Doctorant $doctorant): self
-    {
-        $this->doctorant = $doctorant;
-        return $this;
-    }
+//    public function getAdmission(): Admission
+//    {
+//        return $this->admission;
+//    }
 
     /**
      * @return \Structure\Entity\Db\EcoleDoctorale
@@ -429,19 +282,27 @@ class InscriptionAdministrative implements HistoriqueAwareInterface, ResourceInt
         return $this->ecoleDoctorale;
     }
 
-    /**
-     * @param \Structure\Entity\Db\EcoleDoctorale $ecoleDoctorale
-     * @return self
-     */
-    public function setEcoleDoctorale(EcoleDoctorale $ecoleDoctorale): self
+    public function getInscriptionAdministrativeApprenant(): ?InscriptionAdministrativeApprenant
     {
-        $this->ecoleDoctorale = $ecoleDoctorale;
-        return $this;
+        return $this->inscriptionAdministrativeApprenant->first() ?: null;
     }
 
-
-    public function getResourceId(): string
+    public function getInscriptionAdministrativeDoctorant(): ?InscriptionAdministrativeDoctorant
     {
-        return 'InscriptionAdministrative';
+        return $this->inscriptionAdministrativeDoctorant->first() ?: null;
+    }
+
+    /**
+     * Ajoute à cette IA un lien vers un Doctorant.
+     */
+    public function addInscriptionAdministrativeDoctorantForDoctorant(Doctorant $doctorant): InscriptionAdministrativeDoctorant
+    {
+        $iad = (new InscriptionAdministrativeDoctorant())
+            ->setDoctorant($doctorant)
+            ->setInscriptionAdministrative($this);
+
+        $this->inscriptionAdministrativeDoctorant->add($iad);
+
+        return $iad;
     }
 }

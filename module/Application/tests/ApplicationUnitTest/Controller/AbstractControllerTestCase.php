@@ -3,54 +3,26 @@
 namespace ApplicationUnitTest\Controller;
 
 use ApplicationUnitTest\Test\Provider\EntityProvider;
-use Doctrine\ORM\EntityManager;
-use Laminas\Stdlib\ArrayUtils;
+use Psr\Container\ContainerExceptionInterface;
+use RuntimeException;
 
-/**
- * Class AbstractControllerTest
- *
- * @package ApplicationTest\Controller
- */
 abstract class AbstractControllerTestCase extends \UnicaenTest\Controller\AbstractControllerTestCase
 {
-    public function setUp()
-    {
-        // The module configuration should still be applicable for tests.
-        // You can override configuration here with test case specific values,
-        // such as sample view templates, path stacks, module_listener_options,
-        // etc.
-        $configOverrides = [];
+    protected $traceError = false;
 
-        $this->setApplicationConfig(ArrayUtils::merge(
-            // Grabbing the full application configuration:
-            include __DIR__ . '/../../../../../config/application.config.php',
-            $configOverrides
-        ));
+    private ?EntityProvider $ep = null;
 
-        parent::setUp();
-    }
-
-    /**
-     * @var EntityProvider
-     */
-    private $ep;
-
-    public function ep()
+    public function ep(): EntityProvider
     {
         if (null === $this->ep) {
-            $config = $this->getApplicationServiceLocator()->get('Config');
+            try {
+                $config = $this->getApplicationServiceLocator()->get('Config');
+            } catch (ContainerExceptionInterface $e) {
+                throw new RuntimeException("Impossible d'obtenir la config de l'appli !", null, $e);
+            }
             $this->ep = new EntityProvider($this->em(), $config['unicaen-test']);
         }
 
         return $this->ep;
-    }
-
-    /**
-     * @param string $name
-     * @return EntityManager
-     */
-    protected function em($name = 'orm_default')
-    {
-        return $this->getApplicationServiceLocator()->get("doctrine.entitymanager.$name");
     }
 }

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+    <entity name="InscriptionAdministrative\Entity\Db\InscriptionAdministrativeApprenant" table="inscription_administrative_apprenant">
+        <id name="id" type="integer" column="id">
+            <generator strategy="SEQUENCE"/>
+        </id>
+
+        <field name="code" column="code"/>
+        <field name="INE" column="INE"/>
+        <field name="deuxiemePrenom" column="deuxieme_prenom" nullable="true"/>
+        <field name="genre" column="genre"/>
+        <field name="mailPersonnel" column="mail_personnel"/>
+        <field name="mailUrgence" column="mail_urgence"/>
+        <field name="nomDeNaissance" column="nom_de_naissance"/>
+        <field name="nomUsuel" column="nom_usuel"/>
+        <field name="prenom" column="prenom"/>
+        <field name="prenomUsage" column="prenom_usage" type="boolean"/>
+        <field name="telephonePersonnel" column="telephone_personnel"/>
+        <field name="telephoneUrgence" column="telephone_urgence"/>
+        <field name="troisiemePrenom" column="troisieme_prenom"/>
+
+        <field name="communeDeNaissance" column="commune_de_naissance"/>
+        <field name="communeDeNaissanceEtranger" column="commune_de_naissance_etranger"/>
+        <field name="dateDObtentionDeLaDeuxiemeNationalite" column="date_d_obtention_de_la_deuxieme_nationalite" type="date" nullable="true"/>
+        <field name="dateDeNaissance" column="date_de_naissance" type="date"/>
+        <field name="deuxiemeNationalite" column="deuxieme_nationalite"/>
+        <field name="libelleCommuneDeNaissance" column="libelle_commune_de_naissance"/>
+        <field name="libelleDeuxiemeNationalite" column="libelle_deuxieme_nationalite"/>
+        <field name="libelleNationalite" column="libelle_nationalite"/>
+        <field name="libellePaysDeNaissance" column="libelle_pays_de_naissance"/>
+        <field name="nationalite" column="nationalite" type="boolean"/>
+        <field name="paysDeNaissance" column="pays_de_naissance" type="boolean"/>
+
+        <field name="haystack" column="haystack"/>
+
+        <many-to-one field="inscriptionAdministrative" target-entity="InscriptionAdministrative\Entity\Db\InscriptionAdministrative">
+            <join-columns>
+                <join-column name="inscription_administrative_id"/>
+            </join-columns>
+        </many-to-one>
+
+        <field name="sourceCode" column="source_code" length="64" nullable="true"/>
+
+        <many-to-one field="source" target-entity="Application\Entity\Db\Source">
+            <join-columns>
+                <join-column name="source_id"/>
+            </join-columns>
+        </many-to-one>
+
+        <field name="histoCreation" type="datetime" column="histo_creation"/>
+        <field name="histoDestruction" type="datetime" column="histo_destruction" nullable="true"/>
+        <field name="histoModification" type="datetime" column="histo_modification"/>
+        <many-to-one field="histoCreateur" target-entity="Application\Entity\Db\Utilisateur">
+            <join-columns>
+                <join-column name="histo_createur_id"/>
+            </join-columns>
+        </many-to-one>
+        <many-to-one field="histoModificateur" target-entity="Application\Entity\Db\Utilisateur">
+            <join-columns>
+                <join-column name="histo_modificateur_id"/>
+            </join-columns>
+        </many-to-one>
+        <many-to-one field="histoDestructeur" target-entity="Application\Entity\Db\Utilisateur">
+            <join-columns>
+                <join-column name="histo_destructeur_id"/>
+            </join-columns>
+        </many-to-one>
+
+    </entity>
+</doctrine-mapping>

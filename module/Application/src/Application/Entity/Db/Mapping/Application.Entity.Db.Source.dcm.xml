@@ -3,7 +3,8 @@
                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                   xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
 
-    <entity name="Application\Entity\Db\Source" table="SOURCE">
+    <entity name="Application\Entity\Db\Source" table="SOURCE"
+            repository-class="Application\Entity\Db\Repository\SourceRepository">
 
         <id name="id" type="integer" column="id"/>
 

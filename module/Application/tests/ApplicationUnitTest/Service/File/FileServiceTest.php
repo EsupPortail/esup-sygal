@@ -9,14 +9,14 @@ use Structure\Entity\Db\UniteRecherche;
 use Fichier\Service\Fichier\FichierStorageService;
 use UnicaenApp\Exception\RuntimeException;
 
-class FileServiceTest extends \PHPUnit_Framework_TestCase
+class FileServiceTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var \Fichier\Service\Fichier\FichierStorageService
      */
     private $fileService;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->fileService = new \Fichier\Service\Fichier\FichierStorageService();
 //        $this->fileService->setRootDirectoryPathForUploadedFiles('/root/directory/path');

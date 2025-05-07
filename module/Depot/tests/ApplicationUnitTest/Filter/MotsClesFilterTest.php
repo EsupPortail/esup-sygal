@@ -4,7 +4,7 @@ namespace DepotUnitTest\Filter;
 
 use Depot\Filter\MotsClesFilter;
 
-class MotsClesFilterTest extends \PHPUnit_Framework_TestCase
+class MotsClesFilterTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var MotsClesFilter

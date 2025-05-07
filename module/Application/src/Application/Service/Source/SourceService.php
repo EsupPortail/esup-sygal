@@ -2,8 +2,10 @@
 
 namespace Application\Service\Source;
 
+use Application\Entity\Db\Repository\SourceRepository;
 use Application\Entity\Db\Source;
 use Application\Service\BaseService;
+use Doctrine\ORM\Exception\NotSupported;
 use Application\SourceCodeStringHelperAwareTrait;
 use Doctrine\ORM\EntityRepository;
 use Structure\Entity\Db\Etablissement;
@@ -21,15 +23,13 @@ class SourceService extends BaseService
     public const SQL_TEMPLATE_CREATE_APP_SOURCE =
         "INSERT INTO SOURCE (ID, CODE, LIBELLE, IMPORTABLE) VALUES (1, '%s', 'ESUP-SyGAL', 0);";
 
-    /**
-     * @return EntityRepository
-     */
-    public function getRepository(): EntityRepository
+    public function getRepository(): SourceRepository
     {
-        /** @var EntityRepository $repo */
-        $repo = $this->entityManager->getRepository(Source::class);
-
-        return $repo;
+        try {
+            return $this->entityManager->getRepository(Source::class);
+        } catch (NotSupported $e) {
+            throw new \RuntimeException("Impossible d'obtenir le repository !", null, $e);
+        }
     }
 
     /**

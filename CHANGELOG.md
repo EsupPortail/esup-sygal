@@ -7,13 +7,13 @@ Journal des modifications
 - Module Formation : Ajout de la fiche de formation sur le détail d'une session pour un doctorant
 - Module Formation : Ajout d'une colonne dans l'export des inscriptions du nombre d'heures effectif de suivi du doctorant (pour une session)
 - Module Formation : Possibilité de renseigner par le doctorant (depuis son tableau de bord), une formation externe avec attestation :
-  - avec une validation par la Maison du doctorat / Gestionnaire/Responsable de l'ED
-  - notification à l'initiative du doctorant, aux personnes habilitées à valider les formations 
-  - formations externes validées récupérées automatiquement dans le rapport d'activité
+    - avec une validation par la Maison du doctorat / Gestionnaire/Responsable de l'ED
+    - notification à l'initiative du doctorant, aux personnes habilitées à valider les formations
+    - formations externes validées récupérées automatiquement dans le rapport d'activité
 - Module Formation : Dépôt de justificatifs d'absence à une formation
-  - Lors du passage à l'état clôturé d'une session de formation : envoi d'un mail aux doctorants qui ont été entièrement/partiellement absent aux séances.
-  - Le doctorant pourra déposer ensuite sur une interface, les justificatifs pour chaque séance où il a été absent. Si ce dernier a été absent à deux séances (se déroulant sur une même journée), il pourra déposer un seul justificatif pour les deux séances. 
-  - La gestionnaire pourra visualiser les justificatifs depuis la session de formations, au niveau des présences (seulement lorsque la session sera à l'état clôturée).
+    - Lors du passage à l'état clôturé d'une session de formation : envoi d'un mail aux doctorants qui ont été entièrement/partiellement absent aux séances.
+    - Le doctorant pourra déposer ensuite sur une interface, les justificatifs pour chaque séance où il a été absent. Si ce dernier a été absent à deux séances (se déroulant sur une même journée), il pourra déposer un seul justificatif pour les deux séances.
+    - La gestionnaire pourra visualiser les justificatifs depuis la session de formations, au niveau des présences (seulement lorsque la session sera à l'état clôturée).
 - Changement du template envoyé au doctorant, à la suite de la validation de la page de couverture
 - Extraction CSV des inscriptions aux formations : ajout de la colonne 'Liste'.
 - Ajout d'un formatter pour l'affichage des structures
@@ -25,6 +25,13 @@ Journal des modifications
 - [FIX] Ajout d'un CED impossible
 - [FIX] Correction de la vue v_situ_depot_vc_valid_pres : calcul erroné de l'existence d'une validation.
 - [FIX] Inscription à une formation possible même lorsque la formation était dans l'état "Inscriptions fermées"
+
+10.0.2
+-----
+- [FIX] Vue v_extract_theses erronée (ERREUR : la colonne code_sise_disc n'existe pas).
+- [FIX] Module Soutenance : dépôt impossible des documents liés à la soutenance
+- [FIX] Impossibilité d'ajouter un co-encadrant à une thèse
+- [FIX] Plantage de la validation des corrections par le président du jury (vue v_situ_depot_vc_valid_pres erronée).  
 
 10.0.1
 -----

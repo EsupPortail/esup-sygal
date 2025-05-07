@@ -4,21 +4,18 @@ namespace These\Service\TheseAnneeUniv;
 
 trait TheseAnneeUnivServiceAwareTrait
 {
-    /**
-     * @var TheseAnneeUnivService
-     */
-    protected $theseAnneeUnivService;
-
-    public function getTheseAnneeUnivService(): TheseAnneeUnivService
-    {
-        return $this->theseAnneeUnivService;
-    }
+    protected TheseAnneeUnivService $theseAnneeUnivService;
 
     /**
-     * @param TheseAnneeUnivService $service
+     * @deprecated Utiliser {@see setTheseAnneeUnivService()} à la place
      */
-    public function setAnneesUnivs(TheseAnneeUnivService $service)
+    public function setAnneesUnivs(TheseAnneeUnivService $service): void
     {
         $this->theseAnneeUnivService = $service;
+    }
+
+    public function setTheseAnneeUnivService(TheseAnneeUnivService $theseAnneeUnivService): void
+    {
+        $this->theseAnneeUnivService = $theseAnneeUnivService;
     }
 }

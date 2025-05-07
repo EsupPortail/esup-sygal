@@ -32,6 +32,10 @@ class Individu implements
 
     public const CIVILITE_M = 'M.';
     public const CIVILITE_MME = 'Mme';
+    public const CIVILITES = [
+        self::CIVILITE_M => 'M',
+        self::CIVILITE_MME => 'Mme',
+    ];
 
     public const TYPE_DOCTORANT = 'doctorant';
 
@@ -494,6 +498,14 @@ class Individu implements
      */
     public function setCivilite(?string $civilite): static
     {
+        if ($civilite !== null && !in_array($civilite, self::CIVILITES)) {
+            // autres valeurs acceptées mais transcodées
+            $civilite = [
+                'M' => self::CIVILITE_M,
+                'F' => self::CIVILITE_MME,
+            ][$civilite] ?? null;
+        }
+
         $this->civilite = $civilite;
 
         return $this;

@@ -2,7 +2,7 @@
 
 namespace ApplicationUnitTest\Test\Provider;
 
-use PHPUnit_Framework_TestCase;
+use \PHPUnit\Framework\TestCase;
 
 trait MockProviderAwareTrait
 {
@@ -17,10 +17,10 @@ trait MockProviderAwareTrait
     public function mp()
     {
         if (null === $this->mockProvider) {
-            if (! $this instanceof PHPUnit_Framework_TestCase) {
-                throw new \RuntimeException("La classe utilisant ce trait doit être du type " . PHPUnit_Framework_TestCase::class);
+            if (! $this instanceof \PHPUnit\Framework\TestCase) {
+                throw new \RuntimeException("La classe utilisant ce trait doit être du type " . \PHPUnit\Framework\TestCase::class);
             }
-            /** @var PHPUnit_Framework_TestCase $this */
+            /** @var \PHPUnit\Framework\TestCase $this */
             $this->mockProvider = new MockProvider($this);
         }
 

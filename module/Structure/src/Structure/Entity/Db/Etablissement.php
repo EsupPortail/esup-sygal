@@ -162,12 +162,9 @@ class Etablissement implements
     }
 
     /**
-     * Set sourceCode
-     *
-     * @param string $sourceCode
-     * @return self
+     * Spécifie le "source code" de cet établissement, ex : 'UCN', 'INSA'.
      */
-    public function setSourceCode($sourceCode)
+    public function setSourceCode(string $sourceCode): static
     {
         $this->sourceCode = $sourceCode;
 
@@ -175,11 +172,9 @@ class Etablissement implements
     }
 
     /**
-     * Get sourceCode
-     *
-     * @return string
+     * Retourne le "source code" de cet établissement, ex : 'UCN', 'INSA'.
      */
-    public function getSourceCode(): ?string
+    public function getSourceCode(): string
     {
         return $this->sourceCode;
     }

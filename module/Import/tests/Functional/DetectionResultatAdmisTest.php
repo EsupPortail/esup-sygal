@@ -145,8 +145,10 @@ create or replace view src_these as
 EOS;
     }
 
-    public function setUp()
+    public function setUp(): void
     {
+        $this->applicationConfigPath = __DIR__ . '/../../../../config/application.config.php';
+
         parent::setUp();
 
 //        // forçage du proriétaire et des permissions requis pour éviter l'erreur "Bad permissions"
@@ -157,7 +159,7 @@ EOS;
     /**
      * @throws \Exception
      */
-    protected function tearDown()
+    protected function tearDown(): void
     {
         $this->restoreSrcTheseView();
 

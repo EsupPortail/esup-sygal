@@ -41,7 +41,7 @@ class UtilisateurProcess extends AbstractProcess
 
             $utilisateur = $this->utilisateurService->createFromIndividu($individu, $individu->getEmailPro(), 'none');
             $this->userService->updateUserPasswordResetToken($utilisateur);
-            // todo : créer updateUserPasswordResetToken(), cf.  UnicaenAuth\Service\Traits\UserServiceAwareTrait
+            // todo : créer updateUserPasswordResetToken(), cf.  UnicaenUtilisateur\Service\User\UserServiceAwareTrait
 
             $notif = $this->applicationNotificationFactory->createNotificationInitialisationCompte($utilisateur);
             $result = $this->notifierService->trigger($notif);
@@ -49,17 +49,17 @@ class UtilisateurProcess extends AbstractProcess
                 throw new RuntimeException($result->getErrorMessages()[0]);
             }
 
-            $this->entityManager->commit();
+            $this->entityManager->commit(); // TODO : utiliser $this->commit()
         }
         catch (RuntimeException $e) {
-            $this->entityManager->rollback();
+            $this->entityManager->rollback(); // TODO : utiliser $this->commit()
             throw new UtilisateurProcessException(
                 "La notification n'a pas pu être envoyée : " . $e->getMessage(),
                 null,
                 $e);
         }
         catch (Exception $e) {
-            $this->entityManager->rollback();
+            $this->entityManager->rollback(); // TODO : utiliser $this->commit()
             throw new UtilisateurProcessException(
                 "Un problème est survenu lors de la création du compte local : " . $e->getMessage(),
                 null,

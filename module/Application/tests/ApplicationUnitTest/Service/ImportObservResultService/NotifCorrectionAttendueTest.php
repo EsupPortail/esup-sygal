@@ -14,7 +14,7 @@ use ApplicationUnitTest\Test\Provider\MockProviderAwareTrait;
 use DateTime;
 use PHPUnit_Framework_MockObject_MockObject;
 
-class NotifCorrectionAttendueTest extends \PHPUnit_Framework_TestCase
+class NotifCorrectionAttendueTest extends \PHPUnit\Framework\TestCase
 {
     use MockProviderAwareTrait;
 

@@ -4,10 +4,31 @@ namespace InscriptionAdministrative;
 
 use Doctrine\ORM\Mapping\Driver\XmlDriver;
 use Doctrine\Persistence\Mapping\Driver\MappingDriverChain;
+use InscriptionAdministrative\Config\ModuleConfig;
+use InscriptionAdministrative\Config\ModuleConfigFactory;
 use InscriptionAdministrative\Controller\InscriptionAdministrativeController;
 use UnicaenPrivilege\Guard\PrivilegeController;
 
 return [
+    'sygal' => [
+        /**
+         * Options du module InscriptionAdministrative
+         *
+         * @see \InscriptionAdministrative\Config\ModuleConfig
+         */
+        'inscription_administrative' => [
+            // Active ou non l'automaticité du traitement de l'IA (par le service {@see InscriptionAdministrativeReceptionProcess})
+            // lorsque l'événement {@see InscriptionAdministrativeImportEvent} est reçu.
+            'run_reception_process_after_import' => false,
+
+            'reception' => [
+                // Autorise ou non la mise à jour du doctorant (à partir des données "apprenant") *lorsque c'est possible*.
+                // NB : même si l'autorisation n'est pas accordée, le Code Apprenant du doctorant sera tout de même mis à jour.
+                'update_doctorant_if_possible' => true,
+            ],
+        ],
+    ],
+
     'doctrine' => [
         'driver' => [
             'orm_default' => [
@@ -49,23 +70,23 @@ return [
                 'pages' => [
                     'admin' => [
                         'pages' => [
-//                            'inscription-administrative' => [
-//                                'label' => 'Inscriptions administratives',
-//                                'route' => 'inscription-administrative',
-//                                'resource' => PrivilegeController::getResourceId(InscriptionAdministrativeController::class, 'index'),
-//                                'order' => 200,
-//                                'pages' => [
-//                                    'voir' => [
-//                                        'label' => 'Détails',
-//                                        'route' => 'inscription-administrative/voir',
-//                                        'resource' => PrivilegeController::getResourceId(InscriptionAdministrativeController::class, 'voir'),
-//                                        'order' => 200,
-//                                        'pages' => [
-//
-//                                        ],
-//                                    ],
-//                                ],
-//                            ],
+                            'inscription-administrative' => [
+                                'label' => 'Inscriptions administratives',
+                                'route' => 'inscription-administrative/recherche/index',
+                                'resource' => PrivilegeController::getResourceId(InscriptionAdministrativeController::class, 'index'),
+                                'order' => 200,
+                                'pages' => [
+                                    'voir' => [
+                                        'label' => 'Détails',
+                                        'route' => 'inscription-administrative/voir',
+                                        'resource' => PrivilegeController::getResourceId(InscriptionAdministrativeController::class, 'voir'),
+                                        'order' => 200,
+                                        'pages' => [
+
+                                        ],
+                                    ],
+                                ],
+                            ],
                         ],
                     ],
                 ],
@@ -91,7 +112,7 @@ return [
     ],
     'service_manager' => [
         'factories' => [
-
+            ModuleConfig::class => ModuleConfigFactory::class,
         ],
     ],
     'controllers' => [

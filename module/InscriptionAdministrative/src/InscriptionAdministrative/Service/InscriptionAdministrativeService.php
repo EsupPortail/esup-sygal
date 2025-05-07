@@ -2,19 +2,17 @@
 
 namespace InscriptionAdministrative\Service;
 
-use Application\Entity\Db\Repository\DefaultEntityRepository;
 use Application\Service\BaseService;
 use InscriptionAdministrative\Entity\Db\InscriptionAdministrative;
+use InscriptionAdministrative\Entity\Db\Repository\InscriptionAdministrativeRepository;
 
 class InscriptionAdministrativeService extends BaseService
 {
-    public function getRepository(): DefaultEntityRepository
+    public function getRepository(): InscriptionAdministrativeRepository
     {
-        /** @var DefaultEntityRepository $repo */
+        /** @var InscriptionAdministrativeRepository $repo */
         $repo = $this->entityManager->getRepository(InscriptionAdministrative::class);
 
         return $repo;
     }
-
-
 }

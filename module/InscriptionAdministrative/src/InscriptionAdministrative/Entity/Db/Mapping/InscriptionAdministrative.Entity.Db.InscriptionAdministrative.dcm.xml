@@ -2,40 +2,48 @@
 <doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                   xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
-    <entity name="InscriptionAdministrative\Entity\Db\InscriptionAdministrative" table="inscription_administrative">
+    <entity name="InscriptionAdministrative\Entity\Db\InscriptionAdministrative" table="inscription_administrative"
+            repository-class="InscriptionAdministrative\Entity\Db\Repository\InscriptionAdministrativeRepository">
         <id name="id" type="integer" column="id">
             <generator strategy="SEQUENCE"/>
         </id>
 
-        <field name="noCandidat" column="no_candidat" type="string" nullable="false"/>
-        <field name="dateInscription" column="date_inscription" type="date" nullable="false"/>
+        <field name="noCandidat" column="no_candidat"/>
+        <field name="dateInscription" column="date_inscription" type="date"/>
         <field name="dateAnnulation" column="date_annulation" type="date" nullable="true"/>
-        <field name="cesure" column="cesure" type="string" nullable="false"/>
-        <field name="chemin" column="chemin" type="string" nullable="false"/>
-        <field name="codeStructureEtablissementDuChemin" column="code_structure_etablissement_du_chemin" type="string" nullable="false"/>
-        <field name="formation" column="formation" type="string" nullable="false"/>
-        <field name="mobilite" column="mobilite" type="string" nullable="false"/>
-        <field name="origine" column="origine" type="string" nullable="false"/>
-        <field name="principale" column="principale" type="boolean" nullable="false"/>
-        <field name="regimeInscriptionLibelle" column="regime_inscription_libelle" type="string" nullable="false"/>
-        <field name="statutInscription" column="statut_inscription" type="string" nullable="false"/>
-        <field name="periodeCode" column="periode_code" type="string" nullable="false"/>
-        <field name="periodeLibelle" column="periode_libelle" type="string" nullable="false"/>
-        <field name="periodeDateDebut" column="periode_date_debut" type="date" nullable="false"/>
+        <field name="cesure" column="cesure"/>
+        <field name="chemin" column="chemin"/>
+        <field name="codeStructureEtablissementDuChemin" column="code_structure_etablissement_du_chemin"/>
+        <field name="formation" column="formation"/>
+        <field name="mobilite" column="mobilite"/>
+        <field name="origine" column="origine"/>
+        <field name="principale" column="principale" type="boolean"/>
+        <field name="regimeInscriptionLibelle" column="regime_inscription_libelle"/>
+        <field name="statutInscription" column="statut_inscription"/>
+        <field name="periodeCode" column="periode_code"/>
+        <field name="periodeLibelle" column="periode_libelle"/>
+        <field name="periodeDateDebut" column="periode_date_debut" type="date"/>
         <field name="periodeDateFin" column="periode_date_fin" type="date" nullable="true"/>
-        <field name="periodeAnneeUniversitaire" column="periode_annee_universitaire" type="integer" nullable="false"/>
+        <field name="periodeAnneeUniversitaire" column="periode_annee_universitaire" type="integer"/>
 
-        <many-to-one field="doctorant" target-entity="Doctorant\Entity\Db\Doctorant">
-            <join-columns>
-                <join-column name="doctorant_id" referenced-column-name="id"/>
-            </join-columns>
-        </many-to-one>
+        <one-to-many field="inscriptionAdministrativeApprenant"
+                     target-entity="InscriptionAdministrative\Entity\Db\InscriptionAdministrativeApprenant"
+                     mapped-by="inscriptionAdministrative"/>
+        <one-to-many field="inscriptionAdministrativeDoctorant"
+                     target-entity="InscriptionAdministrative\Entity\Db\InscriptionAdministrativeDoctorant"
+                     mapped-by="inscriptionAdministrative"/>
 
         <many-to-one field="ecoleDoctorale" target-entity="Structure\Entity\Db\EcoleDoctorale">
             <join-columns>
                 <join-column name="ecole_doct_id" referenced-column-name="id"/>
             </join-columns>
         </many-to-one>
+
+<!--        <many-to-one field="admission" target-entity="Admission\Entity\Db\Admission">-->
+<!--            <join-columns>-->
+<!--                <join-column name="admission_id"/>-->
+<!--            </join-columns>-->
+<!--        </many-to-one>-->
 
         <field name="sourceCode" type="string" column="source_code" length="64" nullable="true"/>
 
@@ -45,9 +53,9 @@
             </join-columns>
         </many-to-one>
 
-        <field name="histoCreation" type="datetime" column="histo_creation" nullable="false"/>
+        <field name="histoCreation" type="datetime" column="histo_creation"/>
         <field name="histoDestruction" type="datetime" column="histo_destruction" nullable="true"/>
-        <field name="histoModification" type="datetime" column="histo_modification" nullable="false"/>
+        <field name="histoModification" type="datetime" column="histo_modification"/>
         <many-to-one field="histoCreateur" target-entity="Application\Entity\Db\Utilisateur">
             <join-columns>
                 <join-column name="histo_createur_id" referenced-column-name="id"/>

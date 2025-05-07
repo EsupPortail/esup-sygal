@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
-  <entity name="Application\Entity\Db\Pays" table="PAYS">
+  <entity name="Application\Entity\Db\Pays" table="PAYS" repository-class="Application\Entity\Db\Repository\PaysRepository">
     <id name="id" type="integer" column="id"/>
 
-    <field name="codeIso" type="string" column="code_iso" nullable="false"/>
-    <field name="codeIsoAlpha3" type="string" column="code_iso_alpha3" nullable="false"/>
-    <field name="codeIsoAlpha2" type="string" column="code_iso_alpha2" nullable="false"/>
-    <field name="libelle" type="string" column="libelle" nullable="false"/>
-    <field name="libelleIso" type="string" column="libelle_iso" nullable="false"/>
-    <field name="libelleNationalite" type="string" column="libelle_nationalite" nullable="false"/>
-    <field name="codePaysApogee" type="string" column="code_pays_apogee" nullable="true"/>
+    <field name="codeIso" column="code_iso"/>
+    <field name="codeIsoAlpha3" column="code_iso_alpha3"/>
+    <field name="codeIsoAlpha2" column="code_iso_alpha2"/>
+    <field name="libelle" column="libelle"/>
+    <field name="libelleIso" column="libelle_iso"/>
+    <field name="libelleNationalite" column="libelle_nationalite"/>
+    <field name="codePaysApogee" column="code_pays_apogee" nullable="true"/>
   </entity>
 </doctrine-mapping>

@@ -51,11 +51,6 @@ class AdmissionService extends BaseService
 
     public const DEFAULT_SOURCE_CODE = "SYG";
 
-
-    /**
-     * @return AdmissionRepository
-     * @throws NotSupported
-     */
     public function getRepository(): AdmissionRepository
     {
         /** @var AdmissionRepository $repo */

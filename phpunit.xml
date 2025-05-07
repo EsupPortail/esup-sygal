@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<phpunit bootstrap="./vendor/autoload.php" colors="true">
+<phpunit bootstrap="./vendor/autoload.php" colors="true" cacheDirectory="/tmp">
+
     <testsuites>
         <testsuite name="Application">
             <directory>./module/Application/tests</directory>
@@ -9,38 +10,39 @@
             <directory>./module/Retraitement/test</directory>
         </testsuite>
         <testsuite name="Import">
-            <directory>./module/Import/tests/Import</directory>
+            <directory>./module/Import/tests</directory>
         </testsuite>
         <testsuite name="Rule">
             <directory>./module/Application/tests/ApplicationUnitTest/Rule</directory>
         </testsuite>
-        <testsuite name="Assertions">
-            <directory>./module/Application/tests/ApplicationUnitTest/Assertion</directory>
+        <testsuite name="SygalApiImpl">
+            <directory>./module/SygalApiImpl/tests/SygalApiImplTest/V1</directory>
+        </testsuite>
+        <testsuite name="SygalApiImpl/Functional">
+            <directory>./module/SygalApiImpl/tests/SygalApiImplTest/Functional</directory>
+        </testsuite>
+        <testsuite name="InscriptionAdministrative">
+            <directory>./module/InscriptionAdministrative/tests/InscriptionAdministrativeTest</directory>
         </testsuite>
     </testsuites>
 
-    <logging>
-        <!--<log type="junit" target="/tmp/phpunit/logs/junit.xml" />-->
-        <!--<log type="coverage-clover" target="/tmp/phpunit/logs/clover.xml" />-->
-        <!--<log type="coverage-html" target="/tmp/phpunit/coverage" />-->
-    </logging>
-
-    <filter>
-        <whitelist processUncoveredFilesFromWhitelist="true">
+    <source>
+        <include>
+            <directory suffix=".php">./module/Application</directory>
+            <directory suffix=".php">./module/Retraitement</directory>
             <directory suffix=".php">./module/Import</directory>
-        </whitelist>
-    </filter>
+            <directory suffix=".php">./module/SygalApiImpl</directory>
+            <directory suffix=".php">./module/InscriptionAdministrative</directory>
+        </include>
+    </source>
 
-    <groups>
+    <coverage includeUncoveredFiles="true"
+              pathCoverage="false"
+              ignoreDeprecatedCodeUnits="true"
+              disableCodeCoverageIgnore="true">
+        <report>
+            <html outputDirectory="./tmp/coverage" lowUpperBound="50" highLowerBound="90"/>
+        </report>
+    </coverage>
 
-    </groups>
-    <!--
-    <groups>
-        <exclude>
-            <group>disable</group>
-            <group>integration</group>
-            <group>integration-sqlserver</group>
-        </exclude>
-    </groups>
-    -->
 </phpunit>

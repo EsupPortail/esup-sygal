@@ -22,6 +22,9 @@
             <join-columns>
                 <join-column name="individu_id" referenced-column-name="id"/>
             </join-columns>
+            <cascade>
+                <cascade-persist/>
+            </cascade>
         </many-to-one>
 
         <many-to-one field="etablissement" target-entity="Structure\Entity\Db\Etablissement" fetch="LAZY">

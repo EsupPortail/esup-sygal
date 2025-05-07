@@ -27,7 +27,7 @@ abstract class WorkflowServiceAbstractTest extends AbstractControllerTestCase
     protected $wfs;
 
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -37,7 +37,7 @@ abstract class WorkflowServiceAbstractTest extends AbstractControllerTestCase
         $this->em()->flush($this->these);
     }
 
-    public function tearDown()
+    protected function tearDown(): void
     {
         $this->ep()->removeNewEntities();
     }

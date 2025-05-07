@@ -163,3 +163,52 @@ from PROFIL_TO_ROLE p2r
 where not exists (select * from role_privilege where role_id = p2r.role_id and privilege_id = pp.privilege_id)
 ;
 
+
+--
+-- Nouvelles colonnes dans these_annee_univ (pour le traitement des IA) :
+--   - témoin indiquant s'il s'agit de l'année de 1ere inscription ;
+--   - lien vers l'inscription administrative concernée.
+--
+alter table these_annee_univ add inscription_administrative_id bigint references inscription_administrative;
+create index these_annee_univ_ia on these_annee_univ (inscription_administrative_id);
+alter table these_annee_univ add est_1ere_annee_inscription bool default false not null;
+create or replace view v_these_annee_univ_first(id, source_code, source_id, these_id, annee_univ, histo_createur_id, histo_creation, histo_modificateur_id, histo_modification, histo_destructeur_id, histo_destruction) as
+WITH firsts(source_code) AS (
+    SELECT DISTINCT first_value(these_annee_univ.source_code) OVER (PARTITION BY these_annee_univ.these_id ORDER BY these_annee_univ.annee_univ) AS first_value
+    FROM these_annee_univ
+    WHERE these_annee_univ.histo_destruction IS NULL
+)
+SELECT au.id,
+       au.source_code,
+       au.source_id,
+       au.these_id,
+       au.annee_univ,
+       au.histo_createur_id,
+       au.histo_creation,
+       au.histo_modificateur_id,
+       au.histo_modification,
+       au.histo_destructeur_id,
+       au.histo_destruction
+FROM these_annee_univ au
+         JOIN firsts fi ON au.source_code::text = fi.source_code::text
+where au.source_id <> 1
+union
+SELECT au.id,
+       au.source_code,
+       au.source_id,
+       au.these_id,
+       au.annee_univ,
+       au.histo_createur_id,
+       au.histo_creation,
+       au.histo_modificateur_id,
+       au.histo_modification,
+       au.histo_destructeur_id,
+       au.histo_destruction
+FROM these_annee_univ au
+where est_1ere_annee_inscription = true;
+/* future update à lancer lorsqu'on débranchera l'import Apogée/Physalis :
+update these_annee_univ tau set est_1ere_annee_inscription = true where tau.source_id <> 1 and tau.id in (
+    SELECT DISTINCT first_value(id) OVER (PARTITION BY these_id ORDER BY annee_univ) AS first_value
+    FROM these_annee_univ
+    WHERE histo_destruction IS NULL
+);*/

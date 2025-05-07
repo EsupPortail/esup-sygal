@@ -7,21 +7,21 @@ use These\Service\These\TheseService;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use PHPUnit_Framework_MockObject_MockObject;
-use PHPUnit_Framework_TestCase;
+use \PHPUnit\Framework\TestCase;
 
 class MockProvider
 {
     /**
-     * @var PHPUnit_Framework_TestCase
+     * @var \PHPUnit\Framework\TestCase
      */
     private $testCase;
 
     /**
      * MockProvider constructor.
      *
-     * @param PHPUnit_Framework_TestCase $testCase
+     * @param \PHPUnit\Framework\TestCase $testCase
      */
-    public function __construct(PHPUnit_Framework_TestCase $testCase)
+    public function __construct(\PHPUnit\Framework\TestCase $testCase)
     {
         $this->testCase = $testCase;
     }

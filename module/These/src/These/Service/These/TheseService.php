@@ -2,6 +2,8 @@
 
 namespace These\Service\These;
 
+use Admission\Entity\Db\Admission;
+use Application\Assertion\ThrowsFailedAssertionExceptionTrait;
 use Application\Entity\Db\Financement;
 use Application\Entity\Db\Role;
 use Application\Service\AnneeUniv\AnneeUnivServiceAwareTrait;
@@ -9,6 +11,7 @@ use Application\Service\BaseService;
 use Application\Service\Source\SourceServiceAwareTrait;
 use Application\Service\UserContextService;
 use Application\Service\UserContextServiceAwareTrait;
+use Doctorant\Entity\Db\Doctorant;
 use Doctrine\ORM\Exception\ORMException;
 use Fichier\Service\Fichier\FichierStorageServiceAwareTrait;
 use Fichier\Service\Storage\Adapter\Exception\StorageAdapterException;
@@ -51,6 +54,21 @@ class TheseService extends BaseService
         $these = new These();
         $these->setSource($this->sourceService->fetchApplicationSource());
         $these->setSourceCode($this->sourceService->genereateSourceCode());
+
+        return $these;
+    }
+
+    public function newTheseFromAdmission(Admission $admission, Doctorant $doctorant): These
+    {
+        /** @var \Admission\Entity\Db\Inscription $admissionInscription */
+        $admissionInscription = $admission->getInscription()->first();
+
+        $these = $this->newThese();
+        $these->setDoctorant($doctorant);
+        $these->setEtablissement($admissionInscription->getEtablissementInscription());
+        $these->setEcoleDoctorale($admissionInscription->getEcoleDoctorale());
+        $these->setUniteRecherche($admissionInscription->getUniteRecherche());
+        $these->setTitre($admissionInscription->getTitreThese());
 
         return $these;
     }

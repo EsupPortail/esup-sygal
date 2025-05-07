@@ -20,7 +20,7 @@ return [
     'service_manager' => [
         'factories' => [
             \SygalApiImpl\V1\Rest\InscriptionAdministrative\InscriptionAdministrativeResource::class => \SygalApiImpl\V1\Rest\InscriptionAdministrative\InscriptionAdministrativeResourceFactory::class,
-            \SygalApiImpl\V1\Rest\InscriptionAdministrative\Facade\ImportFacade::class => \SygalApiImpl\V1\Rest\InscriptionAdministrative\Facade\ImportFacadeFactory::class
+            \SygalApiImpl\V1\Process\InscriptionAdministrativeImportProcess::class => \SygalApiImpl\V1\Process\InscriptionAdministrativeImportProcessFactory::class
         ],
     ],
     'bjyauthorize'    => [

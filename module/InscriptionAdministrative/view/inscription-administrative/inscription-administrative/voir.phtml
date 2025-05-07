@@ -1,66 +1,74 @@
 <?php
 /**
- * @see \InscriptionAdministrative\Controller\InscriptionAdministrativeController::indexAction()
+ * @see \InscriptionAdministrative\Controller\InscriptionAdministrativeController::voirAction()
  *
- * @var \InscriptionAdministrative\Entity\Db\InscriptionAdministrative $inscription
+ * @var \Application\View\Renderer\PhpRenderer $this
+ * @var \InscriptionAdministrative\Entity\Db\InscriptionAdministrative $inscriptionAdministrative
+ * @var \InscriptionAdministrative\Entity\Db\InscriptionAdministrativeApprenant $inscriptionAdministrativeApprenant
+ * @var \Admission\Entity\Db\Admission|null $admission
+ * @var \Doctorant\Entity\Db\Doctorant|null $doctorantTrouveAvecCode
+ * @var \Doctorant\Entity\Db\Doctorant|null $doctorantTrouveAvecINE
+ * @var \Application\Service\AnneeUniv\AnneeUnivService $anneeUnivService
  */
+
+use InscriptionAdministrative\Entity\Db\InscriptionAdministrative;
+use Application\Constants;
+
+$statutInscriptionClasses = [
+    InscriptionAdministrative::STATUT_INSCRIPTION_VALIDE => 'success',
+    InscriptionAdministrative::STATUT_INSCRIPTION_ANNULE => 'danger',
+];
+
+$this->headTitle($this->translate("IA importée") . ' ' . $inscriptionAdministrativeApprenant->getNomDeNaissance());
 ?>
 
-<h1>Inscription administrative</h1>
+<?php echo $this->messenger()->addCurrentMessagesFromFlashMessengerWithNoNamespace() ?>
 
-<dl class="">
-    <div class="row align-items-start">
-        <div class="col">
-            <dt>id</dt>
-            <dd><?php echo $inscription->getId() ?></dd>
-            <dt>source_code</dt>
-            <dd><?php echo $inscription->getSourceCode() ?></dd>
-            <dt>doctorant</dt>
-            <dd><?php echo $inscription->getDoctorant() ?></dd>
-            <dt>ecole_doct</dt>
-            <dd><?php echo $inscription->getEcoleDoctorale() ?></dd>
-            <dt>chemin</dt>
-            <dd><?php echo $inscription->getChemin() ?></dd>
-            <dt>date_inscription</dt>
-            <dd><?php echo $inscription->getDateInscriptionToString() ?></dd>
-            <dt>principale</dt>
-            <dd><?php echo $inscription->isPrincipale() ? 'Oui' : 'Non' ?></dd>
-            <dt>statutInscription</dt>
-            <dd><?php echo $inscription->getStatutInscription() ?></dd>
-            <dt>dateAnnulation</dt>
-            <dd><?php echo $inscription->getDateAnnulationToString() ?: '-' ?></dd>
-        </div>
-        <div class="col">
-            <dt>no_candidat</dt>
-            <dd><?php echo $inscription->getNoCandidat() ?></dd>
-            <dt>cesure</dt>
-            <dd><?php echo $inscription->getCesure() ?></dd>
-            <dt>codeStructureEtablissementDuChemin</dt>
-            <dd><?php echo $inscription->getCodeStructureEtablissementDuChemin() ?></dd>
-            <dt>formation</dt>
-            <dd><?php echo $inscription->getFormation() ?: '-' ?></dd>
-            <dt>mobilite</dt>
-            <dd><?php echo $inscription->getMobilite() ?></dd>
-            <dt>origine</dt>
-            <dd><?php echo $inscription->getOrigine() ?></dd>
-            <dt>regimeInscriptionLibelle</dt>
-            <dd><?php echo $inscription->getRegimeInscriptionLibelle() ?></dd>
-        </div>
-        <div class="col">
-            <dt>periodeCode</dt>
-            <dd><?php echo $inscription->getPeriodeCode() ?></dd>
-            <dt>periodeLibelle</dt>
-            <dd><?php echo $inscription->getPeriodeLibelle() ?></dd>
-            <dt>periodeDateDebut</dt>
-            <dd><?php echo $inscription->getPeriodeDateDebutToString() ?></dd>
-            <dt>periodeDateFin</dt>
-            <dd><?php echo $inscription->getPeriodeDateFinToString() ?></dd>
-            <dt>periodeAnneeUniversitaire</dt>
-            <dd><?php echo $inscription->getPeriodeAnneeUniversitaire() ?></dd>
-            <dt>histoCreation</dt>
-            <dd><?php echo $inscription->getHistoCreation()->format(\Application\Constants::DATETIME_FORMAT) ?></dd>
-            <dt>histoModification</dt>
-            <dd><?php echo $inscription->getHistoModification()?->format(\Application\Constants::DATETIME_FORMAT) ?: '-' ?></dd>
+
+<h1><?php echo $this->translate("Inscription administrative importée") ?></h1>
+
+<?php echo $this->get('reception-process') ?>
+
+
+<div class="row">
+    <div class="col-md-5">
+        <h2 class="first">Inscription</h2>
+        <?php echo $this->partial('inscription-administrative/inscription-administrative/partial/dl'); ?>
+    </div>
+
+    <div class="col-md-4">
+        <h2 class="first">Apprenant</h2>
+        <?php echo $this->partial('inscription-administrative/inscription-administrative-apprenant/partial/dl'); ?>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card">
+            <div class="card-header bg-dark text-white">
+                <h2 class="first">Doctorant lié</h2>
+            </div>
+            <div class="card-body">
+                <?php if (($iad = $inscriptionAdministrative->getInscriptionAdministrativeDoctorant()) !== null): ?>
+                    <p class="text text-success">
+                        <span class="icon icon-info"></span> <strong>Information</strong> <br>
+                        Un doctorant a été lié à cette inscription administrative.
+                    </p>
+                    <dl>
+                        <dt>Id</dt>
+                        <dd><?php echo $iad->getDoctorant()->getId() ?></dd>
+                        <dt>Identité</dt>
+                        <dd><?php echo $iad->getDoctorant() ?></dd>
+                        <dt>INE</dt>
+                        <dd><?php echo $iad->getDoctorant()->getIne() ?></dd>
+                        <dt>Lien créé le</dt>
+                        <dd><?php echo $iad->getHistoCreation()?->format(Constants::DATETIME_FORMAT) ?></dd>
+                    </dl>
+                <?php else: ?>
+                    <p class="text text-danger">
+                        <span class="icon icon-info"></span> <strong>Information</strong> <br>
+                        Aucun doctorant n'est lié à cette inscription administrative.
+                    </p>
+                <?php endif; ?>
+            </div>
         </div>
     </div>
-</dl>
+</div>
