@@ -2,26 +2,46 @@
 
 namespace Doctorant\Service;
 
+use Application\Entity\Db\TypeRapport;
 use Application\Entity\Db\Utilisateur;
 use Application\Entity\UserWrapper;
+use Application\Service\AnneeUniv\AnneeUnivServiceAwareTrait;
 use Application\Service\BaseService;
+use Application\Service\Rapport\RapportServiceAwareTrait;
 use Application\Service\Source\SourceServiceAwareTrait;
 use Application\SourceCodeStringHelperAwareTrait;
 use Doctorant\Entity\Db\Doctorant;
 use Doctorant\Entity\Db\Repository\DoctorantRepository;
 use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\NonUniqueResultException;
+use Formation\Entity\Db\Etat;
+use Formation\Entity\Db\Inscription;
 use Individu\Entity\Db\Individu;
+use RapportActivite\Rule\Creation\RapportActiviteCreationRuleAwareTrait;
+use RapportActivite\Service\RapportActiviteServiceAwareTrait;
+use Soutenance\Entity\PropositionThese;
+use Soutenance\Service\Proposition\PropositionServiceAwareTrait;
+use Soutenance\Service\Proposition\PropositionThese\PropositionTheseServiceAwareTrait;
 use InscriptionAdministrative\Entity\Db\InscriptionAdministrativeApprenant;
 use Structure\Entity\Db\Etablissement;
 use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
+use These\Entity\Db\These;
+use These\Service\These\TheseServiceAwareTrait;
 use UnicaenApp\Exception\RuntimeException;
+use UnicaenApp\Service\EntityManagerAwareTrait;
 
 class DoctorantService extends BaseService
 {
     use EtablissementServiceAwareTrait;
     use SourceCodeStringHelperAwareTrait;
     use SourceServiceAwareTrait;
+    use EntityManagerAwareTrait;
+    use RapportActiviteServiceAwareTrait;
+    use RapportActiviteCreationRuleAwareTrait;
+    use RapportServiceAwareTrait;
+    use TheseServiceAwareTrait;
+    use PropositionTheseServiceAwareTrait;
+    use AnneeUnivServiceAwareTrait;
 
     /**
      * @return DoctorantRepository
@@ -50,18 +70,18 @@ class DoctorantService extends BaseService
         }
 
         $id = $user->getSupannId();
-        if (! $id) {
+        if (!$id) {
 //            throw new RuntimeException("Aucun id supann disponible.");
             return null;
         }
 
         $domaineEtab = $user->getDomainFromEppn();
-        if (! $domaineEtab) {
+        if (!$domaineEtab) {
             return null;
         }
 
         $etablissement = $this->getEtablissementService()->getRepository()->findOneByDomaine($domaineEtab);
-        if (! $etablissement) {
+        if (!$etablissement) {
             return null;
         }
 
@@ -74,7 +94,7 @@ class DoctorantService extends BaseService
      * @param string|null $term
      * @return Doctorant[]
      */
-    public function getDoctorantsByTerm(?string $term = null) : array
+    public function getDoctorantsByTerm(?string $term = null): array
     {
         $seach = '%' . strtolower($term) . '%';
         $qb = $this->getRepository()->createQueryBuilder('doctorant')
@@ -85,22 +105,21 @@ class DoctorantService extends BaseService
         return $qb->getQuery()->getResult();
     }
 
-    public function getDoctorantsByUser(?Utilisateur $user) : ?Doctorant
+    public function getDoctorantsByUser(?Utilisateur $user): ?Doctorant
     {
-        if ($user === null OR $user->getIndividu() === null) return null;
+        if ($user === null or $user->getIndividu() === null) return null;
 
         $qb = $this->getEntityManager()->getRepository(Doctorant::class)->createQueryBuilder('doctorant')
-            ->leftJoin('doctorant.individu','individu')
+            ->leftJoin('doctorant.individu', 'individu')
             ->andWhere('individu.id = :id')->setParameter('id', $user->getIndividu()->getId())
             ->andWhere('individu.histoDestruction IS NULL')
-            ->andWhere('doctorant.histoDestruction IS NULL')
-        ;
+            ->andWhere('doctorant.histoDestruction IS NULL');
 
         /** @var Doctorant $result */
         try {
             $result = $qb->getQuery()->getOneOrNullResult();
         } catch (NonUniqueResultException $e) {
-            throw new RuntimeException("Plusieurs doctorants sont liés au mếme individu [".$user->getIndividu()->getId()."]");
+            throw new RuntimeException("Plusieurs doctorants sont liés au mếme individu [" . $user->getIndividu()->getId() . "]");
         }
         return $result;
 
@@ -141,6 +160,51 @@ class DoctorantService extends BaseService
         $doctorant->setCodeApprenantInSource(uniqid());
 
         return $doctorant;
+    }
+
+    public function getVariablesForTableauDeBord(Doctorant $doctorant)
+    {
+        $theses = $this->theseService->getRepository()->findThesesByDoctorant($doctorant, [These::ETAT_EN_COURS, These::ETAT_SOUTENUE]);
+
+        /** @var Inscription[] $inscription */
+        $inscriptions = $this->getEntityManager()->getRepository(Inscription::class)->findInscriptionsByDoctorant($doctorant);
+        $enCours = [];
+        /** @var Inscription $inscription */
+        foreach ($inscriptions as $inscription) {
+            $seances = $inscription->getSession()->getSeances()->toArray();
+            $seances = array_filter($seances, function ($a) {
+                return $a->estNonHistorise();
+            });
+            $nbSeance = count($seances);
+            if ($nbSeance > 0 && $inscription->getSession()->getEtat()->getCode() !== Etat::CODE_CLOTURER && $inscription->getSession()->getEtat()->getCode() !== Etat::CODE_ANNULEE) {
+                if ($inscription->estNonHistorise()) $enCours[] = $inscription;
+            }
+        }
+
+        $typeRapport = $this->rapportService->findTypeRapportByCode(TypeRapport::RAPPORT_CSI);
+        $rapportsCSIParAnnee = $this->rapportService->findRapportsParAnneesForThese($theses[0], $typeRapport);
+
+        $rapportsActiviteParAnnee = $this->rapportActiviteService->findRapportsParAnneesForThese($theses[0]);
+        $rapportsActivite = $this->rapportActiviteService->findRapportsForThese($theses[0]);
+        $this->rapportActiviteCreationRule->setRapportsExistants($rapportsActivite);
+        $canCreateRapportFinContrat = $this->rapportActiviteCreationRule->canCreateRapportFinContrat();
+
+        /** @var PropositionThese $proposition */
+        $proposition = $this->propositionTheseService->findOneForThese($theses[0]);
+        if ($proposition->getDate() !== null) {
+            $anneeUnivProposition = $this->anneeUnivService->fromDate($proposition->getDate());
+        }
+
+        return [
+            'doctorant' => $doctorant,
+            'theses' => $theses,
+            'enCours' => $enCours,
+            'rapportsActiviteParAnnee' => $rapportsActiviteParAnnee,
+            'rapportsCSIParAnnee' => $rapportsCSIParAnnee,
+            'canCreateRapportFinContrat' => $canCreateRapportFinContrat,
+            'anneeUnivProposition' => $anneeUnivProposition ?? null,
+            'proposition' => $proposition
+        ];
     }
 
     /**

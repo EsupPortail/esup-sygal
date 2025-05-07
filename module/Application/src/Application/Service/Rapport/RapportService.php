@@ -212,11 +212,12 @@ class RapportService extends BaseService
             ->orderBy("ra.anneeUniv", 'desc');
 
         /** @var Rapport $rapports */
-        $rapports = $qb->setCacheable($cacheable)->getQuery()->getArrayResult();
+        $rapports = $qb->setCacheable($cacheable)->getQuery()->getResult();
 
         $rapportsParAnnees = [];
+        /** @var Rapport $rapport */
         foreach ($rapports as $rapport) {
-            $anneeUniv = $rapport['anneeUniv'];
+            $anneeUniv = $rapport->getAnneeUniv()->getPremiereAnnee();
             if (!array_key_exists($anneeUniv, $rapportsParAnnees)) {
                 $rapportsParAnnees[$anneeUniv] = [];
             }

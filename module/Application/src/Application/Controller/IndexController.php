@@ -2,19 +2,27 @@
 
 namespace Application\Controller;
 
+use Application\Entity\Db\TypeRapport;
 use Application\Entity\Db\Variable;
 use Application\Entity\UserWrapper;
+use Application\Service\Rapport\RapportServiceAwareTrait;
 use Application\Service\Variable\VariableServiceAwareTrait;
+use Doctorant\Service\DoctorantServiceAwareTrait;
+use Formation\Entity\Db\Etat;
+use Formation\Entity\Db\Inscription;
 use Information\Service\InformationServiceAwareTrait;
 use Laminas\Authentication\AuthenticationServiceInterface;
 use Laminas\Http\Response;
 use Laminas\View\Model\ViewModel;
+use RapportActivite\Rule\Creation\RapportActiviteCreationRuleAwareTrait;
+use RapportActivite\Service\RapportActiviteServiceAwareTrait;
 use Structure\Entity\Db\Etablissement;
 use Structure\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
 use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
 use These\Entity\Db\These;
 use These\Service\These\TheseServiceAwareTrait;
 use UnicaenApp\Exception\RuntimeException;
+use UnicaenApp\Service\EntityManagerAwareTrait;
 
 class IndexController extends AbstractController
 {
@@ -23,6 +31,12 @@ class IndexController extends AbstractController
     use EtablissementServiceAwareTrait;
     use InformationServiceAwareTrait;
     use TheseServiceAwareTrait;
+    use EntityManagerAwareTrait;
+    use RapportActiviteServiceAwareTrait;
+    use RapportActiviteCreationRuleAwareTrait;
+    use RapportServiceAwareTrait;
+
+    use DoctorantServiceAwareTrait;
 
     /**
      * @var AuthenticationServiceInterface
@@ -132,10 +146,13 @@ EOS
              */
 
 //            return $this->redirect()->toRoute('these/identite', ['these' => current($thesesEnCours)->getId()]);
+
+
             $vm->setVariables([
                 'doctorant' => $doctorant,
                 'theses' => $theses,
             ]);
+            $vm->setVariables($this->doctorantService->getVariablesForTableauDeBord($doctorant));
             $vm->setTemplate('application/index/partial/doctorant');
         }
         /**

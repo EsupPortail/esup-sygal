@@ -13,7 +13,7 @@ use Structure\Entity\Db\UniteRecherche;
 
 class StructureViewHelper extends AbstractHelper
 {
-    public function __invoke(Structure|Etablissement|EcoleDoctorale|UniteRecherche $structure = null, bool $afficherLibelle = true, bool $sansOmbre = false): string
+    public function __invoke(Structure|Etablissement|EcoleDoctorale|UniteRecherche $structure = null, bool $afficherLibelle = true, bool $sansOmbre = false, $options = []): string
     {
         /** @var PhpRenderer $view */
         $view = $this->getView();
@@ -46,7 +46,13 @@ class StructureViewHelper extends AbstractHelper
             'structureLibelle' => $structureLibelle,
             'structureCode' => $structureCode,
             'afficherLibelle' => $afficherLibelle,
-            'sansOmbre' => $sansOmbre
+            'sansOmbre' => $sansOmbre,
+            'options' => $options
         ]);
+    }
+
+    public function __toString()
+    {
+        return '<div>Structure par défaut</div>';
     }
 }

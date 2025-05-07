@@ -2,6 +2,7 @@
 
 namespace Doctorant\Assertion;
 
+use Acteur\Service\ActeurThese\ActeurTheseServiceAwareTrait;
 use Application\Assertion\AbstractAssertion;
 use Application\Assertion\Exception\FailedAssertionException;
 use Application\Assertion\ThrowsFailedAssertionExceptionTrait;
@@ -12,7 +13,6 @@ use Doctorant\Provider\Privilege\DoctorantPrivileges;
 use Doctorant\Service\DoctorantServiceAwareTrait;
 use Laminas\Permissions\Acl\Resource\ResourceInterface;
 use These\Entity\Db\These;
-use These\Service\Acteur\ActeurServiceAwareTrait;
 use These\Service\These\TheseServiceAwareTrait;
 use UnicaenApp\Service\MessageCollectorAwareInterface;
 
@@ -22,7 +22,7 @@ class DoctorantAssertion extends AbstractAssertion
     use ThrowsFailedAssertionExceptionTrait;
     use TheseServiceAwareTrait;
     use DoctorantServiceAwareTrait;
-    use ActeurServiceAwareTrait;
+    use ActeurTheseServiceAwareTrait;
 
     public function __invoke(array $page): bool
     {
