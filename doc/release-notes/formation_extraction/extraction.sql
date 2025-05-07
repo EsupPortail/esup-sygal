@@ -1,6 +1,25 @@
 --
--- 9.x ?
+-- 10.x ?
 --
+
+
+WITH d(code, lib, ordre) AS (
+    SELECT 'exporter-xls', 'Exporter les formations/sessions/séances au format Excel', 1000
+)
+INSERT
+INTO unicaen_privilege_privilege(CATEGORIE_ID, CODE, LIBELLE, ORDRE)
+SELECT cp.id, d.code, d.lib, d.ordre
+FROM d
+         JOIN unicaen_privilege_categorie cp ON cp.CODE = 'formation_formation'
+ON CONFLICT (CATEGORIE_ID, CODE) DO UPDATE SET LIBELLE = excluded.LIBELLE,
+                                               ORDRE = excluded.ORDRE;
+
+select privilege__grant_privileges_to_profiles('formation_formation',
+    ARRAY['exporter-xls'],
+    ARRAY['ADMIN_TECH', 'BDD']
+);
+
+
 
 drop view if exists v_extract_formation;
 
