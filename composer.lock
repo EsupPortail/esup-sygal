@@ -11549,7 +11549,7 @@
             "source": {
                 "type": "git",
                 "url": "https://git.unicaen.fr/lib/unicaen/search.git",
-                "reference": "fa58db9baf75d3fb1633a6166fc03f7cf09cc158"
+                "reference": "e56cc8012b57e138935ae46ab5d79476bba6a1be"
             },
             "require": {
                 "doctrine/doctrine-orm-module": "^5.3",
@@ -11577,7 +11577,7 @@
                 ]
             },
             "description": "Module Unicaen proposant la création de pages de recherche en BDD et de filtres normalisés",
-            "time": "2025-05-06T09:38:44+00:00"
+            "time": "2025-05-07T14:53:36+00:00"
         },
         {
             "name": "unicaen/shell",
