@@ -2,6 +2,7 @@
 
 namespace SygalApiImpl\V1\Process;
 
+use Application\Config;
 use Application\Entity\Db\Repository\SourceRepositoryAwareTrait;
 use Application\SourceCodeStringHelperAwareTrait;
 use Exception;
@@ -21,7 +22,6 @@ use UnicaenDbImport\Domain\Destination;
 use UnicaenDbImport\Domain\Import;
 use UnicaenDbImport\Domain\Result;
 use UnicaenDbImport\Domain\Source;
-use UnicaenDbImport\Domain\Synchro;
 use UnicaenDbImport\Filter\ColumnValue\ConcatColumnValueFilter;
 
 /**
@@ -61,18 +61,41 @@ class InscriptionAdministrativeImportProcess extends AbstractProcess implements 
     }
 
     /**
-     * @param \stdClass $data Données IA reçues via l'API, cf {@see }
+     * @param \stdClass $data Données IA reçues via l'API
      * @throws \SygalApiImpl\Exception\ErrorDuringImportException
      */
     public function import(stdClass $data): void
     {
+        // Les données reçues seront éclatées dans 2 entités :
+        // - InscriptionAdministrative
+        // - InscriptionAdministrativeApprenant
+
+        // Deux étapes, chacune dans une transaction dédiée :
+        // - import
+        // - synchro
+
+        /// Import ///
         $this->beginTransaction();
         try {
-            // Les données reçues sont éclatées dans 2 entités :
-            // - InscriptionAdministrative
-            // - InscriptionAdministrativeApprenant
-            $iaSourceCode = $this->importInscriptionAdministrative($data);
+            $source = $this->importInscriptionAdministrative($data);
             $this->importInscriptionAdministrativeApprenant($data);
+        } catch (ErrorDuringImportException $e) {
+            // erreur gérée durant un import : commit nécessaire pour enregistrer les logs en bdd.
+            $this->commit();
+            throw $e;
+        } catch (Exception $e) {
+            // erreur grave imprévue (ex : erreur d'écriture dans la table de log) : rollback requis.
+            $this->rollback($e);
+            throw $e;
+        }
+        // tout s'est bien passé, commit.
+        $this->commit();
+
+        /// Synchro ///
+        $this->beginTransaction();
+        try {
+            $this->synchronizeInscriptionAdministrative($source);
+            $this->synchronizeInscriptionAdministrativeApprenant($source);
         } catch (ErrorDuringImportException $e) {
             // erreur gérée durant un import : commit nécessaire pour enregistrer les logs en bdd.
             $this->commit();
@@ -85,6 +108,8 @@ class InscriptionAdministrativeImportProcess extends AbstractProcess implements 
         // tout s'est bien passé, commit.
         $this->commit();
 
+        $iaSourceCode = $this->inscriptionAdministrativeExtractor->extractSourceCode($data);
+
         // déclenchement d'un événement signalant la fin de l'import de l'IA
         $event = new InscriptionAdministrativeImportEvent();
         $event->setInscriptionAdministrativeSourceCode($iaSourceCode);
@@ -92,15 +117,10 @@ class InscriptionAdministrativeImportProcess extends AbstractProcess implements 
     }
 
     /**
-     * Configure et lance l'import de l'IA à partir des données reçues.
-     * Retourne le source_code de l'IA importée.
-     *
-     * @return string source_code de l'IA importée
-     *
      * @throws \SygalApiImpl\Exception\ErrorDuringImportException Erreur durant l'import mais commit possible
      * @throws \Exception Erreur grave imprévue
      */
-    private function importInscriptionAdministrative(stdClass $data): string
+    private function importInscriptionAdministrative(stdClass $data): \Application\Entity\Db\Source
     {
         $preparedData = $this->inscriptionAdministrativeExtractor->extract($data);
 
@@ -119,11 +139,7 @@ class InscriptionAdministrativeImportProcess extends AbstractProcess implements 
         $result = $this->runImport($import);
         $this->handleResult($result, "l'import de l'inscription administrative");
 
-        $synchro = $this->createSynchroInscriptionAdministrative($sourceId);
-        $result = $this->runSynchro($synchro);
-        $this->handleResult($result, "la synchro de l'inscription administrative");
-
-        return $this->inscriptionAdministrativeExtractor->extractSourceCode($data);
+        return $source;
     }
 
     /**
@@ -133,13 +149,34 @@ class InscriptionAdministrativeImportProcess extends AbstractProcess implements 
     private function importInscriptionAdministrativeApprenant(stdClass $data): void
     {
         $preparedData = $this->inscriptionAdministrativeApprenantExtractor->extract($data);
-        $sourceId = $preparedData['source_id'];
 
         $import = $this->createImportInscriptionAdministrativeApprenant($preparedData);
         $result = $this->runImport($import);
         $this->handleResult($result, "l'import de l'inscription administrative apprenant");
+    }
 
-        $synchro = $this->createSynchroInscriptionAdministrativeApprenant($sourceId);
+    /**
+     * @throws \SygalApiImpl\Exception\ErrorDuringImportException Erreur durant la synchro mais commit possible
+     * @throws \Exception Erreur grave imprévue
+     */
+    private function synchronizeInscriptionAdministrative(\Application\Entity\Db\Source $source): void
+    {
+        $name = sprintf(Config::NAME_INSCRIPTIONS_ADMINISTRATIVES, $source->getEtablissement()->getSourceCode());
+        $synchro = $this->synchroService->getSynchroByName($name);
+
+        $result = $this->runSynchro($synchro);
+        $this->handleResult($result, "la synchro de l'inscription administrative");
+    }
+
+    /**
+     * @throws \SygalApiImpl\Exception\ErrorDuringImportException Erreur durant la synchro mais commit possible
+     * @throws \Exception Erreur grave imprévue
+     */
+    private function synchronizeInscriptionAdministrativeApprenant(\Application\Entity\Db\Source $source): void
+    {
+        $name = sprintf(Config::NAME_INSCRIPTIONS_ADMINISTRATIVES_APPRENANT, $source->getEtablissement()->getSourceCode());
+        $synchro = $this->synchroService->getSynchroByName($name);
+
         $result = $this->runSynchro($synchro);
         $this->handleResult($result, "la synchro de l'inscription administrative apprenant");
     }
@@ -236,70 +273,6 @@ class InscriptionAdministrativeImportProcess extends AbstractProcess implements 
 
             return Import::fromConfig([
                 'name' => 'api_import_inscription_administrative_apprenant',
-                'source' => $source,
-                'destination' => $destination,
-            ]);
-        } catch (ConfigException $e) {
-            throw new InvalidArgumentException("Mauvaise config dans " . __METHOD__ . " : " . $e->getMessage(), 0, $e);
-        }
-    }
-
-    private function createSynchroInscriptionAdministrative(string $sourceId): Synchro
-    {
-        $where = "d.source_id = ( select id from source where code = '$sourceId' )";
-
-        try {
-            $source = Source::fromConfig([
-                'name' => 'Application',
-                'code' => 'app',
-                'table' => 'src_inscription_administrative',
-                'connection' => $this->destinationConnection,
-                'source_code_column' => 'source_code',
-            ]);
-            $destination = Destination::fromConfig([
-                'name' => 'Application',
-                'table' => 'inscription_administrative',
-                'connection' => $this->destinationConnection,
-                'source_code_column' => 'source_code',
-                'where' => $where,
-                'id_strategy' => 'SEQUENCE',
-                'id_sequence' => null,
-            ]);
-
-            return Synchro::fromConfig([
-                'name' => 'api_synchro_inscription_administrative',
-                'source' => $source,
-                'destination' => $destination,
-            ]);
-        } catch (ConfigException $e) {
-            throw new InvalidArgumentException("Mauvaise config dans " . __METHOD__ . " : " . $e->getMessage(), 0, $e);
-        }
-    }
-
-    private function createSynchroInscriptionAdministrativeApprenant(string $sourceId): Synchro
-    {
-        $where = "d.source_id = ( select id from source where code = '$sourceId' )";
-
-        try {
-            $source = Source::fromConfig([
-                'name' => 'Application',
-                'code' => 'app',
-                'table' => 'src_inscription_administrative_apprenant',
-                'connection' => $this->destinationConnection,
-                'source_code_column' => 'source_code',
-            ]);
-            $destination = Destination::fromConfig([
-                'name' => 'Application',
-                'table' => 'inscription_administrative_apprenant',
-                'connection' => $this->destinationConnection,
-                'source_code_column' => 'source_code',
-                'where' => $where,
-                'id_strategy' => 'SEQUENCE',
-                'id_sequence' => null,
-            ]);
-
-            return Synchro::fromConfig([
-                'name' => 'api_synchro_inscription_administrative_apprenant',
                 'source' => $source,
                 'destination' => $destination,
             ]);
