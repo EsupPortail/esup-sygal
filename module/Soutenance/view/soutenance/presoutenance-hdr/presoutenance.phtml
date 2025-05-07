@@ -175,7 +175,8 @@ $canGenererDocument = $canFeuVert;
     <?php
     $bgcolor = "bg-danger";
     $cssClass = "";
-    $tousLesAvisSontFavorables = count(array_filter($avis, fn($avis) => $avis->getAvis() === 'Favorable')) === count($avis);
+    $tousLesAvisSontFavorables = count(array_filter($avis, fn($avis) => $avis->getAvis() === 'Favorable' && $avis->estNonHistorise())) === count($acteursRapporteurs);
+    $tousLesAvisSontDefavorables = count(array_filter($avis, fn($avis) => $avis->getAvis() === 'Défavorable' && $avis->estNonHistorise())) === count($acteursRapporteurs);
     if($proposition->getEtat()->getCode() === Etat::VALIDEE || $proposition->getEtat()->getCode() === Etat::REJETEE){
         $bgcolor = "bg-dark";
     }else{
@@ -195,61 +196,64 @@ $canGenererDocument = $canFeuVert;
         }
     }
     ?>
+    <?php
+    //On affiche cette étape, seulement si tous les avis ne sont pas défavorables
+    if(!$tousLesAvisSontDefavorables) : ?>
+        <div class="box card">
+            <div class="card-header <?php echo $bgcolor; ?> text-white <?= $cssClass; ?>">
+                <h2>Complétion du dossier et validation de l'établissement</h2>
+            </div>
+            <div class="card-body <?= $cssClass; ?>">
+                <?php if ($proposition->getEtat()->getCode() === Etat::ETABLISSEMENT) : ?>
 
-    <div class="box card">
-        <div class="card-header <?php echo $bgcolor; ?> text-white <?= $cssClass; ?>">
-            <h2>Complétion du dossier et validation de l'établissement</h2>
-        </div>
-        <div class="card-body <?= $cssClass; ?>">
-            <?php if ($proposition->getEtat()->getCode() === Etat::ETABLISSEMENT) : ?>
+                    <p class="lead">
+                        Pour permettre de faire avancer le dossier, veuillez vérifier que les rapports de pré-soutenance sont valides.
+                    </p>
 
-                <p class="lead">
-                    Pour permettre de faire avancer le dossier, veuillez vérifier que les rapports de pré-soutenance sont valides.
-                </p>
-
-                <?php if (count($avis) === 0 || !$tousLesAvis) : ?>
-                    <div class="alert alert-warning" style="margin-left: 1rem !important;">
-                        <span class="icon icon-attention"></span>
-                        Tous les rapports n'ont pas été rendus.
-                    </div>
-                <?php else : ?>
-                    <?php if (!$tousLesAvisSontFavorables) : ?>
-                        <div class="alert alert-warning">
+                    <?php if (count($avis) === 0 || !$tousLesAvis) : ?>
+                        <div class="alert alert-warning" style="margin-left: 1rem !important;">
                             <span class="icon icon-attention"></span>
-                            Tous les rapports doivent être favorables pour déclarer le dossier comme complet.
+                            Tous les rapports n'ont pas été rendus.
                         </div>
                     <?php else : ?>
-                        <?php /** @see PresoutenanceController::indiquerDossierCompletAction() */ ?>
-                        <a href="<?php echo $this->url("soutenance_{$typeProposition}/presoutenance/indiquer-dossier-complet", ['id' => $hdr->getId()], [], true); ?>"
-                           class="btn btn-success"
-                        >
-                            <span class="icon icon-checked"></span>
-                            Dossier complet
-                        </a>
+                        <?php if (!$tousLesAvisSontFavorables) : ?>
+                            <div class="alert alert-warning">
+                                <span class="icon icon-attention"></span>
+                                Tous les rapports doivent être favorables pour déclarer le dossier comme complet.
+                            </div>
+                        <?php else : ?>
+                            <?php /** @see PresoutenanceController::indiquerDossierCompletAction() */ ?>
+                            <a href="<?php echo $this->url("soutenance_{$typeProposition}/presoutenance/indiquer-dossier-complet", ['id' => $hdr->getId()], [], true); ?>"
+                               class="btn btn-success"
+                            >
+                                <span class="icon icon-checked"></span>
+                                Dossier complet
+                            </a>
+                        <?php endif; ?>
                     <?php endif; ?>
+
+                <?php elseif($proposition->getEtat()->getCode() === Etat::EN_COURS_EXAMEN): ?>
+                    <p class="lead">
+                        La direction de l'établissement n'a pas encore validé la proposition de soutenance
+                    </p>
                 <?php endif; ?>
 
-            <?php elseif($proposition->getEtat()->getCode() === Etat::EN_COURS_EXAMEN): ?>
-                <p class="lead">
-                    La direction de l'établissement n'a pas encore validé la proposition de soutenance
-                </p>
-            <?php endif; ?>
-
-            <?php if ($proposition->getEtat()->getCode() === Etat::COMPLET || $proposition->getEtat()->getCode() === Etat::VALIDEE) : ?>
-                <span class="badge bg-success text-white" style="margin-left: 1rem !important; font-size: unset;">
+                <?php if ($proposition->getEtat()->getCode() === Etat::COMPLET || $proposition->getEtat()->getCode() === Etat::VALIDEE) : ?>
+                    <span class="badge bg-success text-white" style="margin-left: 1rem !important; font-size: unset;">
+                            <span class="icon icon-checked"></span>
+                            Dossier complet
+                        </span>
+                <?php elseif($proposition->getEtat()->getCode() === Etat::REJETEE): ?>
+                    <span class="badge bg-danger text-white" style="margin-left: 1rem !important; font-size: unset;">
                         <span class="icon icon-checked"></span>
-                        Dossier complet
+                            Dossier incomplet
                     </span>
-            <?php elseif($proposition->getEtat()->getCode() === Etat::REJETEE): ?>
-                <span class="badge bg-danger text-white" style="margin-left: 1rem !important; font-size: unset;">
-                    <span class="icon icon-checked"></span>
-                        Dossier incomplet
-                </span>
-            <?php endif; ?>
+                <?php endif; ?>
 
-            <?php echo $this->horodatagesParType($proposition, HorodatageService::TYPE_ETAT, "Dossier complet"); ?>
+                <?php echo $this->horodatagesParType($proposition, HorodatageService::TYPE_ETAT, "Dossier complet"); ?>
+            </div>
         </div>
-    </div>
+    <?php endif; ?>
 
     <!-- Feu vert ----------------------------------------------------------------------------------------------------->
 
@@ -272,6 +276,8 @@ $canGenererDocument = $canFeuVert;
             }
         }
     }
+    $bgcolor = $tousLesAvisSontDefavorables ? "bg-danger" : $bgcolor;
+    $cssClass = $tousLesAvisSontDefavorables ? "" : $cssClass;
     ?>
 
     <div class="box card">
@@ -279,10 +285,13 @@ $canGenererDocument = $canFeuVert;
             <h2> Validation finale de la proposition de soutenance </h2>
         </div>
         <div class="card-body <?= $cssClass ?>">
-            <p class="lead"> Le feu vert pour la soutenance ne peut être donné qu'une fois le dossier complet et validé
-                par l'établissement. </p>
+            <p class="lead">
+                Le feu vert pour la soutenance ne peut être donné qu'une fois le dossier complet et validé par l'établissement. <br>
+                Dans le cas où l'ensemble des avis serait défavorable, la soutenance pourra être rejetée par l'établissement.
+            </p>
             <?php if ($canFeuVert) : ?>
-                <?php if ($proposition->getEtat()->getCode() === Etat::COMPLET) : ?>
+                <?php if ($proposition->getEtat()->getCode() === Etat::COMPLET ||
+                    ($tousLesAvisSontDefavorables && !($proposition->getEtat()->getCode() === Etat::VALIDEE || $proposition->getEtat()->getCode() === Etat::REJETEE))) :?>
                     <?php /** @see \Soutenance\Controller\PresoutenanceController::feuVertAction() */ ?>
                     <a href="<?php echo $this->url("soutenance_{$typeProposition}/presoutenance/feu-vert", ['id' => $hdr->getId()], [], true); ?>"
                        class="btn btn-success action"
@@ -388,7 +397,8 @@ $canGenererDocument = $canFeuVert;
             'proposition' => $proposition,
             'urlFichier' => $urlFichierHDR,
             'typeProposition' => $typeProposition,
-            'canGenererDocument' => $canGenererDocument
+            'canGenererDocument' => $canGenererDocument,
+            'tousLesAvisSontDefavorables' => $tousLesAvisSontDefavorables,
         ]
     ); ?>
 

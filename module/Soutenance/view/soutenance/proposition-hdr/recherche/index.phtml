@@ -28,7 +28,7 @@ $canVoirHDR = $this->isAllowed(HDRPrivileges::getResourceId(HDRPrivileges::HDR_C
 ?>
 
 <h1 class="page-header">
-    Index des propositions en cours
+    Tableau de bord des propositions en cours
     <span class="badge bg-secondary">
         <?php echo $propositions->getTotalItemCount(); ?>
     </span>
@@ -90,7 +90,7 @@ $canVoirHDR = $this->isAllowed(HDRPrivileges::getResourceId(HDRPrivileges::HDR_C
                 </td>
                 <td>
                     <?php if ($hdr->getEtablissement()) : ?>
-                        <?php echo $this->structure($hdr->getEtablissement()); ?>
+                        <?php echo $this->structure($hdr->getEtablissement(), false); ?>
                     <?php else : ?>
                         <strong style="color:darkred;">
                             Établissement  : Aucun
@@ -99,7 +99,7 @@ $canVoirHDR = $this->isAllowed(HDRPrivileges::getResourceId(HDRPrivileges::HDR_C
                     <br/>
 
                     <?php if ($hdr->getUniteRecherche()) : ?>
-                        <?php echo $this->structure($hdr->getUniteRecherche()); ?>
+                        <?php echo $this->structure($hdr->getUniteRecherche(), false); ?>
                     <?php else : ?>
                         <!-- Gestion des unités de recherche -->
                         <strong style="color:darkred;">
@@ -142,7 +142,9 @@ $canVoirHDR = $this->isAllowed(HDRPrivileges::getResourceId(HDRPrivileges::HDR_C
                             /** @see \Soutenance\Controller\PropositionController::suppressionAction() */ ?>
                                 href="<?php echo $this->url("soutenance_hdr/proposition/suppression", ['hdr' => $hdr->getId()], ['query' => ['redirect' => $returnUrl]], true); ?>"
                                 data-toggle="confirmationx" data-event="modification"
-                                title="Suppression des informations de la soutenance"
+                                data-bs-toggle="tooltip"
+                                data-bs-html="true"
+                                title="Suppression des informations de la soutenance <br>(Une confirmation avant la suppression vous sera demandée)"
                                 data-message="Attention, cela supprimera l'ensemble des informations rentrées pour cette proposition de soutenance, êtes-vous sûr(e) ?">
                             <span class="icon icon-delete"></span>
                             Suppression

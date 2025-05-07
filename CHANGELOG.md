@@ -1,5 +1,9 @@
 Journal des modifications
 =========================
+10.0.3
+-----
+- [FIX] Génération du document pour signature pour la présidence (proposition de soutenance) était possible même sans la validation préalable des autres acteurs
+- [FIX] Proposition de soutenance bloquée lorsque tous les avis étaient défavorables 
 
 10.0.2
 -----

@@ -6,6 +6,7 @@
  * @var UrlFichierThese|UrlFichierHDR $urlFichier
  * @var string $typeProposition
  * @var bool $canGenererDocument
+ * @var bool $tousLesAvisSontDefavorables
  */
 
 use Depot\Controller\Plugin\UrlFichierHDR;
@@ -29,17 +30,21 @@ $canGererDocument = $this->isAllowed($object, DepotPrivileges::THESE_FICHIER_DIV
 
         <!-- documents liés à la soutenance ----------------------------------------------------------------------------->
 
-        <?php if ($canGenererDocument && ($proposition->getEtat()->getCode() === Etat::VALIDEE || $proposition->getEtat()->getCode() === Etat::COMPLET)) : ?>
+        <?php if ($canGenererDocument && ($proposition->getEtat()->getCode() === Etat::ETABLISSEMENT || $proposition->getEtat()->getCode() === Etat::VALIDEE || $proposition->getEtat()->getCode() === Etat::COMPLET)) : ?>
             <div class="row m-2">
                 <h3> Génération et envoi des documents </h3>
                 <div class="col-md-6">
-                    <a  <?php /** @see \Soutenance\Controller\PresoutenanceController::avisSoutenanceAction() */ ?>
-                                href="<?php echo $this->url("soutenance_{$typeProposition}/presoutenance/avis-soutenance", ['id' => $object->getId()], [], true); ?>"
-                                class="btn btn-primary action"
-                                target="_blank"
-                    >
-                        <span class="icon icon-pdf"></span>Générer l'avis de soutenance
-                    </a>
+                    <!-- laisser la possibilité de générer l'avis de soutenance dans le cas où tous les avis sont défavorables -->
+                    <?php if (($proposition->getEtat()->getCode() === Etat::ETABLISSEMENT && $tousLesAvisSontDefavorables) ||
+                        ($proposition->getEtat()->getCode() === Etat::VALIDEE || $proposition->getEtat()->getCode() === Etat::COMPLET)) : ?>
+                        <a  <?php /** @see \Soutenance\Controller\PresoutenanceController::avisSoutenanceAction() */ ?>
+                                    href="<?php echo $this->url("soutenance_{$typeProposition}/presoutenance/avis-soutenance", ['id' => $object->getId()], [], true); ?>"
+                                    class="btn btn-primary action"
+                                    target="_blank"
+                        >
+                            <span class="icon icon-pdf"></span>Générer l'avis de soutenance
+                        </a>
+                    <?php endif; ?>
                     <?php if ($proposition->getEtat()->getCode() === Etat::VALIDEE) : ?>
                         <a  <?php /** @see \Soutenance\Controller\PresoutenanceController::procesVerbalSoutenanceAction() */ ?>
                                 href="<?php echo $this->url("soutenance_{$typeProposition}/presoutenance/proces-verbal-soutenance", ['id' => $object->getId()], [], true); ?>"
@@ -115,7 +120,7 @@ $canGererDocument = $this->isAllowed($object, DepotPrivileges::THESE_FICHIER_DIV
                             <span class="icon icon-notify"></span>Envoyer les convocations
                         </a>
                     <?php endif; ?>
-                    <?php if ($canGenererDocument) : ?>
+                    <?php if ($canGenererDocument && ($proposition->getEtat()->getCode() === Etat::VALIDEE || $proposition->getEtat()->getCode() === Etat::COMPLET)) : ?>
                         <a  <?php /** @see PresoutenanceController::transmettreDocumentsDirectionAction() */ ?>
                                 href="<?php echo $this->url("soutenance_{$typeProposition}/presoutenance/transmettre-documents-direction", ['id' => $object->getId()], [], true); ?>"
                                 class="btn btn-info action"

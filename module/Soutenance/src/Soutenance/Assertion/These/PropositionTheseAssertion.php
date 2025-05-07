@@ -244,7 +244,11 @@ class PropositionTheseAssertion implements  AssertionInterface {
             case PropositionPrivileges::PROPOSITION_PRESIDENCE:
                 switch($role) {
                     case Role::CODE_BDD :
-                        return $structure === $theseEtablissementStructure;
+                        if($structure !== $theseEtablissementStructure) return false;
+                        $validations_UNITE  = $this->getValidationTheseService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_VALIDATION_PROPOSITION_UR, $these);
+                        $validations_ED  = $this->getValidationTheseService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_VALIDATION_PROPOSITION_ED, $these);
+
+                        return !empty($validations_ED) && !empty($validations_UNITE);
                     default:
                         return false;
                 }
