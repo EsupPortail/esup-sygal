@@ -429,8 +429,6 @@ create table tmp_inscription_administrative_apprenant
 --     ligne5Etranger varchar(128) not null,
 --     pays varchar(128) not null,
 
-    haystack text not null,
-
     histo_creation timestamp(0) default ('now'::text)::timestamp(0) without time zone not null,
     histo_createur_id bigint not null,
     histo_modification timestamp(0),
