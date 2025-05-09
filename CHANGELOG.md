@@ -21,6 +21,7 @@ Journal des modifications
 - [FIX] Module Soutenance : Association d'un acteur à membre impossible dans certains cas
 - [FIX] Module Soutenance : Acteurs historisés pouvaient apparaître dans la liste de ceux désignés pour être président de jury
 - [FIX] Module Soutenance : Plusieurs avis pouvaient être ajouté pour un même un rapporteur, ce qui provoquait une exception
+- [FIX] Module Soutenance : la liste des membres du jury pouvant être président de jury affichait les co-directeurs de thèse
 - [FIX] Rôles HDR affichés à tort sur la fiche d'un établissement
 - [FIX] Ajout d'un CED impossible
 - [FIX] Correction de la vue v_situ_depot_vc_valid_pres : calcul erroné de l'existence d'une validation.

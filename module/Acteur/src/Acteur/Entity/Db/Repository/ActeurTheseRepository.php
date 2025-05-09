@@ -122,13 +122,22 @@ class ActeurTheseRepository extends AbstractActeurRepository
             ->andWhereNotHistorise('membre')
             ->addOrderBy('membre.nom', 'ASC');
 
-        $directeurIndividu = $proposition->getObject()
+        $directeur = $proposition->getObject()
             ->getActeursByRoleCode(Role::CODE_DIRECTEUR_THESE)
-            ->first()
-            ->getIndividu();
+            ->first();
+
+        $coDirecteurs = $proposition->getObject()
+            ->getActeursByRoleCode(Role::CODE_CODIRECTEUR_THESE);
+
+        $individusExclus = array_map(
+            fn($a) => $a->getIndividu(),
+            array_merge([$directeur],
+                $coDirecteurs->toArray()
+            )
+        );
 
         return array_filter($qb->getQuery()->getResult(), fn($acteur) =>
-            $acteur->getIndividu() !== $directeurIndividu
+        !in_array($acteur->getIndividu(), $individusExclus, true)
         );
     }
 
