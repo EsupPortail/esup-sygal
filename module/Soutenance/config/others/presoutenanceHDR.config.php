@@ -28,6 +28,7 @@ return [
                             PresoutenancePrivileges::PRESOUTENANCE_ASSOCIATION_MEMBRE_INDIVIDU,
                             PresoutenancePrivileges::PRESOUTENANCE_DATE_RETOUR_MODIFICATION,
                             PresoutenancePrivileges::PRESOUTENANCE_PRESOUTENANCE_VISUALISATION,
+                            PresoutenancePrivileges::PRESOUTENANCE_GERER_DOCUMENT,
                             HDRPrivileges::HDR_DONNER_RESULTAT,
                         ],
                         'resources' => ['HDR'],

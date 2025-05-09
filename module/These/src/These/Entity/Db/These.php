@@ -278,7 +278,7 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     }
 
     /**
-     * 
+     *
      */
     public function __construct()
     {
@@ -414,7 +414,7 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     }
 
     /**
-     * @param \DateTime|null $dateSoutenance
+     * @param DateTime|null $dateSoutenance
      * @return self
      */
     public function setDateSoutenance(?DateTime $dateSoutenance = null): self
@@ -633,7 +633,7 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     {
         return $this->fichierTheses;
     }
-    
+
     /**
      * @param FichierThese $fichierThese
      * @return $this
@@ -923,10 +923,10 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     }
 
     /**
-     * @param \Depot\Entity\Db\RdvBu $rdvBu
+     * @param RdvBu $rdvBu
      * @return $this
      */
-    public function addRdvBu(\Depot\Entity\Db\RdvBu $rdvBu)
+    public function addRdvBu(RdvBu $rdvBu)
     {
         $this->rdvBus->add($rdvBu);
         return $this;
@@ -1190,7 +1190,7 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     /**
      * Retourne le nombre d'années d'inscriptions liées à cette thèse.
      *
-     * @param \Application\Entity\AnneeUniv $anneeUnivMax Année universitaire maximum à considérer.
+     * @param AnneeUniv $anneeUnivMax Année universitaire maximum à considérer.
      * @return int
      */
     public function getAnneesUnivInscriptionCount(AnneeUniv $anneeUnivMax) : int
@@ -1339,17 +1339,17 @@ class These implements HistoriqueAwareInterface, ResourceInterface
      */
     public function getPresidentJuryEmail() : ?string
     {
-        /** @var \These\Entity\Db\Acteur[] $presidents */
+        /** @var ActeurThese[] $presidents */
         $presidents = $this->getActeursByRoleCode(Role::CODE_PRESIDENT_JURY)->toArray();
         if (count($presidents) !== 1) throw new \RuntimeException("Nombre de président incorrect ...");
         $president = current($presidents);
 
         return
             $president->getIndividu()->getEmailPro() ?:
-            $president->getIndividu()->getEmailContact() ?:
-            $president->getIndividu()->getEmailUtilisateur() ?:
-            $president->getMembre()->getEmail() ?:
-            null;
+                $president->getIndividu()->getEmailContact() ?:
+                    $president->getIndividu()->getEmailUtilisateur() ?:
+                        $president->getMembre()->getEmail() ?:
+                            null;
     }
 
     /**
@@ -1400,7 +1400,7 @@ class These implements HistoriqueAwareInterface, ResourceInterface
             if ($fichier->getHistoDestruction() === null
                 && $nature === NatureFichier::CODE_THESE_PDF
                 && $version === VersionFichier::CODE_ORIG)
-                    return $fichierThese;
+                return $fichierThese;
         }
         return null;
     }
@@ -1411,7 +1411,7 @@ class These implements HistoriqueAwareInterface, ResourceInterface
             if ($fichier->getFichier()->getHistoDestruction() === null
                 && $fichier->getFichier()->getNature() === NatureFichier::CODE_THESE_PDF
                 && $fichier->getFichier()->getVersion() === VersionFichier::CODE_ORIG_CORR)
-                    return $fichier;
+                return $fichier;
         }
         return null;
     }
@@ -1518,7 +1518,7 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     /**
      * Set datePremiereInscription.
      *
-     * @param \DateTime|null $datePremiereInscription
+     * @param DateTime|null $datePremiereInscription
      *
      * @return These
      */
@@ -1532,11 +1532,11 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     /**
      * Add fichierThesis.
      *
-     * @param \Depot\Entity\Db\FichierThese $fichierThesis
+     * @param FichierThese $fichierThesis
      *
      * @return These
      */
-    public function addFichierThesis(\Depot\Entity\Db\FichierThese $fichierThesis)
+    public function addFichierThesis(FichierThese $fichierThesis)
     {
         $this->fichierTheses[] = $fichierThesis;
 
@@ -1546,11 +1546,11 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     /**
      * Remove fichierThesis.
      *
-     * @param \Depot\Entity\Db\FichierThese $fichierThesis
+     * @param FichierThese $fichierThesis
      *
      * @return boolean TRUE if this collection contained the specified element, FALSE otherwise.
      */
-    public function removeFichierThesis(\Depot\Entity\Db\FichierThese $fichierThesis)
+    public function removeFichierThesis(FichierThese $fichierThesis)
     {
         return $this->fichierTheses->removeElement($fichierThesis);
     }
@@ -1558,11 +1558,11 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     /**
      * Add miseEnLigne.
      *
-     * @param \Depot\Entity\Db\Diffusion $miseEnLigne
+     * @param Diffusion $miseEnLigne
      *
      * @return These
      */
-    public function addMiseEnLigne(\Depot\Entity\Db\Diffusion $miseEnLigne)
+    public function addMiseEnLigne(Diffusion $miseEnLigne)
     {
         $this->miseEnLignes[] = $miseEnLigne;
 
@@ -1572,11 +1572,11 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     /**
      * Remove miseEnLigne.
      *
-     * @param \Depot\Entity\Db\Diffusion $miseEnLigne
+     * @param Diffusion $miseEnLigne
      *
      * @return boolean TRUE if this collection contained the specified element, FALSE otherwise.
      */
-    public function removeMiseEnLigne(\Depot\Entity\Db\Diffusion $miseEnLigne)
+    public function removeMiseEnLigne(Diffusion $miseEnLigne)
     {
         return $this->miseEnLignes->removeElement($miseEnLigne);
     }
@@ -1599,32 +1599,6 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     public function getRdvBus()
     {
         return $this->rdvBus;
-    }
-
-    /**
-     * Add titreAcce.
-     *
-     * @param \Application\Entity\Db\TitreAcces $titreAcce
-     *
-     * @return These
-     */
-    public function addTitreAcce(\Application\Entity\Db\TitreAcces $titreAcce)
-    {
-        $this->titreAcces[] = $titreAcce;
-
-        return $this;
-    }
-
-    /**
-     * Remove titreAcce.
-     *
-     * @param \Application\Entity\Db\TitreAcces $titreAcce
-     *
-     * @return boolean TRUE if this collection contained the specified element, FALSE otherwise.
-     */
-    public function removeTitreAcce(\Application\Entity\Db\TitreAcces $titreAcce)
-    {
-        return $this->titreAcces->removeElement($titreAcce);
     }
 
     /**
@@ -1651,42 +1625,6 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     public function removeAnneesUnivInscription(TheseAnneeUniv $anneesUnivInscription)
     {
         return $this->anneesUnivInscription->removeElement($anneesUnivInscription);
-    }
-
-    /**
-     * Add anneesUniv1ereInscription.
-     *
-     * @param VTheseAnneeUnivFirst $anneesUniv1ereInscription
-     *
-     * @return These
-     */
-    public function addAnneesUniv1ereInscription(VTheseAnneeUnivFirst $anneesUniv1ereInscription)
-    {
-        $this->anneesUniv1ereInscription[] = $anneesUniv1ereInscription;
-
-        return $this;
-    }
-
-    /**
-     * Remove anneesUniv1ereInscription.
-     *
-     * @param VTheseAnneeUnivFirst $anneesUniv1ereInscription
-     *
-     * @return boolean TRUE if this collection contained the specified element, FALSE otherwise.
-     */
-    public function removeAnneesUniv1ereInscription(VTheseAnneeUnivFirst $anneesUniv1ereInscription)
-    {
-        return $this->anneesUniv1ereInscription->removeElement($anneesUniv1ereInscription);
-    }
-
-    /**
-     * Get anneesUniv1ereInscription.
-     *
-     * @return Collection
-     */
-    public function getAnneesUniv1ereInscription()
-    {
-        return $this->anneesUniv1ereInscription;
     }
 
     /**
@@ -1717,32 +1655,6 @@ class These implements HistoriqueAwareInterface, ResourceInterface
         foreach ($financements as $f) {
             $this->financements->removeElement($f);
         }
-    }
-
-    /**
-     * Add proposition.
-     *
-     * @param \Soutenance\Entity\Proposition $proposition
-     *
-     * @return These
-     */
-    public function addProposition(\Soutenance\Entity\Proposition $proposition)
-    {
-        $this->propositions[] = $proposition;
-
-        return $this;
-    }
-
-    /**
-     * Remove proposition.
-     *
-     * @param \Soutenance\Entity\Proposition $proposition
-     *
-     * @return boolean TRUE if this collection contained the specified element, FALSE otherwise.
-     */
-    public function removeProposition(\Soutenance\Entity\Proposition $proposition)
-    {
-        return $this->propositions->removeElement($proposition);
     }
 
     /**
@@ -1835,7 +1747,7 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     }
 
     /**
-     * @return PropositionThese
+     * @return PropositionThese|null
      */
     public function getCurrentProposition(): PropositionThese|null
     {

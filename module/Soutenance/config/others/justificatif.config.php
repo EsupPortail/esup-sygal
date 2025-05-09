@@ -11,6 +11,7 @@ use Soutenance\Form\Justificatif\JustificatifForm;
 use Soutenance\Form\Justificatif\JustificatifFormFactory;
 use Soutenance\Form\Justificatif\JustificatifHydratorFactory;
 use Soutenance\Provider\Privilege\JustificatifPrivileges;
+use Soutenance\Provider\Privilege\PresoutenancePrivileges;
 use Soutenance\Provider\Privilege\PropositionPrivileges;
 use Soutenance\Service\Justificatif\JustificatifService;
 use Soutenance\Service\Justificatif\JustificatifServiceFactory;
@@ -73,7 +74,10 @@ return [
                     'action' => [
                         'ajouter-document-lie-soutenance',
                     ],
-                    'privileges' => PropositionPrivileges::PROPOSITION_MODIFIER_GESTION,
+                    'privileges' => [
+                        PropositionPrivileges::PROPOSITION_MODIFIER_GESTION,
+                        PresoutenancePrivileges::PRESOUTENANCE_GERER_DOCUMENT,
+                    ]
                 ],
             ],
         ],

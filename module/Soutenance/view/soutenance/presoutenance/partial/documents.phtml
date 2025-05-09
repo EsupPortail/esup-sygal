@@ -10,15 +10,15 @@
 
 use Depot\Controller\Plugin\UrlFichierHDR;
 use Depot\Controller\Plugin\UrlFichierThese;
-use Depot\Provider\Privilege\DepotPrivileges;
 use Soutenance\Entity\Etat;
 use Soutenance\Entity\Proposition;
+use Soutenance\Provider\Privilege\PresoutenancePrivileges;
 use Soutenance\Service\Horodatage\HorodatageService;
 use These\Entity\Db\These;
 
 $object = $proposition->getObject();
 $apprenant = $object instanceof These ? "doctorant" : "candidat";
-$canGererDocument = $this->isAllowed($object, DepotPrivileges::THESE_FICHIER_DIVERS_TELEVERSER);
+$canGererDocument =  $this->isAllowed($object, PresoutenancePrivileges::PRESOUTENANCE_GERER_DOCUMENT);
 ?>
 
 <div class="box card">
