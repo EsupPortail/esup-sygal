@@ -30,7 +30,14 @@ class HDRRechercheController extends AbstractController implements SearchControl
 
     public function indexAction(): Response|ViewModel
     {
-        $this->restrictFiltersByStructure();
+        $role = $this->userContextService->getSelectedIdentityRole();
+        if($role->getCode() === Role::CODE_ADMIN_TECH){
+            $this->restrictFiltersByStructure();
+            $filtersRoute = 'hdr/recherche/filters';
+        }else{
+            $this->restrictFilters();
+            $filtersRoute = 'hdr/recherche/notres/filters';
+        }
 
         $text = $this->params()->fromQuery('text');
 
@@ -54,7 +61,7 @@ class HDRRechercheController extends AbstractController implements SearchControl
             'displayEtablissement' => !$etablissement,
             'displayDateSoutenance' => $etatHDR === HDR::ETAT_SOUTENUE || !$etatHDR,
             'etatHDR' => $etatHDR,
-            'filtersRoute' => 'hdr/recherche/filters',
+            'filtersRoute' => $filtersRoute,
         ]);
         return $viewModel;
     }

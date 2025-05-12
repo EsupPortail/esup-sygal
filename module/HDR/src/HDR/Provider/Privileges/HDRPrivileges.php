@@ -13,6 +13,7 @@ class HDRPrivileges extends Privileges
      * Tout faire !
      */
     public const HDR_TOUT_FAIRE                          = 'hdr-tout-faire';
+    public const HDR_ACCEDER_ANNUAIRE                          = 'hdr-acceder-annuaire';
 
     /**
      * Recherche

@@ -1,7 +1,9 @@
 <?php
 namespace HDR;
 
+use Application\Entity\Db\Role;
 use Application\Navigation\ApplicationNavigationFactory;
+use BjyAuthorize\Guard\Controller;
 use Doctrine\ORM\Mapping\Driver\XmlDriver;
 use Doctrine\Persistence\Mapping\Driver\MappingDriverChain;
 use HDR\Assertion\HDRAssertion;
@@ -16,9 +18,6 @@ use HDR\Service\HDRSearchServiceFactory;
 use HDR\Service\HDRService;
 use HDR\Service\HDRServiceFactory;
 use Laminas\Router\Http\Literal;
-use Soutenance\Controller\AvisController;
-use Soutenance\Controller\EngagementImpartialiteController;
-use Soutenance\Controller\IndexController;
 use UnicaenPrivilege\Guard\PrivilegeController;
 use UnicaenPrivilege\Provider\Rule\PrivilegeRuleProvider;
 
@@ -117,6 +116,7 @@ return [
                 'options' => [
                     'route' => '/hdr',
                     'defaults' => [
+                        /** @see HDRRechercheController::indexAction() */
                         'controller' => HDRRechercheController::class,
                         'action' => 'index',
                     ],
@@ -128,6 +128,7 @@ return [
                         'options' => [
                             'route' => '/recherche',
                             'defaults' => [
+                                /** @see HDRRechercheController::indexAction() */
                                 'controller' => HDRRechercheController::class,
                                 'action' => 'index',
                             ],
@@ -174,6 +175,7 @@ return [
                                 'hdr' => '\d+',
                             ],
                             'defaults' => [
+                                /** @see HDRController::detailIdentiteAction() */
                                 'controller' => HDRController::class,
                                 'action' => 'detail-identite',
                             ],
@@ -187,6 +189,7 @@ return [
                                 'hdr' => '\d+',
                             ],
                             'defaults' => [
+                                /** @see HDRController::demanderSaisieInfosSoutenanceAction() */
                                 'controller' => HDRController::class,
                                 'action' => 'demander-saisie-infos-soutenance',
                             ],
@@ -197,6 +200,7 @@ return [
                         'options' => [
                             'route' => '/export-csv',
                             'defaults' => [
+                                /** @see HDRController::genererExportCsvAction() */
                                 'controller' => HDRController::class,
                                 'action' => 'generer-export-csv',
                             ],
@@ -217,17 +221,17 @@ return [
                      * Annuaire des HDR
                      */
                     // DEPTH = 1
-//                    'annuaireHDR' => [
-//                        'order' => 99,
-//                        'label' => 'Annuaire des HDR',
-//                        'route' => 'hdr',
-//                        'params' => [],
-//                        'query' => ['etatHDR' => 'E'],
-//                        'resource' => PrivilegeController::getResourceId(HDRController::class, 'index'),
-//                        'pages' => [
-//                            // PAS de pages filles sinon le menu disparaît ! :-/
-//                        ]
-//                    ],
+                    'annuaireHDR' => [
+                        'order' => 99,
+                        'label' => 'Annuaire des HDR',
+                        'route' => 'hdr',
+                        'params' => [],
+                        'query' => ['etatHDR' => 'E'],
+                        'resource' => HDRPrivileges::getResourceId(HDRPrivileges::HDR_ACCEDER_ANNUAIRE),
+                        'pages' => [
+                            // PAS de pages filles sinon le menu disparaît ! :-/
+                        ]
+                    ],
 
                     /**
                      * Navigation pour LA HDR "sélectionnée".
