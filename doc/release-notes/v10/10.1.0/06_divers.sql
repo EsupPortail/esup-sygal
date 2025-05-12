@@ -2,6 +2,10 @@
 -- Version 10.1.0
 --
 
+
+drop materialized view mv_recherche_these;
+
+
 create or replace function transfert_these(fromtheseid bigint, totheseid bigint, excepttables character varying[] DEFAULT NULL::character varying[]) returns void
     language plpgsql
 as
@@ -41,7 +45,6 @@ BEGIN
         end loop;
 
     raise info 'Terminé.';
-    raise info '(Vue matérialisée ''%'' mise à jour.)', 'mv_recherche_these';
     raise info '(Remplacements éventuels inscrits dans la table ''%''.)', 'transfert_these_log';
 END
 $$;

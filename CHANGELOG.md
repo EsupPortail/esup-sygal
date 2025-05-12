@@ -17,6 +17,7 @@ Journal des modifications
 - Changement du template envoyé au doctorant, à la suite de la validation de la page de couverture
 - Extraction CSV des inscriptions aux formations : ajout de la colonne 'Liste'.
 - Ajout d'un formatter pour l'affichage des structures
+- Suppression de la vue matérialisée mv_recherche_these inutilisée (remplacée par une vue classique).
 - [FIX] Module Soutenance : lorsque plusieurs propositions de soutenances étaient enregistrées en BDD, ce n'était pas forcément la bonne qui était récupérée
 - [FIX] Module Soutenance : Association d'un acteur à membre impossible dans certains cas
 - [FIX] Module Soutenance : Acteurs historisés pouvaient apparaître dans la liste de ceux désignés pour être président de jury

@@ -19,7 +19,7 @@ class TheseTextSearchFilter extends TextCriteriaSearchFilter
 
     /**
      * ATTENTION : les identifiants (clés) doivent être identiques à ceux utilisés dans
-     *             le script de la vue matérialisée MV_RECHERCHE_THESE sollicitée pour la recherche.
+     *             la fonction pgsql these_rech_compute_haystack() utilisée par la vue THESE_RECH.
      */
     public const CRITERIA = [
         self::CRITERIA_titre => "Titre de la thèse",

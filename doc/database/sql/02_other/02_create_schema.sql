@@ -2973,10 +2973,7 @@ BEGIN
             raise info '  - %.% : OK', v_data.table_name, v_data.column_name;
         end loop;
 
-    refresh materialized view mv_recherche_these;
-
     raise info 'Terminé.';
-    raise info '(Vue matérialisée ''%'' mise à jour.)', 'mv_recherche_these';
     raise info '(Remplacements éventuels inscrits dans la table ''%''.)', 'transfert_these_log';
 END
 $_$;
@@ -6063,39 +6060,6 @@ ALTER TABLE public.role OWNER TO :dbuser;
 
 COMMENT ON COLUMN public.role.ordre_affichage IS 'Chaîne de caractères utilisée pour trier les rôles ; l''astuce consiste à concaténer cette valeur aux autres critères de tri.';
 
-
---
--- Name: mv_recherche_these; Type: MATERIALIZED VIEW; Schema: public; Owner: :dbuser
---
-
-CREATE MATERIALIZED VIEW public.mv_recherche_these AS
- WITH acteurs AS (
-         SELECT a_1.these_id,
-            i.nom_usuel,
-            a_1.individu_id
-           FROM (((public.individu i
-             JOIN public.acteur a_1 ON ((i.id = a_1.individu_id)))
-             JOIN public.these t_1 ON ((t_1.id = a_1.these_id)))
-             JOIN public.role r ON (((a_1.role_id = r.id) AND ((r.code)::text = ANY (ARRAY[('D'::character varying)::text, ('K'::character varying)::text])))))
-        )
- SELECT ('now'::text)::timestamp without time zone AS date_creation,
-    t.source_code AS code_these,
-    d.source_code AS code_doctorant,
-    ed.source_code AS code_ecole_doct,
-    btrim(public.str_reduce((((((((((((((((((((((('code-ed{'::text || COALESCE((eds.code)::text, ''::text)) || '} '::text) || 'code-ur{'::text) || COALESCE((urs.code)::text, ''::text)) || '} '::text) || 'titre{'::text) || (t.titre)::text) || '} '::text) || 'doctorant-numero{'::text) || substr((d.source_code)::text, ("position"((d.source_code)::text, '::'::text) + 2))) || '} '::text) || 'doctorant-nom{'::text) || (id.nom_patronymique)::text) || ' '::text) || (id.nom_usuel)::text) || '} '::text) || 'doctorant-prenom{'::text) || (id.prenom1)::text) || '} '::text) || 'directeur-nom{'::text) || COALESCE((ia.nom_usuel)::text, ''::text)) || '} '::text))) AS haystack
-   FROM ((((((((public.these t
-     JOIN public.doctorant d ON ((d.id = t.doctorant_id)))
-     JOIN public.individu id ON ((id.id = d.individu_id)))
-     LEFT JOIN public.ecole_doct ed ON ((t.ecole_doct_id = ed.id)))
-     LEFT JOIN public.structure eds ON ((ed.structure_id = eds.id)))
-     LEFT JOIN public.unite_rech ur ON ((t.unite_rech_id = ur.id)))
-     LEFT JOIN public.structure urs ON ((ur.structure_id = urs.id)))
-     LEFT JOIN acteurs a ON ((a.these_id = t.id)))
-     LEFT JOIN public.individu ia ON ((ia.id = a.individu_id)))
-  WITH NO DATA;
-
-
-ALTER MATERIALIZED VIEW public.mv_recherche_these OWNER TO :dbuser;
 
 --
 -- Name: nature_fichier_id_seq; Type: SEQUENCE; Schema: public; Owner: :dbuser

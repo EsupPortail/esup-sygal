@@ -275,9 +275,9 @@ class TheseSearchService extends SearchService
     }
 
     /**
-     * Recherche textuelle de thèses dans la vue matérialisée MV_RECHERCHE_THESE.
+     * Recherche textuelle de thèses dans la vue THESE_RECH.
      *
-     * Le contenu de la colonne MV_RECHERCHE_THESE.HAYSTACK suit le format suivant :
+     * Le contenu de la colonne THESE_RECH.HAYSTACK suit le format suivant :
      * <pre>
      * code-ed{...} code-ur{...} titre{...} doctorant-numero{...} doctorant-nom{...} doctorant-prenom{...} directeur-nom{...}
      * </pre>
@@ -297,7 +297,7 @@ class TheseSearchService extends SearchService
      *
      * Lorsque le texte recherché est "hochon" par exemple, la requête SQL générée est la suivante :
      * <pre>
-     *      SELECT * FROM MV_RECHERCHE_THESE MV WHERE rownum <= 100 AND (
+     *      SELECT * FROM THESE_RECH WHERE rownum <= 100 AND (
      *          REGEXP_LIKE(haystack, q'[(doctorant-nom|directeur-nom)\{[^{]*hochon[^}]*\}]', 'i')
      *      )
      * </pre>
@@ -305,7 +305,7 @@ class TheseSearchService extends SearchService
      * Lorsque le texte recherché contient plusieurs mots séparés par des espaces, "hochon bivalve" par exemple,
      * la requête SQL générée est la suivante :
      * <pre>
-     *      SELECT * FROM MV_RECHERCHE_THESE MV WHERE rownum <= 100 AND (
+     *      SELECT * FROM THESE_RECH WHERE rownum <= 100 AND (
      *          REGEXP_LIKE(haystack, q'[(doctorant-nom|directeur-nom)\{[^{]*hochon[^}]*\}]', 'i') OR
      *          REGEXP_LIKE(haystack, q'[(doctorant-nom|directeur-nom)\{[^{]*bivalve[^}]*\}]', 'i')
      *      )

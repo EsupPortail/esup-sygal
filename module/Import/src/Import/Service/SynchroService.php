@@ -56,9 +56,6 @@ class SynchroService
                     $result->getFailureException());
             }
         }
-        $this->executeProcedureCalls([
-            'refresh materialized view mv_recherche_these;',
-        ]);
     }
 
     /**

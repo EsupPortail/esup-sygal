@@ -124,9 +124,3 @@ where pro.role_id = 'ADMIN_TECH'
   and r.code = 'ADMIN_TECH'
   and not exists(select * from profil_to_role where profil_id = pro.id and role_id = r.id)
 ;
-
-
---
--- Peuplement des VM.
---
-refresh materialized view mv_recherche_these;
