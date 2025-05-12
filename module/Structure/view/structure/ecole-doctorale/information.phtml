@@ -12,6 +12,7 @@
  * @var string[]       $contenus
  */
 
+use Individu\Provider\Privilege\IndividuPrivileges;
 use Individu\Entity\Db\IndividuRoleEtablissement;
 use Acteur\Entity\Db\ActeurThese;
 use Individu\Entity\Db\IndividuRole;
@@ -113,6 +114,17 @@ $structure = $ecole->getStructure();
     <h2>
         Rôles et membres
     </h2>
+
+    <p class="lead">
+        Voici les <em>rôles liés à cette structure</em> et les individus auxquels ont été attribués ces rôles.
+    </p>
+
+    <?php if ($this->isAllowed(IndividuPrivileges::getResourceId(IndividuPrivileges::INDIVIDU_LISTER))): ?>
+        <p class="alert alert-info">
+            L'attribution d'un rôle à quelqu'un n'est pas possible ici, vous devez le faire sur la fiche de l'individu
+            (rendez-vous sur la <a href="<?php echo $this->url('individu') ?>">page de recherche d'individu</a>).
+        </p>
+    <?php endif ?>
 
     <div class="row">
         <div class="col-md-7">

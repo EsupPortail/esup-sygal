@@ -18,6 +18,7 @@ Journal des modifications
 - Extraction CSV des inscriptions aux formations : ajout de la colonne 'Liste'.
 - Ajout d'un formatter pour l'affichage des structures
 - Suppression de la vue matérialisée mv_recherche_these inutilisée (remplacée par une vue classique).
+- Fiche structure (onglet Rôles et membres) : message indiquant que l'attribution de rôle à un individu ne se fait pas sur cette page.
 - [FIX] Module Soutenance : lorsque plusieurs propositions de soutenances étaient enregistrées en BDD, ce n'était pas forcément la bonne qui était récupérée
 - [FIX] Module Soutenance : Association d'un acteur à membre impossible dans certains cas
 - [FIX] Module Soutenance : Acteurs historisés pouvaient apparaître dans la liste de ceux désignés pour être président de jury

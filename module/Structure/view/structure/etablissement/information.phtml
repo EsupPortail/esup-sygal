@@ -17,7 +17,6 @@ use Structure\Controller\StructureController;
 use Structure\Entity\Db\Etablissement;
 use Structure\Entity\Db\TypeStructure;
 use Structure\Provider\Privilege\StructurePrivileges;
-use UnicaenPrivilege\Provider\Privilege\Privileges;
 
 $this->headTitle("Établissement '{$etablissement->getStructure()->getLibelle()}'");
 
@@ -172,14 +171,15 @@ $tab = $this->queryParams()['tab'] ?? StructureController::TAB_infos;
     <p class="lead">
         Voici les <em>rôles liés à cet établissement</em> et les individus auxquels ont été attribués ces rôles. <br>
         NB : les rôles comme "Doctorant" ou "Directeur de thèse", "Candidat", "Garant" ne sont pas liés à un établissement mais à une
-        thèse/HDR donc ne peuvent figurer sur cette page. <br>
-        <?php
-        $canVisualiserIndividu = $this->isAllowed(Privileges::getResourceId(IndividuPrivileges::INDIVIDU_LISTER));
-        if ($canVisualiserIndividu): ?>
-            L'attribution d'un rôle à un quelqu'un n'est pas possible ici, vous devez le faire sur la fiche de l'individu
-            (rendez-vous sur la <a href="<?php echo $this->url('individu') ?>">page de recherche d'individu</a>).
-        <?php endif ?>
+        thèse/HDR donc ne peuvent figurer sur cette page.
     </p>
+
+    <?php if ($this->isAllowed(IndividuPrivileges::getResourceId(IndividuPrivileges::INDIVIDU_LISTER))): ?>
+        <p class="alert alert-info">
+            L'attribution d'un rôle à quelqu'un n'est pas possible ici, vous devez le faire sur la fiche de l'individu
+            (rendez-vous sur la <a href="<?php echo $this->url('individu') ?>">page de recherche d'individu</a>).
+        </p>
+    <?php endif ?>
 
     <div class="row">
         <?php foreach ($roleListing as $roleId => $count) :?>
