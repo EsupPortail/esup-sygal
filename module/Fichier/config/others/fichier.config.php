@@ -13,6 +13,10 @@ use Fichier\Controller\FichierController;
 use Fichier\Controller\Plugin\UrlFichier;
 use Fichier\Exporter\PageFichierIntrouvablePdfExporter;
 use Fichier\Exporter\PageFichierIntrouvablePdfExporterFactory;
+use Fichier\Form\FichierForm;
+use Fichier\Form\FichierFormFactory;
+use Fichier\Hydrator\FichierHydrator;
+use Fichier\Hydrator\FichierHydratorFactory;
 use Fichier\Provider\Privilege\FichierPrivileges;
 use Fichier\Search\NatureFichierSearchFilter;
 use Fichier\Search\NatureFichierSearchFilterFactory;
@@ -130,6 +134,8 @@ return [
                     'controller' => FichierController::class,
                     'action' => [
                         'televerser-fichiers-communs',
+                        'afficher',
+                        'modifier',
                         'supprimer',
                     ],
                     'privileges' => [
@@ -160,6 +166,7 @@ return [
                                 'fichier' => '[a-zA-Z0-9-]+',
                             ],
                             'defaults' => [
+                                /** @see \Fichier\Controller\FichierController::telechargerAction() */
                                 'action' => 'telecharger',
                             ],
                         ],
@@ -169,7 +176,34 @@ return [
                         'options' => [
                             'route' => '/telecharger/permanent/:idPermanent',
                             'defaults' => [
+                                /** @see \Fichier\Controller\FichierController::telechargerPermanentAction() */
                                 'action' => 'telecharger-permanent',
+                            ],
+                        ],
+                    ],
+                    'afficher' => [
+                        'type' => 'Segment',
+                        'options' => [
+                            'route' => '/afficher/:fichier',
+                            'constraints' => [
+                                'fichier' => '[a-zA-Z0-9-]+',
+                            ],
+                            'defaults' => [
+                                /** @see \Fichier\Controller\FichierController::afficherAction() */
+                                'action' => 'afficher',
+                            ],
+                        ],
+                    ],
+                    'modifier' => [
+                        'type' => 'Segment',
+                        'options' => [
+                            'route' => '/modifier/:fichier',
+                            'constraints' => [
+                                'fichier' => '[a-zA-Z0-9-]+',
+                            ],
+                            'defaults' => [
+                                /** @see \Fichier\Controller\FichierController::modifierAction() */
+                                'action' => 'modifier',
                             ],
                         ],
                     ],
@@ -181,6 +215,7 @@ return [
                                 'fichier' => '[a-zA-Z0-9-]+',
                             ],
                             'defaults' => [
+                                /** @see \Fichier\Controller\FichierController::supprimerAction() */
                                 'action' => 'supprimer',
                             ],
                         ],
@@ -190,6 +225,7 @@ return [
                         'options' => [
                             'route' => '/televerser-fichiers-communs',
                             'defaults' => [
+                                /** @see \Fichier\Controller\FichierController::televerserFichiersCommunsAction() */
                                 'action' => 'televerser-fichiers-communs',
                             ],
                         ],
@@ -199,6 +235,7 @@ return [
                         'options' => [
                             'route' => '/lister-fichiers-communs',
                             'defaults' => [
+                                /** @see \Fichier\Controller\FichierController::listerFichiersCommunsAction() */
                                 'action' => 'lister-fichiers-communs',
                             ],
                         ],
@@ -256,9 +293,19 @@ return [
             'Application\Controller\Fichier' => FichierController::class,
         ],
     ],
+    'form_elements' => [
+        'factories' => [
+            FichierForm::class => FichierFormFactory::class,
+        ],
+    ] ,
     'controller_plugins' => [
         'invokables' => [
             'urlFichier' => UrlFichier::class,
+        ],
+    ],
+    'hydrators' => [
+        'factories' => [
+            FichierHydrator::class => FichierHydratorFactory::class,
         ],
     ],
     'view_helpers' => [

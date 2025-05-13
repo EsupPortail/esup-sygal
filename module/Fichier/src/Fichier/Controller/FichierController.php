@@ -15,6 +15,7 @@ use DoctrineORMModule\Paginator\Adapter\DoctrinePaginator;
 use Exception;
 use Fichier\Entity\Db\Fichier;
 use Fichier\Entity\Db\NatureFichier;
+use Fichier\Form\FichierFormAwareTrait;
 use Fichier\Provider\Privilege\FichierPrivileges;
 use Fichier\Service\Fichier\FichierServiceAwareTrait;
 use Fichier\Service\Fichier\FichierStorageServiceAwareTrait;
@@ -33,6 +34,7 @@ class FichierController extends AbstractController implements SearchControllerIn
     use SearchServiceAwareTrait;
     use SearchControllerTrait;
 
+    use FichierFormAwareTrait;
     use FichierStorageServiceAwareTrait;
     use FichierServiceAwareTrait;
 
@@ -50,7 +52,7 @@ class FichierController extends AbstractController implements SearchControllerIn
         return new ViewModel([
             'paginator' => $paginator,
             'filters' => $this->filters(),
-            'urlFichierPlugin' => $this->urlFichier(),
+            'fichierUrlPlugin' => $this->urlFichier(),
         ]);
     }
 
@@ -78,8 +80,6 @@ class FichierController extends AbstractController implements SearchControllerIn
 
     /**
      * Surcharge de la méthode {@see SearchControllerTrait::filtersAction()}.
-     *
-     * @return ViewModel
      */
     public function filtersAction(): ViewModel
     {
@@ -87,14 +87,12 @@ class FichierController extends AbstractController implements SearchControllerIn
 
         $filters = $this->filters();
 
-        $model = new ViewModel([
+        return new ViewModel([
             'filters' => $filters,
         ]);
-
-        return $model;
     }
 
-    public function listerFichiersCommunsAction()
+    public function listerFichiersCommunsAction(): Response|ViewModel
     {
         /**
          * Application des filtres et tris par défaut.
@@ -111,7 +109,7 @@ class FichierController extends AbstractController implements SearchControllerIn
             return $this->redirect()->toRoute(null, [], ['query' => $queryParams], true);
         }
 
-        $dir  = $this->params()->fromQuery('direction', Sortable::ASC);
+        $dir = $this->params()->fromQuery('direction', Sortable::ASC);
         $maxi = $this->params()->fromQuery('maxi', 40);
         $page = $this->params()->fromQuery('page', 1);
 
@@ -121,7 +119,8 @@ class FichierController extends AbstractController implements SearchControllerIn
             ->join('f.histoCreateur', 'hc')
             ->join('hc.individu', 'i')
             ->join('f.nature', 'n', Join::WITH, 'n.code = :code')
-            ->setParameter('code', NatureFichier::CODE_COMMUNS);
+            ->setParameter('code', NatureFichier::CODE_COMMUNS)
+            ->andWhereNotHistorise('f');
 
         foreach (explode('+', $sort) as $sortProp) {
             $qb->addOrderBy($sortProp, $dir);
@@ -141,9 +140,9 @@ class FichierController extends AbstractController implements SearchControllerIn
         return $vm;
     }
 
-    public function televerserFichiersCommunsAction()
+    public function televerserFichiersCommunsAction(): Response
     {
-        if (! $this->getRequest()->isPost()) {
+        if (!$this->getRequest()->isPost()) {
             return $this->redirect()->toUrl($this->urlFichier()->listerFichiersCommuns());
         }
 
@@ -159,7 +158,7 @@ class FichierController extends AbstractController implements SearchControllerIn
         return $this->redirect()->toUrl($this->urlFichier()->listerFichiersCommuns());
     }
 
-    public function telechargerAction()
+    public function telechargerAction(): void
     {
         $fichier = $this->requestFichier();
 
@@ -174,12 +173,12 @@ class FichierController extends AbstractController implements SearchControllerIn
         $this->uploader()->download($fichier);
     }
 
-    public function telechargerPermanentAction()
+    public function telechargerPermanentAction(): void
     {
         $idPermanent = $this->params()->fromRoute('idPermanent');
         /** @var Fichier|null $fichier */
         $fichier = $this->fichierService->getRepository()->findOneBy(['idPermanent' => $idPermanent]);
-        if( $fichier === null) {
+        if ($fichier === null) {
             throw new RuntimeException("Fichier introuvable en base de données");
         }
 
@@ -195,40 +194,71 @@ class FichierController extends AbstractController implements SearchControllerIn
         $this->uploader()->download($fichier);
     }
 
-    public function supprimerAction()
+    public function afficherAction(): Response|ViewModel
     {
         $fichier = $this->requestFichier();
 
-        if (! $this->isAllowed($fichier, FichierPrivileges::privilegeTeleverserFor($fichier->getNature()))) {
-            throw new UnAuthorizedException("Suppression non autorisée.");
+        if (!$this->isAllowed($fichier, FichierPrivileges::privilegeTelechargerFor($fichier->getNature()))) {
+            throw new UnAuthorizedException("Visualisation non autorisée.");
         }
 
-        $result = $this->confirm()->execute();
-
-        // si un tableau est retourné par le plugin Confirm, l'opération a été confirmée
-        if (is_array($result)) {
-            $this->fichierService->supprimerFichiers([$fichier]);
-
-            $this->flashMessenger()->addSuccessMessage("Fichier '{$fichier->getNomOriginal()}' supprimé avec succès.");
-
-            return $this->redirect()->toUrl($this->urlFichier()->listerFichiersCommuns());
-        }
-
-        $viewModel = $this->confirm()->getViewModel();
+        $viewModel = new ViewModel();
         $viewModel->setVariables([
-            'title'   => "Suppression d'un fichier",
             'fichier' => $fichier,
+            'fichierUrlPlugin' => $this->urlFichier(),
         ]);
 
         return $viewModel;
-
-
     }
 
-    /**
-     * @return Fichier
-     */
-    private function requestFichier()
+    public function modifierAction(): Response|ViewModel
+    {
+        $fichier = $this->requestFichier();
+
+        if (!$this->isAllowed($fichier, FichierPrivileges::privilegeTeleverserFor($fichier->getNature()))) {
+            throw new UnAuthorizedException("Modification non autorisée.");
+        }
+
+        $this->fichierForm->bind($fichier);
+
+        if ($this->getRequest()->isPost()) {
+            $data = $this->getRequest()->getPost();
+            $this->fichierForm->setData($data);
+            if ($this->fichierForm->isValid()) {
+                $this->fichierService->saveEntities([$fichier]);
+                $this->flashMessenger()->addSuccessMessage("Fichier '{$fichier->getNom()}' modifié avec succès.");
+
+                return $this->redirect()->toUrl($this->urlFichier()->afficherFichier($fichier));
+            }
+        }
+
+        $this->fichierForm->setAttribute('action', $this->urlFichier()->modifierFichier($fichier));
+
+        $viewModel = new ViewModel();
+        $viewModel->setVariables([
+            'form' => $this->fichierForm,
+            'fichierUrlPlugin' => $this->urlFichier(),
+        ]);
+
+        return $viewModel;
+    }
+
+    public function supprimerAction(): Response
+    {
+        $fichier = $this->requestFichier();
+
+        if (!$this->isAllowed($fichier, FichierPrivileges::privilegeTeleverserFor($fichier->getNature()))) {
+            throw new UnAuthorizedException("Suppression non autorisée.");
+        }
+
+        $this->fichierService->supprimerFichiers([$fichier]);
+
+        $this->flashMessenger()->addSuccessMessage("Fichier '{$fichier->getNomOriginal()}' supprimé avec succès.");
+
+        return $this->redirect()->toUrl($this->urlFichier()->listerFichiersCommuns());
+    }
+
+    private function requestFichier(): Fichier
     {
         /** @var RouteMatch $routeMatch */
         $routeMatch = $this->getEvent()->getRouteMatch();

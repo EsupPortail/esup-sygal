@@ -4,6 +4,7 @@ namespace Fichier\Controller\Factory;
 
 use Application\Search\SearchServicePluginManager;
 use Fichier\Controller\FichierController;
+use Fichier\Form\FichierForm;
 use Fichier\Service\Fichier\FichierService;
 use Fichier\Service\Fichier\FichierStorageService;
 use Fichier\Service\Fichier\Search\FichierSearchService;
@@ -30,7 +31,11 @@ class FichierControllerFactory
         /** @var FichierSearchService $fileService */
         $fileService = $container->get(SearchServicePluginManager::class)->get(FichierSearchService::class);
         $service->setSearchService($fileService);
-        
+
+        /** @var FichierForm $fichierForm */
+        $fichierForm = $container->get('FormElementManager')->get(FichierForm::class);
+        $service->setFichierForm($fichierForm);
+
         return $service;
     }
 }

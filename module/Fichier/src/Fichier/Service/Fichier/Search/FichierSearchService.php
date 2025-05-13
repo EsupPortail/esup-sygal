@@ -21,8 +21,12 @@ class FichierSearchService extends SearchService
     protected function createQueryBuilder(): QueryBuilder
     {
         $qb = $this->fichierService->getRepository()->createQueryBuilder('f');
-        $qb->addSelect('nf')->join('f.nature', 'nf');
-        $qb->addSelect('vf')->join('f.version', 'vf');
+        $qb
+            ->addSelect('hc')->join('f.histoCreateur', 'hc')
+            ->addSelect('i')->join('hc.individu', 'i')
+            ->addSelect('nf')->join('f.nature', 'nf')
+            ->addSelect('vf')->leftJoin('f.version', 'vf')
+            ->andWhere('f.histoDestruction is null');
 
         return $qb;
     }
@@ -32,7 +36,6 @@ class FichierSearchService extends SearchService
         $this->natureFichierSearchFilter = $this->getNatureFichierSearchFilter();
         $this->natureFichierSearchFilter
             ->setWhereField('nf.code')
-            ->setMultiple()
             ->setApplyInValueOptionsConditionToQueryBuilder()
             ->setAttributes([
                 'class' => 'selectpicker show-tick',
@@ -54,12 +57,15 @@ class FichierSearchService extends SearchService
 
         /** @var IdPermanentFichierSearchFilter $idPermanentFichierSearchFilter */
         $idPermanentFichierSearchFilter = $this->searchFilterPluginManager->get(IdPermanentFichierSearchFilter::class);
+        $idPermanentFichierSearchFilter
+            ->setLabel('Avec id permanent') // todo : transformer le filtre en select serait plus clair
+            ->setUseOnlyIfChecked(true);
         $this->addFilter($idPermanentFichierSearchFilter);
 
         $this->addSorters([
             new SearchSorter("Id", 'id'),
-            new SearchSorter("Nature", 'nf.code'),
-            new SearchSorter("Version", 'vf.code'),
+            (new SearchSorter("Nature", NatureFichierSearchFilter::NAME))->setOrderByField('nf.code'),
+            (new SearchSorter("Version", VersionFichierSearchFilter::NAME))->setOrderByField('vf.code'),
             new SearchSorter("Nom", 'nom', true),
             new SearchSorter("Nom original", 'nomOriginal'),
             new SearchSorter("Id permanent", 'idPermanent'),

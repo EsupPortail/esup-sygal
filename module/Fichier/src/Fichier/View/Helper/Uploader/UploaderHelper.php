@@ -15,7 +15,7 @@ use Laminas\View\Resolver\TemplatePathStack;
  * NB: requiert le widget jQuery dont le source est dans "./script/uploader-widget.js.dist".
  *
  * @author Bertrand GAUTHIER <bertrand.gauthier at unicaen.fr>
- * @see    UploaderPlugin
+ * @see UploaderPlugin
  */
 class UploaderHelper extends AbstractHelper
 {
@@ -24,17 +24,13 @@ class UploaderHelper extends AbstractHelper
      * C'est l'URL à laquelle est POSTé le formulaire d'upload.
      *
      * Si elle est null, le formulaire n'est pas affiché.
-     *
-     * @var string
      */
-    protected $url;
+    protected ?string $url = null;
 
     /**
      * Point d'entrée.
-     *
-     * @return UploaderHelper
      */
-    public function __invoke()
+    public function __invoke(): static
     {
         /** @var PhpRenderer $view */
         $view = $this->getView();
@@ -49,11 +45,8 @@ class UploaderHelper extends AbstractHelper
      * C'est l'URL à laquelle est POSTé le formulaire de dépôt.
      *
      * Si elle est null, aucun formulaire ne sera affiché.
-     *
-     * @param string $url
-     * @return self
      */
-    public function setUrl($url)
+    public function setUrl(?string $url): static
     {
         $this->url = $url;
 
@@ -65,7 +58,7 @@ class UploaderHelper extends AbstractHelper
      *
      * @return string Code HTML
      */
-    public function __toString()
+    public function __toString(): string
     {
         return $this->renderForm();
     }
@@ -76,51 +69,61 @@ class UploaderHelper extends AbstractHelper
      *
      * @return string Code HTML
      */
-    public function renderForm()
+    public function renderForm(): string
     {
-        $form = $this->getForm();
-
-        $html = $this->getView()->render("upload-form.phtml", [
-            'form' => $form,
-            'url'  => $this->url,
+        return $this->getView()->render("upload-form.phtml", [
+            'form' => $this->form,
+            'url' => $this->url,
         ]);
-
-        return $html;
     }
 
     /**
      * Génère le code HTML de la DIV destionée à afficher la liste des fichiers déposés.
      *
-     * @param string $url   URL de dépôt (upload) de fichier
+     * @param string $url URL de dépôt (upload) de fichier
      * @param string $label Label de la liste des fichiers déposés
      * @return string Code HTML
      */
-    public function renderUploadedFiles($url, $label = "Fichiers déposés :")
+    public function renderUploadedFiles(string $url, string $label = "Fichiers déposés :", bool $iconOnly = false): string
     {
-        $html = $this->getView()->render("uploaded-files.phtml", [
-            'url'   => $url,
+        return $this->getView()->render("uploaded-files.phtml", [
+            'url' => $url,
             'label' => $label,
+            'iconOnly' => $iconOnly,
         ]);
-
-        return $html;
     }
 
     /**
      * Génère le code HTML du lien permettant de télécharger un fichier déposé.
      * Sauf si aucune URL n'est spécifiée, auquel cas ce n'est pas un lien mais simplement le nom du fichier.
      *
-     * @param UploadedFileInterface $fichier Fichier déposés
-     * @param string                $url     URL de téléchargement (download) du fichier déposé
+     * @param UploadedFileInterface $fichier Fichier déposé
+     * @param string|null $url Eventuelle URL de téléchargement (download) du fichier déposé
      * @return string Code HTML
      */
-    public function renderUploadedFile(UploadedFileInterface $fichier, $url = null)
+    public function renderUploadedFile(UploadedFileInterface $fichier, string $url = null): string
     {
-        $html = $this->getView()->render("uploaded-file.phtml", [
+        return $this->getView()->render("uploaded-file.phtml", [
             'fichier' => $fichier,
-            'url'     => $url,
+            'url' => $url,
+            'iconOnly' => false,
         ]);
+    }
 
-        return $html;
+    /**
+     * Génère le code HTML du lien permettant de télécharger un fichier déposé, sous la forma d'un simple icône.
+     *
+     * @param UploadedFileInterface $fichier Fichier déposé
+     * @param string $url URL de téléchargement (download) du fichier déposé
+     * @return string Code HTML
+     */
+    public function renderUploadedFileIcon(UploadedFileInterface $fichier, string $url): string
+    {
+        return $this->getView()->render("uploaded-file.phtml", [
+            'fichier' => $fichier,
+            'url' => $url,
+            'iconOnly' => true,
+        ]);
     }
 
     /**
@@ -128,32 +131,20 @@ class UploaderHelper extends AbstractHelper
      * Sauf si aucune URL n'est spécifiée, auquel cas aucun lien n'est généré.
      *
      * @param UploadedFileInterface $fichier Fichier à supprimer
-     * @param string                $url     URL de la requête de suppression du fichier
-     * @param boolean               $confirm Faut-il afficher une demande de confirmation avant suppression ? Oui, par
-     *                                       défaut.
+     * @param string|null $url Eventuelle URL de la requête de suppression du fichier
      * @return string Code HTML
      */
-    public function renderDeleteFile(UploadedFileInterface $fichier, $url = null, $confirm = true)
+    public function renderDeleteFile(UploadedFileInterface $fichier, ?string $url = null): string
     {
-        $html = $this->getView()->render("delete-file.phtml", [
+        return $this->getView()->render("delete-file.phtml", [
             'fichier' => $fichier,
-            'url'     => $url,
-            'confirm' => $confirm,
+            'url' => $url,
         ]);
-
-        return $html;
     }
 
-    /**
-     * @var UploadForm
-     */
-    protected $form;
+    protected ?UploadForm $form = null;
 
-    /**
-     * @param UploadForm $form
-     * @return UploaderHelper
-     */
-    public function setForm(UploadForm $form)
+    public function setForm(UploadForm $form): static
     {
         $this->form = $form;
         return $this;
@@ -161,10 +152,8 @@ class UploaderHelper extends AbstractHelper
 
     /**
      * Retourne le formulaire de dépôt de fichier, fourni par le plugin de contrôleur.
-     *
-     * @return UploadForm
      */
-    public function getForm()
+    public function getForm(): ?UploadForm
     {
         return $this->form;
     }

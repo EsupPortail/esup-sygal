@@ -1,0 +1,43 @@
+<?php
+/**
+ * @var \Application\View\Renderer\PhpRenderer $this
+ * @see \Fichier\Controller\FichierController::ajouterAction()
+ * @see \Fichier\Controller\FichierController::modifierAction()
+ * @var \Fichier\Form\FichierForm $form
+ * @var \Fichier\Controller\Plugin\UrlFichier $fichierUrlPlugin
+ */
+
+/** @var \Fichier\Entity\Db\Fichier $fichier */
+$fichier = $form->getObject();
+?>
+
+<h2> Modification du fichier <?php echo $fichier->getNom() ?></h2>
+
+<?php
+$form->prepare();
+echo $this->form()->openTag($form);
+?>
+
+
+<dl class="row">
+    <dt class="col-md-2">Id</dt>
+    <dd class="col-md-10"><?php echo $fichier->getId() ?></dd>
+    <dt class="col-md-2">Nom</dt>
+    <dd class="col-md-10"><?php echo $fichier->getNom() ?></dd>
+    <dt class="col-md-2">Nom original</dt>
+    <dd class="col-md-10"><?php echo $fichier->getNomOriginal() ?></dd>
+    <dt class="col-md-2">Uuid</dt>
+    <dd class="col-md-10"><?php echo $fichier->getUuid() ?></dd>
+    <dt class="col-md-2">Id permanent</dt>
+    <dd class="col-md-10"><?php echo $fichier->getIdPermanent() ?: '-' ?></dd>
+</dl>
+
+<div class="row">
+    <div class="col-md-4">
+        <?php echo $this->formControlGroup($form->get('idPermanent')); ?>
+    </div>
+</div>
+
+<?php echo $this->formControlGroup($form->get('submit')); ?>
+
+<?php echo $this->form()->closeTag(); ?>

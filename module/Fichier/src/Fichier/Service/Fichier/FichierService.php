@@ -84,7 +84,7 @@ class FichierService extends BaseService
      * @param string|NatureFichier $nature Nature de fichier, ou son code
      * @param string|VersionFichier|null $version Version de fichier, ou son code.
      *                                                 Si null, ce sera VersionFichier::CODE_ORIG
-     * @return Fichier[] Fichiers instanciés
+     * @return Fichier[] Entités {@see Fichier} instanciées
      */
     public function createFichiersFromUpload(
         array $uploadResult,
@@ -139,30 +139,46 @@ class FichierService extends BaseService
     }
 
     /**
-     * Enregistre en base de données les Fichiers spécifiés, et enregsitre les fichiers physiques associés.
+     * Enregistre en bdd les entités {@see Fichier} spécifiées, *sans créer les fichiers physiques associés*.
      *
      * @param Fichier[] $fichiers
      */
-    public function saveFichiers(array $fichiers): void
+    public function saveEntities(array $fichiers): void
     {
         $this->entityManager->beginTransaction();
         try {
             foreach ($fichiers as $fichier) {
-                $this->entityManager->persist($fichier);
+                if (!$fichier->getId()) {
+                    $this->entityManager->persist($fichier);
+                }
                 $this->entityManager->flush($fichier);
-
-//                $this->moveUploadedFileForFichier($fichier);
-                $this->fichierStorageService->saveFileForFichier($fichier->getPath(), $fichier);
             }
             $this->entityManager->commit();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->entityManager->rollback();
             throw new RuntimeException("Erreur survenue lors de l'enregistrement des fichiers, rollback!", 0, $e);
         }
     }
 
     /**
-     * Supprime définitivement des fichiers.
+     * Enregistre en bdd les entités {@see Fichier} spécifiées et crée les fichiers physiques associés.
+     *
+     * @param Fichier[] $fichiers
+     */
+    public function saveFichiers(array $fichiers): void
+    {
+        try {
+            $this->saveEntities($fichiers);
+            foreach ($fichiers as $fichier) {
+                $this->fichierStorageService->saveFileForFichier($fichier->getPath(), $fichier);
+            }
+        } catch (Exception $e) {
+            throw new RuntimeException("Erreur survenue lors de l'enregistrement des fichiers, rollback!", 0, $e);
+        }
+    }
+
+    /**
+     * Supprime définitivement les entités {@see Fichier} spécifiées ainsi que les fichiers physiques associés.
      *
      * @param Fichier[] $fichiers
      */
@@ -203,10 +219,10 @@ class FichierService extends BaseService
     }
 
     /**
-     * Compression des fichiers physiques de plusieurs Fichier en une archive .zip puis création d'un Fichier temporaire
+     * Compression des fichiers physiques de plusieurs {@see Fichier} en une archive .zip puis création d'un {@see Fichier} temporaire
      * "pointant" vers cette archive.
      *
-     * NB: c'est une entité Fichier qui est retournée pour une raison de praticité, elle n'a pas du tout vocation à
+     * NB: c'est une entité {@see Fichier} qui est retournée pour une raison de praticité, elle n'a pas du tout vocation à
      * être persistée.
      *
      * @param \Fichier\Entity\FichierArchivable[] $fichiersArchivables
@@ -256,7 +272,7 @@ class FichierService extends BaseService
     }
 
     /**
-     * Téléchargement d'un Fichier.
+     * Téléchargement du fichier physique associé au {@see Fichier} spécifié.
      *
      * @param Fichier $fichier
      */
