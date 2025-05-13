@@ -1,9 +1,5 @@
 Journal des modifications
 =========================
-10.0.3
------
-- [FIX] Génération du document pour signature pour la présidence (proposition de soutenance) était possible même sans la validation préalable des autres acteurs
-- [FIX] Proposition de soutenance bloquée lorsque tous les avis étaient défavorables 
 
 10.1.0
 ------
@@ -23,6 +19,8 @@ Journal des modifications
 - Ajout d'un formatter pour l'affichage des structures
 - Suppression de la vue matérialisée mv_recherche_these inutilisée (remplacée par une vue classique).
 - Fiche structure (onglet Rôles et membres) : message indiquant que l'attribution de rôle à un individu ne se fait pas sur cette page.
+- Page de recherche de tout fichier déposé (soumise pour l'instant au privilège de télécharger un fichier dit 'commun').
+- Fichiers : visualisation des détails d'un fichier ; modification d'un fichier (uniquement l'id permanent).
 - [FIX] Module Soutenance : lorsque plusieurs propositions de soutenances étaient enregistrées en BDD, ce n'était pas forcément la bonne qui était récupérée
 - [FIX] Module Soutenance : Association d'un acteur à membre impossible dans certains cas
 - [FIX] Module Soutenance : Acteurs historisés pouvaient apparaître dans la liste de ceux désignés pour être président de jury
@@ -32,6 +30,11 @@ Journal des modifications
 - [FIX] Ajout d'un CED impossible
 - [FIX] Correction de la vue v_situ_depot_vc_valid_pres : calcul erroné de l'existence d'une validation.
 - [FIX] Inscription à une formation possible même lorsque la formation était dans l'état "Inscriptions fermées"
+
+10.0.3
+------
+- [FIX] Génération du document pour signature pour la présidence (proposition de soutenance) était possible même sans la validation préalable des autres acteurs
+- [FIX] Proposition de soutenance bloquée lorsque tous les avis étaient défavorables
 
 10.0.2
 -----
