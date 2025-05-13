@@ -60,7 +60,7 @@
         "unicaen/maintenance-mode": "^1.0",
         "unicaen/parametre": "^6.0",
         "unicaen/pdf": "^6.1",
-        "unicaen/renderer": "^7.0",
+        "unicaen/renderer": "dev-release_7.0.6",
         "unicaen/search": "dev-master",
         "unicaen/sql": "dev-master",
         "unicaen/sygal-api": "dev-master",
