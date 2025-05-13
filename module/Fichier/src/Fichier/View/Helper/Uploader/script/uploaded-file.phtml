@@ -1,15 +1,30 @@
 <?php
+/**
+ * @var UploadedFileInterface $fichier
+ * @var string|null $url
+ * @var bool $iconOnly
+ */
+
+use Fichier\Controller\Plugin\Uploader\UploadedFileInterface;
+
 $fichier = $this->fichier; /* @var $fichier UnicaenApp\Controller\Plugin\Upload\UploadedFileInterface */
-$file    = sprintf("%s (<abbr title=\"%s octets\">%s</abbr>)", $fichier->getNom(), $fichier->getTaille(), $fichier->getTailleToString());
+$file = sprintf("%s (<abbr title=\"%s octets\">%s</abbr>)", $fichier->getNom(), $fichier->getTaille(), $fichier->getTailleToString());
+$iconOnly = $iconOnly ?? false;
 ?>
 
-<?php if ($this->url): ?>
+<?php if ($url): ?>
 
     <!-- lien de téléchargement du fichier -->
-    <a class="download-file" href="<?php echo $this->url ?>"
-       title="<?php echo $this->translate("Télécharger le fichier déposé");?> '<?php echo $fichier->getNom() ?>'"
-    ><span class="icon icon-file"></span> <span class="filename"><?php echo $file ?></span></a>
-        
+    <a class="download-file" href="<?php echo $url ?>"
+       title="<?php echo $this->translate("Télécharger le fichier ") . $fichier->getNom() ?>"
+    >
+        <?php if ($iconOnly): ?>
+            <span class="icon icon-download"></span>
+        <?php else: ?>
+            <span class="icon icon-file"></span> <span class="filename"><?php echo $file ?></span>
+        <?php endif ?>
+    </a>
+
 <?php else: ?>
     
     <!-- nom du fichier -->
@@ -17,18 +32,20 @@ $file    = sprintf("%s (<abbr title=\"%s octets\">%s</abbr>)", $fichier->getNom(
 
 <?php endif ?>
 
-<!-- date de dépôt éventuelle du fichier -->
-<?php if ($fichier->getDate()): ?>
-    <br /><span class="upload-date">
-        <?php
-            echo $this->translate("le");
-            echo " ";
-            echo $this->dateFormat($fichier->getDate(),IntlDateFormatter::MEDIUM);
-            //echo $fichier->getDate()->format('d/m/Y');
-            echo " ";
-            echo $this->translate("à");
-            echo " ";
-            echo $fichier->getDate()->format('H:i');
-        ?>
-    </span>
+<?php if (!$iconOnly): ?>
+    <!-- date de dépôt éventuelle du fichier -->
+    <?php if ($fichier->getDate()): ?>
+        <br /><span class="upload-date">
+            <?php
+                echo $this->translate("le");
+                echo " ";
+                echo $this->dateFormat($fichier->getDate(),IntlDateFormatter::MEDIUM);
+                //echo $fichier->getDate()->format('d/m/Y');
+                echo " ";
+                echo $this->translate("à");
+                echo " ";
+                echo $fichier->getDate()->format('H:i');
+            ?>
+        </span>
+    <?php endif; ?>
 <?php endif;

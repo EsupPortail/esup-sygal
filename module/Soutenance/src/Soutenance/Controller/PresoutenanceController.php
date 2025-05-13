@@ -433,7 +433,7 @@ abstract class PresoutenanceController extends AbstractSoutenanceController
             $vm->setTemplate('soutenance/default/confirmation');
             $vm->setVariables([
                 'title' => "Annuler/Rejeter la proposition de soutenance",
-                'text' => "L'annulation effacera le dossier de soutentance et les justificatifs associés. Êtes-vous sûr·e de vouloir continuer ?",
+                'text' => "Êtes-vous sûr·e de vouloir continuer ?",
                 'action' => $this->url()->fromRoute("soutenance_{$this->type}/presoutenance/stopper-demarche", ['id' => $this->entity->getId()], [], true),
             ]);
         }

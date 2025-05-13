@@ -6,9 +6,6 @@
 $fichier = $this->fichier; /* @var $fichier UnicaenApp\Controller\Plugin\Upload\UploadedFileInterface */
 $file    = sprintf("%s (<abbr title=\"%s octets\">%s</abbr>)", $fichier->getNom(), $fichier->getTaille(), $fichier->getTailleToString());
 $id      = uniqid('a-');
-$confirm = $this->confirm ?
-    (is_string($this->confirm) ? $this->confirm : "Êtes-vous sûr(e) de vouloir supprimer le fichier " . htmlentities($fichier->getNom())) :
-    null;
 ?>
 
 <?php if ($this->url): ?>
@@ -18,20 +15,19 @@ $confirm = $this->confirm ?
        class="delete-file btn btn-sm btn-danger" 
        href="<?php echo $url ?>" 
        title="Supprimer le fichier '<?php echo htmlentities($fichier->getNom()) ?>'"
-       <?php echo $confirm ?>
        data-loading-text="Patientez..."><span class="icon icon-delete iconly"></span></a>
     
-    <?php if ($confirm): ?>
     <script>
         $(function() {
             $("#<?php echo $id ?>").on("click", function(e) {
-                if (!confirm('<?php echo $confirm ?>')) {
-                  e.preventDefault();
-                  e.stopPropagation();
+                $(this).addClass("delete-file-loading");
+                const ok = confirm($(this).data('message') || "Êtes-vous sûr·e de vouloir supprimer le fichier ?");
+                if (!ok) {
+                    $(this).removeClass("delete-file-loading");
                 }
+                return ok;
             });
         });
     </script>
-    <?php endif; ?>
-    
+
 <?php endif;

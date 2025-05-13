@@ -1,0 +1,98 @@
+<?php
+
+use Application\View\Renderer\PhpRenderer;
+use Fichier\Entity\Db\Fichier;
+use Fichier\Provider\Privilege\FichierPrivileges;
+
+/**
+ * @var PhpRenderer $this
+ * @see \Fichier\Controller\FichierController::afficherAction()
+ * @var Fichier $fichier
+ * @var \Fichier\Controller\Plugin\UrlFichier $fichierUrlPlugin
+ */
+
+$pageTitle = 'Fichier ' . $fichier->getNom();
+$this->headTitle($pageTitle);
+
+$canDownloadFichier = $this->isAllowed(FichierPrivileges::getResourceId(FichierPrivileges::FICHIER_COMMUN_TELECHARGER));
+$canIndexFichier = $this->isAllowed(FichierPrivileges::getResourceId(FichierPrivileges::FICHIER_COMMUN_TELECHARGER));
+$canModifierFichier = $this->isAllowed(FichierPrivileges::getResourceId(FichierPrivileges::FICHIER_COMMUN_TELEVERSER));
+
+echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace();
+?>
+
+<h1 class="page-header">
+    <?php echo $pageTitle ?>
+</h1>
+
+<div>
+    <?php if ($canModifierFichier) : ?>
+        <?php /** @see \Fichier\Controller\FichierController::modifierAction() */ ?>
+        <a class="btn btn-primary float-end action ajax-modal" data-event="modification"
+           href="<?php echo $fichierUrlPlugin->modifierFichier($fichier) ?>"
+        >
+            <span class="icon icon-modifier"></span>
+            Modifier le fichier
+        </a>
+    <?php endif; ?>
+</div>
+
+<div class="row">
+
+    <div class="col-md-9">
+        <div class="box card">
+            <div class="card-header these-card-header text-white">
+                <h2> Informations sur le fichier </h2>
+            </div>
+            <div class="card-body">
+                <dl class="row">
+                    <dt class="col-md-3">Id</dt>
+                    <dd class="col-md-8"><?php echo $fichier->getId() ?></dd>
+                    <dt class="col-md-3">Nom</dt>
+                    <dd class="col-md-8"><?php echo $fichier->getNom() ?></dd>
+                    <dt class="col-md-3">Nom original</dt>
+                    <dd class="col-md-8"><?php echo $fichier->getNomOriginal() ?></dd>
+                    <dt class="col-md-3">Nature</dt>
+                    <dd class="col-md-8"><?php echo $fichier->getNature() ?></dd>
+                    <dt class="col-md-3">Version</dt>
+                    <dd class="col-md-8"><?php echo $fichier->getVersion() ?></dd>
+                    <dt class="col-md-3">Id permanent</dt>
+                    <dd class="col-md-8">
+                        <?php if ($idp = $fichier->getIdPermanent()): ?>
+                            <?php $urlTelecharger = $canDownloadFichier ? $fichierUrlPlugin->telechargerPermanentFichier($fichier) : null; ?>
+                            <code><a href="<?php echo $urlTelecharger ?>"
+                                     title="Lien de téléchargement à l'aide de l'id permanent <?php echo $idp ?>"><?php echo $idp ?></a></code>
+                        <?php else: ?>
+                            -
+                        <?php endif ?>
+                    </dd>
+                    <dt class="col-md-3">Description</dt>
+                    <dd class="col-md-8"><?php echo $fichier->getDescription() ?: '-' ?></dd>
+                    <dt class="col-md-3">Type MIME</dt>
+                    <dd class="col-md-8"><?php echo $fichier->getTypeMime() ?></dd>
+                    <dt class="col-md-3">Taille</dt>
+                    <dd class="col-md-8"><?php echo $fichier->getTailleToString() ?></dd>
+                    <dt class="col-md-3">Uuid</dt>
+                    <dd class="col-md-8"><?php echo $fichier->getUuid() ?></dd>
+                    <dt class="col-md-3">Short Uuid</dt>
+                    <dd class="col-md-8"><?php echo $fichier->getShortUuid() ?></dd>
+                    <dt class="col-md-3">Archivabilité</dt>
+                    <dd class="col-md-8"><?php echo $fichier->getValidite() ?: '-' ?></dd>
+                    <dt class="col-md-3">Créa / modif</dt>
+                    <dd class="col-md-8"><?php echo $fichier->getHistoModificationToString() ?></dd>
+                </dl>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+<script>
+    $(function () {
+        $("body").on("modification", function (event) {
+            event.div.modal('hide');
+            window.location.reload();
+        });
+    });
+</script>

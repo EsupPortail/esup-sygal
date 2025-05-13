@@ -2,6 +2,7 @@
 
 namespace Fichier\Entity\Db;
 
+use Application\Constants;
 use Application\Entity\Db\ValiditeFichier;
 use Fichier\Controller\Plugin\Uploader\UploadedFileInterface;
 use DateTime;
@@ -474,20 +475,28 @@ class Fichier implements HistoriqueAwareInterface, ResourceInterface, UploadedFi
 
     /**
      * Retourne la date de dépôt du fichier.
-     *
-     * @return DateTime
      */
-    public function getDate()
+    public function getDate(): DateTime
     {
         return $this->getHistoModification();
     }
 
     /**
-     * Get histoModification
+     * Retourne la date de dépôt du fichier au format littéral.
      */
-    public function getHistoModification(): ?DateTime
+    public function getDateToString(): string
+    {
+        return $this->getDate()->format(Constants::DATETIME_FORMAT);
+    }
+
+    public function getHistoModification(): DateTime
     {
         return $this->histoModification ?: $this->getHistoCreation();
+    }
+
+    public function getHistoModificationToString(): string
+    {
+        return $this->getHistoModification()->format(Constants::DATETIME_FORMAT);
     }
 
     /**

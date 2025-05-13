@@ -13,6 +13,10 @@ class OrigineFinancementSearchFilter extends SelectSearchFilter
     protected string $label = "Orig. financ.";
     protected array $attributes = ['liveSearch' => true];
 
+    protected string $name = self::NAME;
+    protected string $label = "Orig. financ.";
+    protected array $attributes = ['liveSearch' => true];
+
     private ?AnneeFinancementSearchFilter $anneeFinancementSearchFilter = null;
 
     /**

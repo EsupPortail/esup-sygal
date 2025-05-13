@@ -171,7 +171,7 @@ class AvisService
      * @param Proposition $proposition
      * @return Avis[]
      */
-    public function getAvisByProposition(Proposition $proposition)
+    public function getAvisByProposition(Proposition $proposition, bool $histo = false)
     {
         $acteurService = $proposition instanceof PropositionThese ?
             $this->acteurTheseService :
@@ -181,6 +181,7 @@ class AvisService
             ->andWhere('proposition.histoDestruction IS NULL')
             ->andWhere('proposition = :proposition')
             ->setParameter('proposition', $proposition);
+        if (!$histo) $qb = $qb->andWhere('avis.histoDestruction IS NULL');
         $result = $qb->getQuery()->getResult();
 
         $avis = [];
