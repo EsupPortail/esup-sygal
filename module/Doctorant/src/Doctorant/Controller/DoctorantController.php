@@ -11,19 +11,15 @@ use UnicaenSearch\Controller\SearchControllerTrait;
 use UnicaenSearch\SearchServiceAwareTrait;
 use Application\Service\MailConfirmationService;
 use Doctorant\Entity\Db\Doctorant;
-use Doctorant\Form\Doctorant\DoctorantForm;
+use Doctorant\Facade\TableauDeBordDoctorantAwareTrait;
 use Doctorant\Form\Doctorant\DoctorantFormAwareTrait;
 use Doctorant\Form\MailConsentementForm;
 use Doctorant\Service\DoctorantServiceAwareTrait;
-use Individu\Entity\Db\Individu;
 use InvalidArgumentException;
-use Laminas\Http\Request;
 use Laminas\Http\Response;
 use Laminas\Paginator\Paginator as LaminasPaginator;
 use Laminas\View\Model\JsonModel;
 use Laminas\View\Model\ViewModel;
-use These\Entity\Db\These;
-use These\Service\These\TheseServiceAwareTrait;
 
 /**
  * @property \Doctorant\Service\Search\DoctorantSearchService $searchService
@@ -33,7 +29,7 @@ class DoctorantController extends AbstractController implements SearchController
     use DoctorantServiceAwareTrait;
     use SearchServiceAwareTrait;
     use SearchControllerTrait;
-    use TheseServiceAwareTrait;
+    use TableauDeBordDoctorantAwareTrait;
 
     use DoctorantFormAwareTrait;
 
@@ -72,26 +68,17 @@ class DoctorantController extends AbstractController implements SearchController
         ]);
     }
 
-    public function voirAction(): ViewModel
+    public function tableauDeBordAction(): ViewModel
     {
-        $doctorant = $this->doctorantService->getRepository()->find($this->params('doctorant'));
-        if ($doctorant === null) {
-            throw new InvalidArgumentException("Doctorant introuvable.");
-        }
+        $doctorant = $this->params('doctorant') instanceof Doctorant ? $this->params('doctorant') : $this->doctorantService->getRepository()->find($this->params('doctorant'));
 
-        $theses = $this->theseService->getRepository()->findThesesByDoctorant($doctorant, [These::ETAT_EN_COURS, These::ETAT_SOUTENUE]);
-
-        /** @var ViewModel $vmFormations */
-        $vmFormations = $this->forward()->dispatch(
-            \Formation\Controller\IndexController::class,
-            ['action' => 'index-doctorant', 'doctorant' => $doctorant]
-        );
-
-        return new ViewModel([
-            'doctorant' => $doctorant,
-            'theses' => $theses,
-            'inscriptions' => $vmFormations->getVariable('inscriptions'),
+        $title = $this->params('title') ?: "Tableau de bord de $doctorant";
+        $vm = new ViewModel([
+            'title' => $title
         ]);
+        $vm->setVariables($this->tableauDeBordDoctorantFacade->getVariablesForTableauDeBord($doctorant));
+
+        return $vm;
     }
 
     public function consulterAction(): ViewModel
@@ -127,7 +114,7 @@ class DoctorantController extends AbstractController implements SearchController
                 $this->flashMessenger()->addSuccessMessage("Le doctorant &laquo; $doctorant &raquo; a été modifié avec succès.");
 
                 if (!$inModal) {
-                    return $this->redirect()->toRoute('doctorant/voir', ['doctorant' => $doctorant->getId()]);
+                    return $this->redirect()->toRoute('doctorant/tableau-de-bord', ['doctorant' => $doctorant->getId()]);
                 }
             }
         }

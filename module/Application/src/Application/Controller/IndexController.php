@@ -2,14 +2,11 @@
 
 namespace Application\Controller;
 
-use Application\Entity\Db\TypeRapport;
 use Application\Entity\Db\Variable;
 use Application\Entity\UserWrapper;
 use Application\Service\Rapport\RapportServiceAwareTrait;
 use Application\Service\Variable\VariableServiceAwareTrait;
-use Doctorant\Service\DoctorantServiceAwareTrait;
-use Formation\Entity\Db\Etat;
-use Formation\Entity\Db\Inscription;
+use Doctorant\Controller\DoctorantController;
 use Information\Service\InformationServiceAwareTrait;
 use Laminas\Authentication\AuthenticationServiceInterface;
 use Laminas\Http\Response;
@@ -35,8 +32,6 @@ class IndexController extends AbstractController
     use RapportActiviteServiceAwareTrait;
     use RapportActiviteCreationRuleAwareTrait;
     use RapportServiceAwareTrait;
-
-    use DoctorantServiceAwareTrait;
 
     /**
      * @var AuthenticationServiceInterface
@@ -145,15 +140,11 @@ EOS
              * @todo Gérer le cas où il y a plus d'une thèse.
              */
 
-//            return $this->redirect()->toRoute('these/identite', ['these' => current($thesesEnCours)->getId()]);
-
-
-            $vm->setVariables([
-                'doctorant' => $doctorant,
-                'theses' => $theses,
-            ]);
-            $vm->setVariables($this->doctorantService->getVariablesForTableauDeBord($doctorant));
-            $vm->setTemplate('application/index/partial/doctorant');
+            /** @see DoctorantController::tableauDeBordAction() */
+            $vm = $this->forward()->dispatch(
+                DoctorantController::class,
+                ['action' => 'tableau-de-bord', 'doctorant' => $doctorant, 'title' => " "]
+            );
         }
         /**
          * Profil "Directeur de thèse".

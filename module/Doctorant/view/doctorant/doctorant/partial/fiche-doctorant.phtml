@@ -1,0 +1,94 @@
+<?php
+/**
+ * @see \Doctorant\Controller\DoctorantController::tableauDeBordAction()
+ * @var These $these
+ */
+
+use Doctorant\Provider\Privilege\DoctorantPrivileges;
+use Individu\Provider\Privilege\IndividuPrivileges;
+use Individu\View\Helper\IndividuUsurpationHelper;
+use These\Entity\Db\These;
+use UnicaenPrivilege\Provider\Privilege\Privileges;
+
+$canVoirEmailContact = $this->isAllowed($these, DoctorantPrivileges::DOCTORANT_AFFICHER_EMAIL_CONTACT);
+?>
+
+<ul class="list-group list-group-flush">
+    <li class="list-group-item">
+        <?php
+        $nomComplet = $these->getDoctorant()->getIndividu()->getNomCompletFormatter()->avecCivilite()->avecAutresPrenoms()->avecNomUsage()->f();
+        $dateNaissance = $these->getDoctorant()->getIndividu()->getDateNaissanceToString();
+        echo !empty($dateNaissance) ? sprintf("%s (%s)", $nomComplet, $dateNaissance) : $nomComplet;
+
+        $canVisualiserIndividu = $this->isAllowed($these->getDoctorant()->getIndividu(), IndividuPrivileges::INDIVIDU_CONSULTER);
+        $canVisualiserIndividu = $this->isAllowed(Privileges::getResourceId(IndividuPrivileges::INDIVIDU_CONSULTER));
+        if ($canVisualiserIndividu) {
+            echo " <a href='" . $this->url('individu/voir', ['individu' => $these->getDoctorant()->getIndividu()->getId()], [], true) . "'>";
+            echo "<span class='icon icon-voir' title='Accéder à la fiche détaillée de cet individu'></span></a>";
+        }
+
+        // bouton d'usurpation d'identité
+        $individuUsurpationHelper = $this->plugin('individuUsurpation');
+        /* @var $individuUsurpationHelper IndividuUsurpationHelper */
+        $individuUsurpationHelper->setIndividu($these->getDoctorant()->getIndividu());
+        echo $individuUsurpationHelper();
+
+        ?>
+    </li>
+
+    <li class="list-group-item">
+        <strong>
+            <?php echo $this->translate("Nationalité :"); ?>
+        </strong>
+        <?php if ($these->getDoctorant()->getIndividu() && $these->getDoctorant()->getIndividu()->getPaysNationalite()): ?>
+            <?php echo $these->getDoctorant()->getIndividu()->getPaysNationalite()->getLibelleNationalite() ?> <br>
+        <?php else: ?>
+            <span class="badge bg-secondary text-white" style="font-size:unset">
+                <span class="icon icon-info" style="padding-right: unset"></span>
+                Non renseignée
+            </span>
+        <?php endif ?>
+    </li>
+
+    <li class="list-group-item">
+        <strong>
+            <?php echo $this->translate("N° étudiant :"); ?>
+        </strong>
+        <?php if ($these->getDoctorant()->getNumeroEtudiant() !== ""): ?>
+            <?php echo $these->getDoctorant()->getNumeroEtudiant() ?> <br>
+        <?php else: ?>
+            <span class="badge bg-secondary text-white" style="font-size:unset">
+                <span class="icon icon-info" style="padding-right: unset"></span>
+                Non renseigné
+            </span>
+        <?php endif ?>
+    </li>
+    <li class="list-group-item">
+        <strong>
+            <?php echo $this->translate("Adresse électronique institutionnelle :"); ?>
+        </strong>
+        <?php if ($email = $these->getDoctorant()->getIndividu()->getEmailPro()): ?>
+            <a href="mailto: <?php echo $email ?>"><?php echo $email ?></a>
+        <?php else: ?>
+            <span class="badge bg-secondary text-white" style="font-size:unset">
+                <span class="icon icon-info" style="padding-right: unset"></span>
+                Inconnue
+            </span>
+        <?php endif ?>
+
+        <?php if ($canVoirEmailContact) : ?>
+            <br>
+            <strong>
+                <?php echo $this->translate("Adresse de contact :"); ?>
+            </strong>
+            <?php if ($mailContact = $these->getDoctorant()->getIndividu()->getEmailContact()): ?>
+                <a href="mailto: <?php echo $mailContact = $these->getDoctorant()->getIndividu()->getEmailContact() ?>"><?php echo $mailContact ?></a>
+            <?php else: ?>
+                <span class="badge bg-secondary text-white" style="font-size:unset">
+                    <span class="icon icon-info" style="padding-right: unset"></span>
+                    Non renseignée
+                </span>
+            <?php endif; ?>
+        <?php endif; ?>
+    </li>
+</ul>

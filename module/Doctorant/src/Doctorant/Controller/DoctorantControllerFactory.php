@@ -4,11 +4,11 @@ namespace Doctorant\Controller;
 
 use Application\Form\MailConfirmationForm;
 use Application\Service\MailConfirmationService;
+use Doctorant\Facade\TableauDeBordDoctorantFacade;
 use Doctorant\Form\Doctorant\DoctorantForm;
 use Doctorant\Form\MailConsentementForm;
 use Doctorant\Service\DoctorantService;
 use Interop\Container\ContainerInterface;
-use These\Service\These\TheseService;
 
 class DoctorantControllerFactory
 {
@@ -40,9 +40,9 @@ class DoctorantControllerFactory
         $mailConsentementForm = $container->get('FormElementManager')->get(MailConsentementForm::class);
         $controller->setMailConsentementForm($mailConsentementForm);
 
-        /** @var TheseService $theseServuice */
-        $theseService = $container->get(TheseService::class);
-        $controller->setTheseService($theseService);
+        /** @var TableauDeBordDoctorantFacade $tdbDoctorantFacade */
+        $tdbDoctorantFacade = $container->get(TableauDeBordDoctorantFacade::class);
+        $controller->setTableauDeBordDoctorantFacade($tdbDoctorantFacade);
 
         return $controller;
     }

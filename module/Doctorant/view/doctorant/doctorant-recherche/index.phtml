@@ -81,7 +81,7 @@ $canAjouter = false;//$this->isAllowed(Privileges::getResourceId(DoctorantPrivil
                 <td>
                     <span class="<?php echo $doctorant->estHistorise() ? 'historise' : '' ?>">
                         <?php if ($canConsulter): ?>
-                            <a href="<?php echo $this->url('doctorant/voir', ['doctorant' => IdifyFilter::id($doctorant)]) ?>"
+                            <a href="<?php echo $this->url('doctorant/tableau-de-bord', ['doctorant' => IdifyFilter::id($doctorant)]) ?>"
                                title="Accéder à la fiche détaillée de ce doctorant">
                                 <?php echo $doctorant->getId() ?>
                             </a>

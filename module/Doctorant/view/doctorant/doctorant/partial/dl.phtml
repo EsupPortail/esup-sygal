@@ -102,7 +102,7 @@ $ddClass = $horizontal ? 'col-md-7' : '';
 <?php endif ?>
 
 <?php if ($includeGotoDetailsLink ?? false): ?>
-    <a href="<?php echo $this->url('doctorant/voir', ['doctorant' => $entity->getId()], [], true); ?>"
+    <a href="<?php echo $this->url('doctorant/tableau-de-bord', ['doctorant' => $entity->getId()], [], true); ?>"
        class="action btn btn-outline-secondary"><span class="icon icon-voir"></span> Voir la fiche détaillée de ce·tte doctorant·e
     </a>
 <?php endif ?>

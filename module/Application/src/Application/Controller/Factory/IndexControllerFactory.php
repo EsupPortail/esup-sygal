@@ -4,8 +4,11 @@ namespace Application\Controller\Factory;
 
 use Application\Controller\IndexController;
 use Application\Service\Rapport\RapportService;
-use Doctorant\Service\DoctorantService;
+use Application\Service\Variable\VariableService;
 use Doctrine\ORM\EntityManager;
+use Information\Service\InformationService;
+use Interop\Container\ContainerInterface;
+use Laminas\Authentication\AuthenticationServiceInterface;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use RapportActivite\Rule\Creation\RapportActiviteCreationRule;
@@ -13,10 +16,6 @@ use RapportActivite\Service\RapportActiviteService;
 use Structure\Service\EcoleDoctorale\EcoleDoctoraleService;
 use Structure\Service\Etablissement\EtablissementService;
 use These\Service\These\TheseService;
-use Application\Service\Variable\VariableService;
-use Information\Service\InformationService;
-use Interop\Container\ContainerInterface;
-use Laminas\Authentication\AuthenticationServiceInterface;
 
 class IndexControllerFactory
 {
@@ -77,10 +76,6 @@ class IndexControllerFactory
         /** @var \RapportActivite\Rule\Creation\RapportActiviteCreationRule $rapportActiviteCreationRule */
         $rapportActiviteCreationRule = $container->get(RapportActiviteCreationRule::class);
         $controller->setRapportActiviteCreationRule($rapportActiviteCreationRule);
-
-        /** @var DoctorantService $doctorantService */
-        $doctorantService = $container->get(DoctorantService::class);
-        $controller->setDoctorantService($doctorantService);
 
         /**
          * @var VariableService $variableService

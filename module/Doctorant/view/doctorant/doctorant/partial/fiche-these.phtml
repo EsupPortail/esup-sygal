@@ -1,0 +1,101 @@
+<?php
+/**
+ * @see \Doctorant\Controller\DoctorantController::tableauDeBordAction()
+ * @var These $these
+ */
+
+use These\Entity\Db\These;
+?>
+
+
+<div class="card-body">
+    <div class="card mb-3">
+        <div class="card-body">
+            <div class="thesis-title d-flex align-items-start gap-2">
+                <div>
+                    <h5 class="card-title mb-1">Titre</h5>
+                    <p class="card-text text-muted large fst-italic">
+                        “<?php echo trim($these->getTitre()) ?>”
+                    </p>
+                    <?php if ($these->estConfidentielle()): ?>
+                        <?php $content = sprintf('<span class="text-danger">Confidentielle jusqu\'au %s</span>', $these->getDateFinConfidentialiteToString()) ?>
+                        <span class="text-danger"
+                              data-bs-toggle="popover"
+                              data-bs-content="<?php echo htmlspecialchars($content) ?>"
+                              data-bs-trigger="hover"
+                              data-bs-html="true"
+                              data-bs-placement="bottom">
+                            <span class="badge bg-danger">CONFIDENTIELLE</span>
+                        </span>
+                    <?php endif ?>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <ul class="list-group list-group-flush">
+        <li class="list-group-item">
+            <strong>Discipline : </strong><?php echo $these->getDiscipline() ?>
+        </li>
+
+        <li class="list-group-item">
+            <strong>Établissement d'inscription : </strong>
+            <?php if ($these->getEtablissement()): ?>
+                <?php echo $this->structure($these->getEtablissement(), true, false, [
+                    "css" => "max-width:100%;
+                    word-break:break-word; overflow-wrap:break-word;
+                    white-space:normal;"
+                ]); ?>
+            <?php else: ?>
+                <span class="badge bg-danger text-white" style="font-size:unset">
+                    <span class="icon icon-warning" style="padding-right: unset"></span>
+                    Aucun établissement n'est renseigné.
+                </span>
+            <?php endif; ?>
+        </li>
+
+        <li class="list-group-item">
+            <strong>Unité de recherche :</strong>
+            <?php if ($these->getUniteRecherche()): ?>
+                <?php echo $this->structure($these->getUniteRecherche(), true, false, [
+                    "css" => "max-width:100%;
+                     word-break:break-word; overflow-wrap:break-word;
+                     white-space:normal;"
+                ]); ?>
+            <?php else: ?>
+                <span class="badge bg-warning text-white" style="font-size:unset">
+                                    <span class="icon icon-warning" style="padding-right: unset"></span>
+                                    <?php echo $this->translate("Aucune unité de recherche n'est renseignée") ?>
+                                </span>
+            <?php endif; ?>
+        </li>
+        <li class="list-group-item">
+            <strong>École doctorale :</strong>
+            <?php if ($these->getEcoleDoctorale()): ?>
+                <?php echo $this->structure($these->getEcoleDoctorale(), true, false, [
+                    "css" => "max-width:100%;
+                    word-break:break-word; overflow-wrap:break-word;
+                    white-space:normal;"
+                ]); ?>
+            <?php else: ?>
+                <span class="badge bg-danger text-white" style="font-size:unset">
+                    <span class="icon icon-warning" style="padding-right: unset"></span>
+                    <?php echo $this->translate("Aucune école doctorale n'est renseignée") ?>
+                </span>
+            <?php endif ?>
+        </li>
+    </ul>
+</div>
+<div class="card-footer">
+    <a href="<?php echo $this->url('these/identite', ['these' => $these], [], true); ?>" class="btn btn-primary">
+        <span class="icon icon-voir"></span>
+        Accéder à la fiche détaillée
+    </a>
+</div>
+
+<style>
+    .thesis-title {
+        border-left: 4px solid var(--primary-color);
+        padding-left: 12px;
+    }
+</style>

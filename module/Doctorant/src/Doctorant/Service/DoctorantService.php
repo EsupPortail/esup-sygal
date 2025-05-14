@@ -2,31 +2,18 @@
 
 namespace Doctorant\Service;
 
-use Application\Entity\Db\TypeRapport;
 use Application\Entity\Db\Utilisateur;
 use Application\Entity\UserWrapper;
-use Application\Service\AnneeUniv\AnneeUnivServiceAwareTrait;
 use Application\Service\BaseService;
-use Application\Service\Rapport\RapportServiceAwareTrait;
 use Application\Service\Source\SourceServiceAwareTrait;
 use Application\SourceCodeStringHelperAwareTrait;
 use Doctorant\Entity\Db\Doctorant;
 use Doctorant\Entity\Db\Repository\DoctorantRepository;
 use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\NonUniqueResultException;
-use Formation\Entity\Db\Etat;
-use Formation\Entity\Db\Inscription;
 use Individu\Entity\Db\Individu;
-use RapportActivite\Rule\Creation\RapportActiviteCreationRuleAwareTrait;
-use RapportActivite\Service\RapportActiviteServiceAwareTrait;
-use Soutenance\Entity\PropositionThese;
-use Soutenance\Service\Proposition\PropositionServiceAwareTrait;
-use Soutenance\Service\Proposition\PropositionThese\PropositionTheseServiceAwareTrait;
-use InscriptionAdministrative\Entity\Db\InscriptionAdministrativeApprenant;
 use Structure\Entity\Db\Etablissement;
 use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
-use These\Entity\Db\These;
-use These\Service\These\TheseServiceAwareTrait;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Service\EntityManagerAwareTrait;
 
@@ -36,12 +23,6 @@ class DoctorantService extends BaseService
     use SourceCodeStringHelperAwareTrait;
     use SourceServiceAwareTrait;
     use EntityManagerAwareTrait;
-    use RapportActiviteServiceAwareTrait;
-    use RapportActiviteCreationRuleAwareTrait;
-    use RapportServiceAwareTrait;
-    use TheseServiceAwareTrait;
-    use PropositionTheseServiceAwareTrait;
-    use AnneeUnivServiceAwareTrait;
 
     /**
      * @return DoctorantRepository
@@ -160,81 +141,5 @@ class DoctorantService extends BaseService
         $doctorant->setCodeApprenantInSource(uniqid());
 
         return $doctorant;
-    }
-
-    public function getVariablesForTableauDeBord(Doctorant $doctorant)
-    {
-        $theses = $this->theseService->getRepository()->findThesesByDoctorant($doctorant, [These::ETAT_EN_COURS, These::ETAT_SOUTENUE]);
-
-        /** @var Inscription[] $inscription */
-        $inscriptions = $this->getEntityManager()->getRepository(Inscription::class)->findInscriptionsByDoctorant($doctorant);
-        $enCours = [];
-        /** @var Inscription $inscription */
-        foreach ($inscriptions as $inscription) {
-            $seances = $inscription->getSession()->getSeances()->toArray();
-            $seances = array_filter($seances, function ($a) {
-                return $a->estNonHistorise();
-            });
-            $nbSeance = count($seances);
-            if ($nbSeance > 0 && $inscription->getSession()->getEtat()->getCode() !== Etat::CODE_CLOTURER && $inscription->getSession()->getEtat()->getCode() !== Etat::CODE_ANNULEE) {
-                if ($inscription->estNonHistorise()) $enCours[] = $inscription;
-            }
-        }
-
-        $typeRapport = $this->rapportService->findTypeRapportByCode(TypeRapport::RAPPORT_CSI);
-        $rapportsCSIParAnnee = $this->rapportService->findRapportsParAnneesForThese($theses[0], $typeRapport);
-
-        $rapportsActiviteParAnnee = $this->rapportActiviteService->findRapportsParAnneesForThese($theses[0]);
-        $rapportsActivite = $this->rapportActiviteService->findRapportsForThese($theses[0]);
-        $this->rapportActiviteCreationRule->setRapportsExistants($rapportsActivite);
-        $canCreateRapportFinContrat = $this->rapportActiviteCreationRule->canCreateRapportFinContrat();
-
-        /** @var PropositionThese $proposition */
-        $proposition = $this->propositionTheseService->findOneForThese($theses[0]);
-        if ($proposition->getDate() !== null) {
-            $anneeUnivProposition = $this->anneeUnivService->fromDate($proposition->getDate());
-        }
-
-        return [
-            'doctorant' => $doctorant,
-            'theses' => $theses,
-            'enCours' => $enCours,
-            'rapportsActiviteParAnnee' => $rapportsActiviteParAnnee,
-            'rapportsCSIParAnnee' => $rapportsCSIParAnnee,
-            'canCreateRapportFinContrat' => $canCreateRapportFinContrat,
-            'anneeUnivProposition' => $anneeUnivProposition ?? null,
-            'proposition' => $proposition
-        ];
-    }
-
-    /**
-     * Met à jour les attributs de l'instance de Doctorant spécifiée, à partir des données apprenant fournies.
-     */
-    public function updateDoctorantFromApprenant(Doctorant $doctorant, InscriptionAdministrativeApprenant $iaa): void
-    {
-        $doctorant->setCodeApprenantInSource($iaa->getCode());
-        $doctorant->setIne($iaa->getINE());
-    }
-
-
-    /**
-     * Détermine si le doctorant spécifié possède des attributs dont la valeur pourrait être mise à jour
-     * à partir de ceux de l'apprenant spécifié.
-     */
-    public function diffDoctorantFromApprenant(
-        Doctorant $doctorant,
-        InscriptionAdministrativeApprenant $apprenant,
-        ?array $fieldNames = null): array
-    {
-        $doctorantFromApprenant = new Doctorant();
-        $this->updateDoctorantFromApprenant($doctorantFromApprenant, $apprenant);
-
-        if ($fieldNames === null) {
-            $fieldNames = [
-                'ine',
-            ];
-        }
-
-        return $this->computeEntityDiff($doctorant, $doctorantFromApprenant, $fieldNames);
     }
 }

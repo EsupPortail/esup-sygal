@@ -14,6 +14,8 @@ use Doctorant\Controller\DoctorantRechercheController;
 use Doctorant\Controller\DoctorantRechercheControllerFactory;
 use Doctorant\Controller\MissionEnseignementController;
 use Doctorant\Controller\MissionEnseignementControllerFactory;
+use Doctorant\Facade\TableauDeBordDoctorantFacade;
+use Doctorant\Facade\TableauDeBordDoctorantFacadeFactory;
 use Doctorant\Form\Doctorant\DoctorantForm;
 use Doctorant\Form\Doctorant\DoctorantFormFactory;
 use Doctorant\Form\MailConsentementForm;
@@ -113,7 +115,7 @@ return [
                 [
                     'controller' => DoctorantController::class,
                     'action' => [
-                        'voir',
+                        'tableau-de-bord',
                     ],
                     'privileges' => [
                         DoctorantPrivileges::DOCTORANT_CONSULTER_TOUS,
@@ -224,16 +226,17 @@ return [
                             ],
                         ],
                     ],
-                    'voir' => [
+                    'tableau-de-bord' => [
                         'type' => Segment::class,
                         'options' => [
-                            'route' => '/voir/:doctorant',
+                            'route' => '/tableau-de-bord/:doctorant',
                             'constraints' => [
                                 'doctorant' => '\d+',
                             ],
                             'defaults' => [
+                                /** @see DoctorantController::tableauDeBordAction() */
                                 'controller' => DoctorantController::class,
-                                'action' => 'voir',
+                                'action' => 'tableau-de-bord',
                             ],
                         ],
                     ],
@@ -414,6 +417,7 @@ return [
             MissionEnseignementService::class => MissionEnseignementServiceFactory::class,
             TheseAssertion::class => TheseAssertionFactory::class,
             TheseEntityAssertion::class => TheseEntityAssertionFactory::class,
+            TableauDeBordDoctorantFacade::class => TableauDeBordDoctorantFacadeFactory::class,
         ],
         'aliases' => [
             DoctorantService::class => 'DoctorantService',

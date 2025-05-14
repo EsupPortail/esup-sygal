@@ -1,0 +1,252 @@
+<?php
+
+/**
+ * @var PhpRenderer $this
+ * @var These $these
+ * @var Doctorant $doctorant
+ * @var array $rapportsActiviteParAnnee
+ * @var array $rapportsCSIParAnnee
+ * @var bool $canCreateRapportFinContrat
+ * @var AnneeUniv $anneeUnivProposition
+ * @var PropositionThese $proposition
+ *
+ * @see DoctorantController::tableauDeBordAction()
+ * /
+ */
+
+use Application\Entity\AnneeUniv;
+use Application\Entity\AnneeUnivInterface;
+use Application\Entity\Db\Rapport;
+use Application\Filter\IdifyFilter;
+use Application\Provider\Privilege\RapportPrivileges;
+use Application\View\Renderer\PhpRenderer;
+use Doctorant\Entity\Db\Doctorant;
+use RapportActivite\Entity\Db\RapportActivite;
+use RapportActivite\Provider\Privilege\RapportActivitePrivileges;
+use Soutenance\Entity\PropositionThese;
+use These\Entity\Db\These;
+use These\Entity\Db\TheseAnneeUniv;
+use UnicaenPrivilege\Provider\Privilege\Privileges;
+
+$canListerRapportCSI = $this->isAllowed(Privileges::getResourceId(RapportPrivileges::RAPPORT_CSI_LISTER_SIEN)) ||
+    $this->isAllowed(Privileges::getResourceId(RapportPrivileges::RAPPORT_CSI_LISTER_TOUT));
+
+$canListerRapportActivite = $this->isAllowed(Privileges::getResourceId(RapportActivitePrivileges::RAPPORT_ACTIVITE_LISTER_SIEN)) ||
+    $this->isAllowed(Privileges::getResourceId(RapportActivitePrivileges::RAPPORT_ACTIVITE_LISTER_TOUT));
+
+$anneesUniv = $these->getAnneesUnivInscription()->toArray();
+/** @var int[] $annees */
+$annees = array_map(function(AnneeUnivInterface $anneeUniv) {
+    return $anneeUniv->getPremiereAnnee();
+}, $anneesUniv);
+
+$derniereAnneeUniv = AnneeUniv::fromPremiereAnnee(max($annees));
+
+if(is_array($anneesUniv)):
+    krsort($anneesUniv);
+    /** @var TheseAnneeUniv $annee */
+    foreach($anneesUniv as $annee) : ?>
+        <?php
+        $rapportsActivite = isset($rapportsActiviteParAnnee[$annee->getPremiereAnnee()]) ? $rapportsActiviteParAnnee[$annee->getPremiereAnnee()] : [];
+        /** @var RapportActivite|null $rapportAnnuel */
+        $rapportAnnuel = array_values(array_filter($rapportsActivite, function (RapportActivite $r) {
+            return empty($r->estFinContrat());
+        }))[0] ?? null;
+        /** @var RapportActivite|null $rapportFinContrat */
+        $rapportFinContrat = array_values(array_filter($rapportsActivite, function (RapportActivite $r) {
+            return $r->estFinContrat();
+        }))[0] ?? null;
+
+        /** @var Rapport|null $rapportCSI */
+        $rapportCSI = isset($rapportsCSIParAnnee[$annee->getPremiereAnnee()]) ? $rapportsCSIParAnnee[$annee->getPremiereAnnee()][0] : null;
+        ?>
+        <h2>
+            <span class="icon icon-calendrier"></span>
+            Année <?= $annee ?>
+        </h2>
+        <div class="row">
+            <?php if ($anneeUnivProposition && $anneeUnivProposition->getPremiereAnnee() === $annee->getPremiereAnnee()): ?>
+                <div class="col-md-4">
+                    <div class="box card card-recapitulatif-annuel">
+                        <div class="card-header bg-dark text-white">
+                            <h2 class="first">Soutenance</h2>
+                        </div>
+                        <div class="card-body">
+                            <div class="col-md-12">
+                                <?php echo $this->etatSoutenance()->render($proposition->getEtat(), ["css" => "margin-bottom:unset; margin-left: 15px;"]); ?>
+                            </div>
+                            <ul>
+                                <li><b>Date prévisionnelle :</b> <?= $proposition->getDate()->format("d/m/Y à H:i"); ?></li>
+                                <li><b>Lieu prévisionnel :</b> <?= $proposition->getLieu(); ?></li>
+                            </ul>
+                        </div>
+                        <div class="card-footer">
+                            <a
+                                <?php /** @see PropositionTheseController::propositionAction() */ ?>
+                                href="<?php echo $this->url("soutenance_these/proposition", ['these' => $these->getId()], [], true); ?>"
+                                class="btn btn-primary"
+                                title="Visualiser la proposition de soutenance">
+                                <span class="icon icon-voir"></span>
+                                Accéder à la proposition de soutenance
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            <?php endif; ?>
+
+            <?php if($canListerRapportActivite): ?>
+                <div class="col-md-4">
+                    <?php if ($rapportFinContrat): ?>
+                        <div class="box card card-recapitulatif-annuel">
+                            <div class="card-header bg-success text-white">
+                                <h2 class="first">Rapport Fin de contrat</h2>
+                            </div>
+                            <div class="card-body">
+                                Déposé par <?php echo $rapportFinContrat->getHistoCreateur() ?><br>
+                                le <?php echo $rapportFinContrat->getHistoCreation()->format('d/m/Y H:i') ?>
+                            </div>
+                            <div class="card-footer">
+                                <?php
+                                $canViewRapportFinContrat =
+                                    $this->isAllowed($rapportFinContrat, RapportActivitePrivileges::RAPPORT_ACTIVITE_CONSULTER_TOUT) ||
+                                    $this->isAllowed($rapportFinContrat, RapportActivitePrivileges::RAPPORT_ACTIVITE_CONSULTER_SIEN);
+
+                                if ($canViewRapportFinContrat): ?>
+                                    <a href="<?php echo $this->url('rapport-activite/consulter', ['these' => $rapportFinContrat->getThese()->getId(), 'rapport' => $rapportFinContrat->getId()]) ?>"
+                                       class="btn btn-primary"
+                                       title="Consulter ce rapport">
+                                        <span class="icon icon-voir"></span>
+                                        Accéder au rapport
+                                    </a>
+                                <?php endif; ?>
+                            </div>
+                        </div>
+                    <?php endif; ?>
+
+                    <?php if ($canCreateRapportFinContrat && ($derniereAnneeUniv && $derniereAnneeUniv->getPremiereAnnee() === $annee->getPremiereAnnee())): ?>
+                        <div class="box card card-recapitulatif-annuel">
+                            <div class="card-header bg-danger text-white">
+                                <h2 class="first">Rapport Fin de contrat</h2>
+                            </div>
+                            <div class="card-body">
+                                <p>Aucun rapport d'activité de fin de contrat déposé</p>
+                            </div>
+                            <div class="card-footer">
+                                <?php if ($canCreateRapportFinContrat) : ?>
+                                    <a href="<?php echo $this->url('rapport-activite/lister', ['these' => $these->getId()]) ?>"
+                                       class="btn btn-primary">
+                                        <span class="icon icon-ajouter"></span>
+                                        Ajouter un rapport de fin de contrat
+                                    </a>
+                                <?php endif; ?>
+                            </div>
+                        </div>
+                    <?php endif; ?>
+
+                    <div class="box card card-recapitulatif-annuel">
+                        <div class="card-header <?= $rapportAnnuel ? "bg-success" : "bg-danger" ?> text-white">
+                            <h2 class="first">Rapport Annuel</h2>
+                        </div>
+                        <div class="card-body">
+                            <?php if ($rapportAnnuel): ?>
+                                Déposé par <?php echo $rapportAnnuel->getHistoCreateur() ?><br>
+                                le <?php echo $rapportAnnuel->getHistoCreation()->format('d/m/Y H:i') ?>
+                            <?php else: ?>
+                                <p>Aucun rapport d'activité annuel déposé</p>
+                            <?php endif; ?>
+                        </div>
+                        <div class="card-footer">
+                            <?php
+                            if($rapportAnnuel) :
+                                $canDlRapportAnnuel =
+                                    $this->isAllowed($rapportAnnuel, RapportActivitePrivileges::RAPPORT_ACTIVITE_TELECHARGER_TOUT) ||
+                                    $this->isAllowed($rapportAnnuel, RapportActivitePrivileges::RAPPORT_ACTIVITE_TELECHARGER_SIEN);
+                                if ($canDlRapportAnnuel && $fichier = $rapportAnnuel->getFichier()): ?>
+                                    <a href="<?php echo $this->url('rapport-activite/telecharger', ['rapport' => IdifyFilter::id($rapportAnnuel)]) ?>"
+                                       title="Télécharger ce rapport"
+                                       class="btn btn-primary">
+                                        <span class="icon icon-telecharger"></span>
+                                        Télécharger ce rapport
+                                    </a>
+                                    <span class="icon icon-info text-info"
+                                          data-bs-toggle="tooltip"
+                                          title="Il s'agit d'un rapport non dématérialisé téléversé dans l'ancienne version du module Rapport d'activité">
+                                        </span>
+                                <?php endif;
+                                $canViewRapportAnnuel =
+                                    $this->isAllowed($rapportAnnuel, RapportActivitePrivileges::RAPPORT_ACTIVITE_CONSULTER_TOUT) ||
+                                    $this->isAllowed($rapportAnnuel, RapportActivitePrivileges::RAPPORT_ACTIVITE_CONSULTER_SIEN);
+
+                                if ($canViewRapportAnnuel): ?>
+                                    <a href="<?php echo $this->url('rapport-activite/consulter', ['these' => $these->getId(), 'rapport' => $rapportAnnuel->getId()]) ?>"
+                                       class="btn btn-primary"
+                                       title="Consulter ce rapport">
+                                        <span class="icon icon-voir"></span>
+                                        Accéder au rapport
+                                    </a>
+                                <?php endif; ?>
+                            <?php else: ?>
+                                <a href="<?php echo $this->url('rapport-activite/lister', ['these' => $these->getId()]) ?>"
+                                   class="btn btn-primary">
+                                    <span class="icon icon-ajouter"></span>
+                                    Ajouter un rapport annuel
+                                </a>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                </div>
+            <?php endif; ?>
+
+            <?php if($canListerRapportCSI): ?>
+                <div class="col-md-4">
+                    <div class="box card card-recapitulatif-annuel">
+                        <div class="card-header <?= $rapportCSI ? "bg-success" : "bg-danger" ?> text-white">
+                            <h2 class="first">Rapport CSI</h2>
+                        </div>
+                        <div class="card-body">
+                            <?php if($rapportCSI): ?>
+                                Téléversé par <?php echo $rapportCSI->getHistoCreateur() ?><br>
+                                le <?php echo $rapportCSI->getHistoCreation()->format('d/m/Y H:i') ?>
+                            <?php else: ?>
+                                <p>Aucun rapport CSI déposé</p>
+                            <?php endif; ?>
+                        </div>
+                        <div class="card-footer">
+                            <?php if($rapportCSI) :
+                                $canDlRapportCSI = $this->isAllowed($rapportCSI, RapportPrivileges::RAPPORT_CSI_TELEVERSER_TOUT) ||
+                                    $this->isAllowed($rapportCSI, RapportPrivileges::RAPPORT_CSI_TELEVERSER_SIEN);
+
+                                if ($canDlRapportCSI): ?>
+                                    <a href="<?php echo $this->url('rapport-csi/telecharger', ['rapport' => IdifyFilter::id($rapportCSI)]) ?>"
+                                       title="Télécharger ce rapport"
+                                       class="btn btn-primary">
+                                        <span class="icon icon-telecharger"></span>
+                                        Télécharger ce rapport
+                                    </a>
+                                <?php endif; ?>
+                            <?php else: ?>
+                                <a href="<?php echo $this->url('rapport-csi/consulter', ['these' => $these->getId()]) ?>"
+                                   class="btn btn-primary">
+                                    <span class="icon icon-ajouter"></span>
+                                    Ajouter un rapport CSI
+                                </a>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                </div>
+            <?php endif; ?>
+        </div>
+    <?php endforeach; ?>
+<?php else: ?>
+    <p>Aucune inscription dans une année universitaire n'est en cours</p>
+<?php endif; ?>
+
+<style>
+    .card-recapitulatif-annuel {
+        transition: transform 0.2s ease;
+    }
+
+    .card-recapitulatif-annuel:hover {
+        transform: translateY(-4px);
+    }
+</style>

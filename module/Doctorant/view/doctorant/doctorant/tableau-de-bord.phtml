@@ -1,0 +1,158 @@
+<?php
+/**
+ * @var string $title
+ * @var These[] $theses
+ * @var PhpRenderer $this
+ * @var Doctorant $doctorant
+ * @var Inscription[] $inscriptions
+ * @var Inscription[] $enCours
+ * @var array $rapportsActiviteParAnnee
+ * @var array $rapportsCSIParAnnee
+ * @var bool $canCreateRapportFinContrat
+ * @var AnneeUniv $anneeUnivProposition
+ * @var PropositionThese $proposition
+ *
+ * @see DoctorantController::tableauDeBordAction()
+ * /
+ */
+
+use Application\Entity\AnneeUniv;
+use Application\View\Renderer\PhpRenderer;
+use Doctorant\Entity\Db\Doctorant;
+use Doctorant\Provider\Privilege\DoctorantPrivileges;
+use Formation\Entity\Db\Inscription;
+use Formation\Provider\Privilege\IndexPrivileges;
+use Soutenance\Entity\PropositionThese;
+use These\Entity\Db\These;
+use UnicaenPrivilege\Provider\Privilege\Privileges;
+
+$appName = $this->appInfos()->nom;
+/** @var These $these */
+$these = current($doctorant->getTheses());
+
+$canAccederIndexFormations = $this->isAllowed(Privileges::getResourceId(IndexPrivileges::INDEX_AFFICHER)) ||
+    $this->isAllowed(Privileges::getResourceId(IndexPrivileges::INDEX_DOCTORANT));
+$canModifierDoctorant =
+    $this->isAllowed($doctorant, DoctorantPrivileges::DOCTORANT_MODIFIER_TOUS) ||
+    $this->isAllowed($doctorant, DoctorantPrivileges::DOCTORANT_MODIFIER_TOUS);
+?>
+
+<h1 class="page-header">
+    <?= $title ?>
+</h1>
+
+<div class="tableau-de-bord-doctorant">
+    <div class="row align-items-stretch">
+        <div class="col-md-8">
+            <div class="box card h-100">
+                <div class="card-header these-card-header text-white">
+                    <h2 class="first">
+                        <span class="fas fa-book"></span>
+                        <?php echo $this->translate("Thèse"); ?>
+                    </h2>
+                </div>
+                <?php $class = $these->estConfidentielle() ? 'text-danger' : ''; ?>
+                <?php echo $this->partial('doctorant/doctorant/partial/fiche-these', ['these' => $these]) ?>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="box card h-100">
+                <div class="card-header these-card-header text-white">
+                    <h2 class="first">
+                        <span class="fas fa-graduation-cap"></span>
+                        <?php echo $this->translate("Doctorant"); ?>
+                    </h2>
+                </div>
+                <div class="card-body">
+                    <?php echo $this->partial('doctorant/doctorant/partial/fiche-doctorant', ['these' => $these]) ?>
+                </div>
+                <div class="card-footer">
+                    <a href="<?php echo $this->url('doctorant/tableau-de-bord', ['doctorant' => $doctorant->getId()], [], true); ?>"
+                       class="btn btn-primary">
+                        <span class="icon icon-voir"></span>
+                        Accéder à la fiche détaillée
+                    </a>
+                    <?php if ($canModifierDoctorant && !$doctorant->estHistorise()): ?>
+                        <a href="<?php echo $this->url('doctorant/modifier', ['doctorant' => $doctorant->getId()]) ?>"
+                           class="btn btn-primary float-end"
+                           title="Accéder à la page de modification de cet doctorant">
+                            <span class="icon icon-modifier"></span>
+                            Modifier le doctorant
+                        </a>
+                    <?php endif ?>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <?php if($canAccederIndexFormations): ?>
+        <br>
+        <div class="separator"></div>
+        <br>
+
+        <div class="row">
+            <div class="col-md-6">
+                <h2 class="page-header">
+                <span class="<?php echo $doctorant->estHistorise() ? 'historise' : '' ?>">
+                    Formations
+                </span>
+                </h2>
+            </div>
+        </div>
+        <div class="formations">
+            <!-- Formations à venir -->
+            <div class="box card">
+                <div class="card-header these-card-header text-white">
+                    <h2 class="first">Formations à venir</h2>
+                </div>
+                <div class="card-body">
+                    <?php echo $this->partial('doctorant/doctorant/partial/formations-en-cours', ['inscriptions' => $enCours]) ?>
+                </div>
+                <div class="card-footer">
+                    <a href="<?php echo $this->url('formation/catalogue', [], [], true); ?>" class="btn btn-primary">
+                        <span class="icon icon-voir"></span>
+                        Accéder au tableau de bord
+                    </a>
+                </div>
+            </div>
+        </div>
+    <?php endif; ?>
+
+    <br>
+    <div class="separator"></div>
+    <br>
+
+    <div class="row">
+        <div class="col-md-6">
+            <h2 class="page-header">
+            <span class="<?php echo $doctorant->estHistorise() ? 'historise' : '' ?>">
+                Récapitulatif annuel
+            </span>
+            </h2>
+        </div>
+    </div>
+
+    <div class="recapitulatif-annuel">
+        <?php echo $this->partial('doctorant/doctorant/partial/recapitulatif-annuel',
+            [
+                'these' => $these,
+                'doctorant' => $doctorant,
+                'rapportsActiviteParAnnee' => $rapportsActiviteParAnnee,
+                'rapportsCSIParAnnee' => $rapportsCSIParAnnee,
+                'canCreateRapportFinContrat' => $canCreateRapportFinContrat,
+                'anneeUnivProposition' => $anneeUnivProposition,
+                'proposition' => $proposition
+            ])
+        ?>
+    </div>
+</div>
+
+<style>
+    .formations, .recapitulatif-annuel {
+        padding: 1rem;
+    }
+
+    .tableau-de-bord-doctorant p, .tableau-de-bord-doctorant ul, .tableau-de-bord-doctorant li {
+        font-size: inherit !important;
+    }
+</style>

@@ -53,7 +53,7 @@ class DoctorantAssertion extends AbstractAssertion
                 case 'rechercher':
                     return true;
 
-                case 'voir':
+                case 'tableau-de-bord':
                 case 'consulter':
                     if (!$this->assertEntity($entity, DoctorantPrivileges::DOCTORANT_CONSULTER_SIEN)) {
                         return false;
@@ -100,7 +100,7 @@ class DoctorantAssertion extends AbstractAssertion
 
                     if ($role->isTheseDependant()) {
                         return in_array(true, array_map(
-                            fn(These $these) => !empty($this->acteurService->getRepository()->findActeursByTheseAndRole($these, $role)),
+                            fn(These $these) => !empty($this->acteurTheseService->getRepository()->findActeursByTheseAndRole($these, $role)),
                             $theses
                         ));
                     }
