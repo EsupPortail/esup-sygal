@@ -4,9 +4,23 @@
  * @var These $these
  */
 
+use Acteur\Entity\Db\ActeurThese;
+use Acteur\Filter\ActeurThese\ActeursTheseFormatter;
+use Application\Entity\Db\Role;
+use Individu\Provider\Privilege\IndividuPrivileges;
+use Individu\View\Helper\IndividuUsurpationHelper;
 use These\Entity\Db\These;
-?>
+use UnicaenPrivilege\Provider\Privilege\Privileges;
 
+$acteursFormatter = new ActeursTheseFormatter();
+$acteursFormatter->paramFilter(["role" => [
+    Role::CODE_DIRECTEUR_THESE,
+    Role::CODE_CODIRECTEUR_THESE,
+]]);
+$acteursFormatter->paramDisplay(["role" => true, "qualite" => true, "etablissement" => true, "uniteRecherche" => true]);
+$acteursFormatter->asArray(true);
+$acteursFormatted = $acteursFormatter->doFormat($these->getActeursSorted()->toArray());
+?>
 
 <div class="card-body">
     <div class="card mb-3">
@@ -82,6 +96,77 @@ use These\Entity\Db\These;
                     <span class="icon icon-warning" style="padding-right: unset"></span>
                     <?php echo $this->translate("Aucune école doctorale n'est renseignée") ?>
                 </span>
+            <?php endif ?>
+        </li>
+        <li class="list-group-item">
+            <?php if ($acteursFormatted): ?>
+                <?php
+                foreach ($acteursFormatted as $role => $acteurs) { ?>
+                    <dt><?php echo $role ?></dt>
+                    <dd>
+                        <table class="table table-extra-condensed">
+                            <?php foreach ($acteurs as $i => $result){
+                                /** @var ActeurThese $acteur */
+                                $acteur = $result["acteur"]; ?>
+                                <tr>
+                                    <td>
+                                        <?php
+                                        $ligne = [];
+                                        $canVisualiserIndividu = $this->isAllowed(Privileges::getResourceId(IndividuPrivileges::INDIVIDU_CONSULTER));
+                                        if ($canVisualiserIndividu) {
+                                            $identite = " <a href='".$this->url('individu/voir', ['individu' => $acteur->getIndividu()->getId()], [], true) ."'>" .
+                                                "<span title='Accéder à la fiche détaillée de cet individu'>" . $result["nom"] . "</span></a>";
+                                        } else {
+                                            $identite = $result["nom"];
+                                        }
+                                        if ($acteur->getRole()->estUsurpable() && ! isset($result['alerte-supann-id'])) {
+                                            // bouton d'usurpation d'identité
+                                            $individuUsurpationHelper = $this->plugin('individuUsurpation');
+                                            /* @var $individuUsurpationHelper IndividuUsurpationHelper */
+                                            $individuUsurpationHelper->setIndividu($acteur->getIndividu());
+                                            $identite .= $individuUsurpationHelper();
+                                        }
+                                        $ligne[] = $identite;
+                                        if (isset($result["complement"])) {
+                                            $ligne[] = "<strong>" . $result["complement"] . "</strong>";
+                                        }
+                                        if (isset($result["qualite"]) && trim($result["qualite"]) != "") {
+                                            $ligne[] = $result["qualite"];
+                                        }
+                                        echo implode('<br>', $ligne);
+                                        ?>
+                                    </td>
+                                    <td>
+                                        <?php
+                                        $ligne = [];
+                                        if (isset($result["etablissementForce"]) && trim($result["etablissementForce"]) != "") {
+                                            $ligne[] = sprintf("<span class='text-structure etablissement'><em data-bs-toggle='tooltip' data-bs-original-title='Valeur forcée (initialement : %s)'>%s</em></span>",
+                                                $result["etablissement"] ?? 'vide',
+                                                $result["etablissementForce"],
+                                            );
+                                        }
+                                        elseif (isset($result["etablissement"]) && trim($result["etablissement"]) != "") {
+                                            $ligne[] = "<span class='text-structure etablissement' style='background-color:white;padding: 4px 4px 5px 0;' data-bs-toggle='tooltip' data-placement='right' data-bs-original-title='Établissement'>" . $result["etablissement"] . "</span>";
+                                        }
+
+                                        if (isset($result["uniteRecherche"]) && trim($result["uniteRecherche"]) != "") {
+                                            $ligne[] = "<span class='text-structure ur' style='background-color:white;padding: 4px 4px 5px 0;'  data-bs-toggle='tooltip' data-placement='right' data-bs-original-title='Unité de recherche'>" . $result["uniteRecherche"] . "</span>";
+                                        }
+                                        echo implode('<br>', $ligne);
+                                        ?>
+                                    </td>
+                                </tr>
+                            <?php } ?>
+                        </table>
+                    </dd>
+                <?php } ?>
+            <?php else : ?>
+                <dd class="col-md-9">
+                    <span class="badge bg-danger text-white" style="font-size:unset">
+                        <span class="icon icon-warning" style="padding-right: unset"></span>
+                        <?php echo $this->translate("Aucune direction renseignée") ?>
+                    </span>
+                </dd>
             <?php endif ?>
         </li>
     </ul>

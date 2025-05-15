@@ -80,11 +80,6 @@ class Diffusion implements HistoriqueAwareInterface
     /**
      * @var string
      */
-    private $orcid;
-
-    /**
-     * @var string
-     */
     private $halId;
 
     /**
@@ -293,25 +288,6 @@ class Diffusion implements HistoriqueAwareInterface
     public function getAutorisMotif()
     {
         return $this->autorisMotif;
-    }
-
-    /**
-     * @return string
-     */
-    public function getOrcid()
-    {
-        return $this->orcid;
-    }
-
-    /**
-     * @param string $orcid
-     * @return self
-     */
-    public function setOrcid($orcid)
-    {
-        $this->orcid = $orcid;
-
-        return $this;
     }
 
     /**

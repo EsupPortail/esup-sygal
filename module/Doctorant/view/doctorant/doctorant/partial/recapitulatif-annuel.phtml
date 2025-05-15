@@ -24,6 +24,7 @@ use Doctorant\Entity\Db\Doctorant;
 use RapportActivite\Entity\Db\RapportActivite;
 use RapportActivite\Provider\Privilege\RapportActivitePrivileges;
 use Soutenance\Entity\PropositionThese;
+use Soutenance\Provider\Privilege\PropositionPrivileges;
 use These\Entity\Db\These;
 use These\Entity\Db\TheseAnneeUniv;
 use UnicaenPrivilege\Provider\Privilege\Privileges;
@@ -33,6 +34,8 @@ $canListerRapportCSI = $this->isAllowed(Privileges::getResourceId(RapportPrivile
 
 $canListerRapportActivite = $this->isAllowed(Privileges::getResourceId(RapportActivitePrivileges::RAPPORT_ACTIVITE_LISTER_SIEN)) ||
     $this->isAllowed(Privileges::getResourceId(RapportActivitePrivileges::RAPPORT_ACTIVITE_LISTER_TOUT));
+
+$canVisualiserProposition = $this->isAllowed(PropositionPrivileges::getResourceId(PropositionPrivileges::PROPOSITION_VISUALISER));
 
 $anneesUniv = $these->getAnneesUnivInscription()->toArray();
 /** @var int[] $annees */
@@ -73,23 +76,27 @@ if(is_array($anneesUniv)):
                         </div>
                         <div class="card-body">
                             <div class="col-md-12">
-                                <?php echo $this->etatSoutenance()->render($proposition->getEtat(), ["css" => "margin-bottom:unset; margin-left: 15px;"]); ?>
+                                <?php echo $this->etatSoutenance()->render($proposition->getEtat(), ["css" => "margin-bottom:unset; margin-left: 15px; margin-right: 15px;"]); ?>
                             </div>
-                            <ul>
-                                <li><b>Date prévisionnelle :</b> <?= $proposition->getDate()->format("d/m/Y à H:i"); ?></li>
-                                <li><b>Lieu prévisionnel :</b> <?= $proposition->getLieu(); ?></li>
-                            </ul>
+                            <?php if($canVisualiserProposition): ?>
+                                <ul>
+                                    <li><b>Date prévisionnelle :</b> <?= $proposition->getDate()->format("d/m/Y à H:i"); ?></li>
+                                    <li><b>Lieu prévisionnel :</b> <?= $proposition->getLieu(); ?></li>
+                                </ul>
+                            <?php endif; ?>
                         </div>
-                        <div class="card-footer">
-                            <a
-                                <?php /** @see PropositionTheseController::propositionAction() */ ?>
-                                href="<?php echo $this->url("soutenance_these/proposition", ['these' => $these->getId()], [], true); ?>"
-                                class="btn btn-primary"
-                                title="Visualiser la proposition de soutenance">
-                                <span class="icon icon-voir"></span>
-                                Accéder à la proposition de soutenance
-                            </a>
-                        </div>
+                        <?php if($canVisualiserProposition): ?>
+                            <div class="card-footer">
+                                <a
+                                    <?php /** @see PropositionTheseController::propositionAction() */ ?>
+                                    href="<?php echo $this->url("soutenance_these/proposition", ['these' => $these->getId()], [], true); ?>"
+                                    class="btn btn-primary"
+                                    title="Visualiser la proposition de soutenance">
+                                    <span class="icon icon-voir"></span>
+                                    Accéder à la proposition de soutenance
+                                </a>
+                            </div>
+                        <?php endif; ?>
                     </div>
                 </div>
             <?php endif; ?>

@@ -28,6 +28,10 @@ class DoctorantForm extends Form implements InputFilterProviderInterface
                 ->setLabel("INE :")
         );
         $this->add(
+            (new Text('orcid'))
+                ->setLabel("ORCID :")
+        );
+        $this->add(
             (new Text('idRef'))
                 ->setLabel("IdRef :")
         );

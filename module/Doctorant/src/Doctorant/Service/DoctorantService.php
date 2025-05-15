@@ -110,7 +110,7 @@ class DoctorantService extends BaseService
     /**
      * Enregistre le Doctorant en base de données.
      *
-     * NB : l'IdRef de l'individu lié peut avoir été modifié donc le flush() sans argument est nécessaire.
+     * NB : l'IdRef/ORCID de l'individu lié peut avoir été modifié donc le flush() sans argument est nécessaire.
      */
     public function saveDoctorant(Doctorant $doctorant): void
     {

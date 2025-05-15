@@ -21,6 +21,7 @@
         <field name="prenom2" column="prenom2"/>
         <field name="prenom3" column="prenom3"/>
         <field name="idRef" column="id_ref" nullable="true"/>
+        <field name="orcid" column="orcid" nullable="true"/>
 
         <field name="npdForce" type="string" column="npd_force"/>
         <field name="estSubstituantModifiable" type="boolean" column="est_substituant_modifiable"/>

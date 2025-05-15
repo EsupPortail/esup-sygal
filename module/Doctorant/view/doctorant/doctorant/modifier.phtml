@@ -33,12 +33,21 @@ $form->setAttribute('class', 'row')->prepare();
         NB : prenez garde de ne créer un doctorant que si vous êtes certain·e qu'il n'existe pas déjà.
         Dédoublonner des doctorants n'est pas chose facile.
     </p>
+<?php elseif($doctorant->getSource()->getImportable()): ?>
+    <p class="lead text-warning">
+        Le doctorant étant issu d’une source de données externe, certaines informations ne sont pas modifiables.
+    </p>
 <?php endif ?>
 
 <?php echo $this->form()->openTag($form) ?>
 <div class="row">
     <div class="col-md-2">
         <?php echo $this->formControlGroup($form->get('ine')) ?>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-2">
+        <?php echo $this->formControlGroup($form->get('orcid')) ?>
     </div>
 </div>
 <div class="row">

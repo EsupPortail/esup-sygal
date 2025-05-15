@@ -44,7 +44,7 @@ use Application\Service\Message\DiffusionMessages;
         </div>
     </li>
 
-    <?php if ($orcid = $diffusion->getOrcid()): ?>
+    <?php if ($orcid = $these->getDoctorant()->getIndividu()?->getOrcid()): ?>
         <li>Identifiant ORCID : <code class="text-muted"><?php echo $orcid ?></code></li>
     <?php endif ?>
 

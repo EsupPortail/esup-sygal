@@ -9,6 +9,7 @@ use Doctrine\Laminas\Hydrator\DoctrineObject;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\ORMException;
 use Fichier\Entity\Db\VersionFichier;
+use Individu\Entity\Db\Individu;
 use UnicaenApp\Exception\RuntimeException;
 
 /**
@@ -37,7 +38,8 @@ class RdvBuHydrator extends DoctrineObject
         $data['versionArchivableFournie'] = $this->existeVersionArchivable($rdvBu);
 
         if ($diffusion = $this->getDiffusion($rdvBu)) {
-            $data['idOrcid'] = $diffusion->getOrcid();
+            $individu = $this->getIndividuThese($diffusion);
+            $data['idOrcid'] = $individu?->getOrcid();
             $data['halId'] = $diffusion->getHalId();
             $data['nnt'] = $diffusion->getNNT();
         }
@@ -61,7 +63,14 @@ class RdvBuHydrator extends DoctrineObject
         $object = parent::hydrate($data, $rdvBu);
 
         if ($diffusion = $this->getDiffusion($rdvBu)) {
-            $diffusion->setOrcid($data['idOrcid']);
+            $individu = $this->getIndividuThese($diffusion);
+            $individu?->setOrcid($data['idOrcid']);
+            try {
+                $this->objectManager->flush($individu);
+            } catch (ORMException $e) {
+                throw new RuntimeException("Impossible d'enregistrer les modifications sur l'individu", null, $e);
+            }
+
             $diffusion->setHalId($data['halId']);
             $diffusion->setNNT($data['nnt'] ?? null);
             try {
@@ -84,5 +93,17 @@ class RdvBuHydrator extends DoctrineObject
         $version = $this->fichierTheseService->fetchVersionFichier(VersionFichier::CODE_ORIG);
 
         return $rdvBu->getThese()->getDiffusionForVersion($version);
+    }
+
+    /**
+     * @param Diffusion $diffusion
+     * @return Diffusion|null
+     */
+    private function getIndividuThese(Diffusion $diffusion): ?Individu
+    {
+        $these = $diffusion->getThese();
+        $doctorant = $these?->getDoctorant();
+
+        return $doctorant->getIndividu();
     }
 }

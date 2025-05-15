@@ -112,6 +112,7 @@ class Individu implements
      * @var string|null
      */
     private ?string $idRef = null;
+    private ?string $orcid = null;
 
     /**
      * @var integer
@@ -629,6 +630,22 @@ class Individu implements
     {
         $this->idRef = $idRef;
         return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getOrcid(): ?string
+    {
+        return $this->orcid;
+    }
+
+    /**
+     * @param string|null $orcid
+     */
+    public function setOrcid(?string $orcid): void
+    {
+        $this->orcid = $orcid;
     }
 
     /**

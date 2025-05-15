@@ -66,21 +66,16 @@ $canModifierDoctorant =
                 <div class="card-body">
                     <?php echo $this->partial('doctorant/doctorant/partial/fiche-doctorant', ['these' => $these]) ?>
                 </div>
-                <div class="card-footer">
-                    <a href="<?php echo $this->url('doctorant/tableau-de-bord', ['doctorant' => $doctorant->getId()], [], true); ?>"
-                       class="btn btn-primary">
-                        <span class="icon icon-voir"></span>
-                        Accéder à la fiche détaillée
-                    </a>
-                    <?php if ($canModifierDoctorant && !$doctorant->estHistorise()): ?>
+                <?php if ($canModifierDoctorant && !$doctorant->estHistorise()): ?>
+                    <div class="card-footer">
                         <a href="<?php echo $this->url('doctorant/modifier', ['doctorant' => $doctorant->getId()]) ?>"
-                           class="btn btn-primary float-end"
+                           class="btn btn-primary"
                            title="Accéder à la page de modification de cet doctorant">
                             <span class="icon icon-modifier"></span>
                             Modifier le doctorant
                         </a>
-                    <?php endif ?>
-                </div>
+                    </div>
+                <?php endif ?>
             </div>
         </div>
     </div>

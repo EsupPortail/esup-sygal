@@ -13,6 +13,7 @@ class DoctorantHydrator extends DoctrineObject
         $data = parent::extract($object);
 
         $data['idRef'] = $object->getIndividu()->getIdRef();
+        $data['orcid'] = $object->getIndividu()->getOrcid();
 
         return $data;
     }
@@ -22,6 +23,7 @@ class DoctorantHydrator extends DoctrineObject
         /** @var \Doctorant\Entity\Db\Doctorant $object */
 
         $object->getindividu()->setIdRef($data['idRef'] ?? null);
+        $object->getindividu()->setOrcid($data['orcid'] ?? null);
 
         return parent::hydrate($data, $object);
     }

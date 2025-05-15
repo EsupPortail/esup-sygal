@@ -54,3 +54,17 @@ update unicaen_privilege_privilege
     set code = 'modifier-email-contact-et-consentement',
         libelle = 'Modifier email de contact et consentement du doctorant'
     where categorie_id = (select id from unicaen_privilege_categorie where code = 'doctorant') and code = 'modifier-email-contact'
+
+
+-- Ajout de l'ORCID pour un doctorant
+alter table individu add orcid varchar(200);
+
+-- Transfert des données de la table diffusion vers le champ nouvellement crée dans individu
+UPDATE individu i
+SET orcid = d.orcid
+    FROM diffusion d
+         JOIN these t ON d.these_id = t.id
+    JOIN doctorant doc ON t.doctorant_id = doc.id
+WHERE doc.individu_id = i.id and d.orcid is not null and trim(d.orcid) != '';
+
+alter table diffusion drop column orcid;

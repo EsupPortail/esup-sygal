@@ -15,7 +15,6 @@
         <field name="autorisMel" type="integer" column="autoris_mel" nullable="false"/>
         <field name="autorisEmbargoDuree" type="string" column="autoris_embargo_duree" length="20" nullable="true"/>
         <field name="autorisMotif" type="string" column="autoris_motif" length="2000" nullable="true"/>
-        <field name="orcid" type="string" column="orcid" length="200" nullable="true"/>
         <field name="halId" type="string" column="hal_id" length="100" nullable="true"/>
         <field name="nnt" type="string" column="nnt" length="200" nullable="true"/>
         <field name="creationAuto" type="boolean" column="creation_auto"/>
