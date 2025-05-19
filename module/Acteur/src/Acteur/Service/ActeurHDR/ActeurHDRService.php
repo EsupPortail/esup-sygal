@@ -32,8 +32,8 @@ class ActeurHDRService extends AbstractActeurService
     {
         $qb = $this->getRapporteurDansEnCoursQb($individu)
             ->addSelect('hdr')->join('acteur.hdr', 'hdr')
-            ->andWhere('hdr.etat = :encours')
-            ->setParameter('encours', HDR::ETAT_EN_COURS);
+            ->andWhere('hdr.etat IN (:encours)')
+            ->setParameter('encours', HDR::ETATS_EN_COURS);
 
         return $qb->getQuery()->getResult();
     }

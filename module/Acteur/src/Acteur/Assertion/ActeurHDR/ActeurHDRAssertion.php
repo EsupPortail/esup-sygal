@@ -109,7 +109,7 @@ class ActeurHDRAssertion extends AbstractActeurAssertion
 
     private function assertEtatHDR(HDR $hdr): void
     {
-        $this->assertTrue($hdr->getEtatHDR() == HDR::ETAT_EN_COURS, "l'HDR doit être en cours");
+        $this->assertTrue(in_array($hdr->getEtatHDR(), HDR::ETATS_EN_COURS), "l'HDR doit être en cours");
     }
 
     private function getRequestedHDR(): ?HDR

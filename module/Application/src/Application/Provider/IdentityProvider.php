@@ -239,7 +239,7 @@ class IdentityProvider implements ProviderInterface, ChainableProvider
         }
 
         // le candidat doit avoir une HDR en cours ou soutenue
-        $hdrs = array_filter($candidat->getHDRs(), fn(HDR $hdr) => in_array($hdr->getEtatHDR(), [HDR::ETAT_EN_COURS, HDR::ETAT_SOUTENUE]));
+        $hdrs = array_filter($candidat->getHDRs(), fn(HDR $hdr) => in_array($hdr->getEtatHDR(), [HDR::ETAT_EN_COURS, HDR::ETAT_SOUTENANCE_PROGRAMMEE, HDR::ETAT_SOUTENUE]));
         if (! $hdrs) {
             return [];
         }

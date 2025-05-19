@@ -163,6 +163,7 @@ class HDRSearchService extends SearchService
     {
         return [
             $v = HDR::ETAT_EN_COURS => HDR::$etatsLibelles[$v],
+            $v = HDR::ETAT_SOUTENANCE_PROGRAMMEE => HDR::$etatsLibelles[$v],
             $v = HDR::ETAT_ABANDONNEE => HDR::$etatsLibelles[$v],
             $v = HDR::ETAT_SOUTENUE => HDR::$etatsLibelles[$v],
         ];

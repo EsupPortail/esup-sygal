@@ -249,8 +249,8 @@ class PropositionHDRService extends PropositionService
     public function findPropositionsByRole(Role $role): array
     {
         $qb = $this->createQueryBuilder()
-            ->andWhere('hdr.etatHDR = :encours')
-            ->setParameter('encours', HDR::ETAT_EN_COURS)
+            ->andWhere('hdr.etatHDR in (:encours)')
+            ->setParameter('encours', HDR::ETATS_EN_COURS)
             ->orderBy('proposition.date', 'ASC');
 
         switch ($role->getCode()) {

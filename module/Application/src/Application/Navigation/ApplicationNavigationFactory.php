@@ -169,7 +169,7 @@ class ApplicationNavigationFactory extends NavigationFactory
         // Rôle Candidat : génération d'une page "Mon HDR" pour chaque HDR du candidat
         if ($protoPage = $page['pages'][$key = self::MA_HDR_PAGE_ID] ?? null) {
             if ($this->candidat !== null) {
-                $hdrs = $this->hdrService->getRepository()->findHDRByCandidat($this->candidat, [HDR::ETAT_EN_COURS, HDR::ETAT_SOUTENUE]);
+                $hdrs = $this->hdrService->getRepository()->findHDRByCandidat($this->candidat, [HDR::ETAT_EN_COURS, HDR::ETAT_SOUTENANCE_PROGRAMMEE, HDR::ETAT_SOUTENUE]);
                 $newPages = $this->createPagesMaHDR($protoPage, $hdrs);
                 $page['pages'] = array_merge($page['pages'], $newPages);
                 $page['visible'] = true;
@@ -186,7 +186,7 @@ class ApplicationNavigationFactory extends NavigationFactory
         // Rôles acteurs de HDR (Garant...) : génération d'une page "Mes HDR" contenant une page fille par HDR
         if ($protoPage = $page['pages'][$key = self::MES_HDR_PAGE_ID] ?? null) {
             if ($this->role !== null && $this->role->isActeurDeHDR()) {
-                $hdrs = $this->hdrService->getRepository()->findHDRByActeur($this->individu, $this->role, [HDR::ETAT_EN_COURS, HDR::ETAT_SOUTENUE]);
+                $hdrs = $this->hdrService->getRepository()->findHDRByActeur($this->individu, $this->role, [HDR::ETAT_EN_COURS, HDR::ETAT_SOUTENANCE_PROGRAMMEE, HDR::ETAT_SOUTENUE]);
                 $newPages = $this->createPageMesHDR($protoPage, $hdrs);
                 if($newPages){
                     $page['pages'][$key]['pages'] = $newPages;

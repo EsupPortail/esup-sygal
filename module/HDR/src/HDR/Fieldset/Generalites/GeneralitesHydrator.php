@@ -48,6 +48,7 @@ class GeneralitesHydrator extends DoctrineObject
      */
     public function hydrate(array $data, object $object): object
     {
+        /** @var HDR $object */
         //Nécessaire sinon Doctrine pense que c'est les données appartenant à un fieldset
         $data['candidat'] = $data['candidat']['id'] ?? null; /** todo : utiliser {@see \UnicaenApp\Filter\SearchAndSelectFilter} dans le fieldset ! */
 
@@ -55,7 +56,7 @@ class GeneralitesHydrator extends DoctrineObject
 
         $data['resultat'] = (isset($data['resultat']) && $data['resultat'] !== "") ? $data['resultat'] : null;
 
-        $data['etatHDR'] = !empty($data['dateAbandon']) ? HDR::ETAT_ABANDONNEE : HDR::ETAT_EN_COURS;
+        $data['etatHDR'] = !empty($data['dateAbandon']) ? HDR::ETAT_ABANDONNEE : $object->getEtatHDR();
 
         //date
         $conf = (isset($data['confidentialite']) and $data['confidentialite'] == true);

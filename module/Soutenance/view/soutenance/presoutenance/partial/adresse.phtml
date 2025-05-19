@@ -34,7 +34,7 @@ $canDemanderAdresseExacte = $this->isAllowed(PropositionPrivileges::getResourceI
 
     <?php
     $etatObject = $object instanceof These ? $object->getEtatThese() : $object->getEtatHDR();
-    if($canDemanderAdresseExacte && ($etatObject === These::ETAT_EN_COURS || $etatObject === HDR::ETAT_EN_COURS)) : ?>
+    if($canDemanderAdresseExacte && ($etatObject === These::ETAT_EN_COURS || in_array($etatObject, HDR::ETATS_EN_COURS))) : ?>
         <?php /** @see \Soutenance\Controller\PropositionController::demanderAdresseAction() */ ?>
         <a href="<?php echo $this->url("soutenance_{$typeProposition}/proposition/demander-adresse", ['id' => $object->getId(), 'proposition' => $proposition->getId()], [], true); ?>"
            class="btn btn-info">

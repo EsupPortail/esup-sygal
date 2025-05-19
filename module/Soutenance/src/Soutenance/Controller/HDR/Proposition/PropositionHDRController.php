@@ -205,6 +205,9 @@ class PropositionHDRController extends PropositionController
         if($validation){
             $this->proposition->setEtat($this->propositionService->findPropositionEtatByCode(Etat::EN_COURS_EXAMEN));
             $this->propositionService->update($this->proposition);
+
+            $this->entity->setEtatHDR(HDR::ETAT_SOUTENANCE_PROGRAMMEE);
+            $this->entityService->update($this->entity);
         }
         /** @var ActeurHDR[] $acteurs */
         $garants = $this->entity->getActeursByRoleCode(Role::CODE_HDR_GARANT)->toArray();

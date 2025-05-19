@@ -44,7 +44,7 @@ class HDRRepository extends DefaultEntityRepository
      * @param string[] $etats
      * @return HDR[]
      */
-    public function findHDRByCandidat(Candidat $candidat, array $etats = [HDR::ETAT_EN_COURS]): array
+    public function findHDRByCandidat(Candidat $candidat, array $etats = HDR::ETATS_EN_COURS): array
     {
         return $this->findHDRByCandidatAsIndividu($candidat->getIndividu(), $etats);
     }
@@ -54,7 +54,7 @@ class HDRRepository extends DefaultEntityRepository
      * @param array $etats
      * @return HDR[]
      */
-    public function findHDRByCandidatAsIndividu(Individu $individu, array $etats = [HDR::ETAT_EN_COURS]): array
+    public function findHDRByCandidatAsIndividu(Individu $individu, array $etats = HDR::ETATS_EN_COURS): array
     {
         $qb = $this->createQueryBuilder('hdr')
             ->join("hdr.candidat", "c")
@@ -77,7 +77,7 @@ class HDRRepository extends DefaultEntityRepository
      * @param array $etats
      * @return HDR[]
      */
-    public function findHDRByActeur(Individu $individu, Role $role, array $etats = [HDR::ETAT_EN_COURS]): array
+    public function findHDRByActeur(Individu $individu, Role $role, array $etats = HDR::ETATS_EN_COURS): array
     {
         $qb = $this->createQueryBuilder('hdr')
             ->join('hdr.acteurs', 'a')

@@ -55,7 +55,7 @@ class PropositionHDRSearchService extends SearchService
             ->andWhere('proposition.histoDestruction is null')
             ->andWhere('hdr.histoDestruction is null')
             ->andWhere('proposition.date is not null')
-            ->andWhere('hdr.etatHDR = :etatHDR')->setParameter('etatHDR', HDR::ETAT_EN_COURS)
+            ->andWhere('hdr.etatHDR in (:etatHDR)')->setParameter('etatHDR', HDR::ETATS_EN_COURS)
             ->orderBy('proposition.date', 'ASC')
         ;
 

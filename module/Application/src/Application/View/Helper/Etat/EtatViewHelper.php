@@ -4,6 +4,7 @@ namespace Application\View\Helper\Etat;
 
 use Admission\Entity\Db\Etat;
 use Application\View\Renderer\PhpRenderer;
+use HDR\Entity\Db\HDR;
 use Laminas\View\Helper\AbstractHelper;
 use Laminas\View\Resolver\TemplatePathStack;
 use These\Entity\Db\These;
@@ -32,6 +33,7 @@ class EtatViewHelper extends AbstractHelper
         $etatCode = $etat instanceof Etat ? $etat->getCode() : $etat;
         switch ($etatCode){
             case Etat::CODE_EN_COURS_SAISIE :
+            case HDR::ETAT_SOUTENANCE_PROGRAMMEE :
                 $colorEtat = "#ffba00";
                 break;
             case Etat::CODE_EN_COURS_VALIDATION :
@@ -68,30 +70,33 @@ class EtatViewHelper extends AbstractHelper
         $etatCode = $etat instanceof Etat ? $etat->getCode() : $etat;
         switch ($etatCode){
             case Etat::CODE_EN_COURS_SAISIE :
-                $iconEtat = "edit";
+                $iconEtat = "icon icon-edit";
+                break;
+            case HDR::ETAT_SOUTENANCE_PROGRAMMEE :
+                $iconEtat = "fas fa-clock";
                 break;
             case Etat::CODE_EN_COURS_VALIDATION :
             case These::ETAT_EN_COURS :
-                $iconEtat = "hourglass";
+                $iconEtat = "icon icon-hourglass";
                 break;
             case Etat::CODE_ABANDONNE:
             case These::ETAT_ABANDONNEE:
-                $iconEtat = "unchecked";
+                $iconEtat = "icon icon-unchecked";
                 break;
             case These::ETAT_TRANSFEREE :
-                $iconEtat = "export";
+                $iconEtat = "icon icon-export";
                 break;
             case Etat::CODE_REJETE:
-                $iconEtat = "ko";
+                $iconEtat = "icon icon-ko";
                 break;
             case Etat::CODE_VALIDE :
-                $iconEtat = "ok";
+                $iconEtat = "icon icon-ok";
                 break;
             case These::ETAT_SOUTENUE :
                 if(!$resultat){
-                    $iconEtat = "question";
+                    $iconEtat = "icon icon-question";
                 }else{
-                    $iconEtat = $resultat === 1 ? "ok" : "ko";
+                    $iconEtat = $resultat === 1 ? "icon icon-ok" : "icon icon-ko";
                 }
                 break;
             default:
@@ -108,6 +113,9 @@ class EtatViewHelper extends AbstractHelper
             case Etat::CODE_EN_COURS_SAISIE :
             case These::ETAT_EN_COURS :
                 $etatTextTooltip = $etat instanceof Etat ? $etat->getLibelle() : "En cours";
+                break;
+            case HDR::ETAT_SOUTENANCE_PROGRAMMEE :
+                $etatTextTooltip = "Soutenance programmée";
                 break;
             case Etat::CODE_VALIDE:
             case Etat::CODE_REJETE:

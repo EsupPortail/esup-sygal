@@ -28,19 +28,19 @@ $proposition = $hdr->getCurrentProposition();
 
 $etatHDRTextTooltip = "État de l'HDR";
 switch ($hdr->getEtatHDR()){
-    case "E" :
+    case HDR::ETAT_EN_COURS :
         $etatHDRClass = "en-cours";
         $iconEtatHDR = "hourglass";
         break;
-    case "A" :
+    case HDR::ETAT_ABANDONNEE :
         $etatHDRClass = "abandonnee";
         $iconEtatHDR = "cancel";
         break;
-    case "U" :
-        $etatHDRClass = "transferee";
-        $iconEtatHDR = "export";
+    case HDR::ETAT_SOUTENANCE_PROGRAMMEE :
+        $etatHDRClass = "programmee";
+        $iconEtatHDR = "fas fa-clock";
         break;
-    case "S" :
+    case HDR::ETAT_SOUTENUE :
         if(!$hdr->getResultat()){
             $etatHDRClass = "";
             $iconEtatHDR = "";
@@ -63,7 +63,7 @@ switch ($hdr->getEtatHDR()){
     ->addAlertesFromFlashMessenger()
     ->renderAsBootstrapToasts() ?>
 
-<div class="row informations-principales-these-header">
+<div class="row informations-principales-these-header icon-">
     <div class="col-md-4">
         <h1 class="page-header">
             <?php echo $this->translate("HDR"); ?>

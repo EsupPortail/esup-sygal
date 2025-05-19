@@ -118,7 +118,7 @@ class CandidatRepository extends DefaultEntityRepository
         $qb
             ->addSelect('i, h, ed, s')
             ->join('c.individu', 'i')
-            ->join('c.hdrs', 't', Join::WITH, 'h.etatHDR = :etat')->setParameter('etat', HDR::ETAT_EN_COURS)
+            ->join('c.hdrs', 't', Join::WITH, 'h.etatHDR in (:etat)')->setParameter('etat', HDR::ETATS_EN_COURS)
             ->join('h.ecoleDoctorale', 'ed')
             ->join('ed.structure', 's')
             ->andWhere('c.histoDestruction is null')
