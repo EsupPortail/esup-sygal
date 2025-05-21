@@ -171,8 +171,8 @@ insert into type_validation (id, code, libelle) VALUES (nextval('type_validation
 insert into type_validation (id, code, libelle) VALUES (nextval('type_validation_id_seq'), 'REFUS_VALIDATION_FORMATION_EXTERNE', 'Refus de la formation suivi à l''extérieur par un doctorant');
 
 -- Templates/Macro Renderer
-INSERT INTO public.unicaen_renderer_macro (id, code, description, variable_name, methode_name) VALUES (160, 'Url#IndexGestionFormation', '<p>Retourne l''URL de l''index de gestion des formations d''un doctorant</p>', 'Url', 'getUrlIndexGestionFormation');
-INSERT INTO public.unicaen_renderer_template (id, code, description, document_type, document_sujet, document_corps, document_css, namespace, engine) VALUES (118, 'FORMATION_EXTERNE_AJOUTEE', '<p>Mail envoyé aux personnes ayant le droit de valider des formations externes déposées par le doctorant</p>', 'mail', 'Des formations externes déposées par VAR[Doctorant#Denomination] ont été soumises à validation', e'<p>Bonjour,</p>
+INSERT INTO public.unicaen_renderer_macro (code, description, variable_name, methode_name) VALUES ('Url#IndexGestionFormation', '<p>Retourne l''URL de l''index de gestion des formations d''un doctorant</p>', 'Url', 'getUrlIndexGestionFormation');
+INSERT INTO public.unicaen_renderer_template (code, description, document_type, document_sujet, document_corps, document_css, namespace, engine) VALUES ('FORMATION_EXTERNE_AJOUTEE', '<p>Mail envoyé aux personnes ayant le droit de valider des formations externes déposées par le doctorant</p>', 'mail', 'Des formations externes déposées par VAR[Doctorant#Denomination] ont été soumises à validation', e'<p>Bonjour,</p>
 <p>De nouvelles déclarations de formations externes ont été enregistrées par <strong>VAR[Doctorant#Denomination]</strong>.</p>
 <p>Vous êtes invité·e à vous connecter à l\'application pour les examiner et, si nécessaire, les valider : VAR[Url#IndexGestionFormation]</p>
 <p>Cordialement, </p>
