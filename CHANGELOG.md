@@ -3,6 +3,7 @@ Journal des modifications
 10.1.1
 ------
 - [FIX] Dépendance erronée pour OrigineFinancementSearchFilter dans certaines classes
+- [FIX] Module Soutenance : Génération du document pour la présidence inaccessible
 
 10.1.0
 ------

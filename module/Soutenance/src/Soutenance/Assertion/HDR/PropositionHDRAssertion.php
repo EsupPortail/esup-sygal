@@ -204,7 +204,7 @@ class PropositionHDRAssertion implements  AssertionInterface {
                 switch($role) {
                     case Role::CODE_GEST_HDR:
                         if($structure !== $hdrEtablissementStructure) return false;
-                        $validations_UNITE  = $this->getValidationHDRService()->getRepository()->findValidationByCodeAndHDR(TypeValidation::CODE_VALIDATION_PROPOSITION_BDD, $hdr);
+                        $validations_UNITE  = $this->getValidationHDRService()->getRepository()->findValidationByCodeAndHDR(TypeValidation::CODE_VALIDATION_PROPOSITION_UR, $hdr);
 
                         return !empty($validations_UNITE);
                     default:
