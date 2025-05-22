@@ -161,6 +161,7 @@ $these = (!empty($theses))?current($theses):null;
                                 <a      <?php /** @see FormationExterneController::validerFormationExterneAction()  */ ?>
                                     href="<?php echo $this->url('formation/formation/valider-formation-externe', ['formationExterne' => $formationExterne->getId()], ['query' => ['redirect' => $returnUrl]], true); ?>"
                                     style="width:80%;"
+                                    class="validation-formation-externe"
                                     title="Valider cette formation externe ? <br><br> Cette validation fera remonter cette formation dans le rapport d'activité"
                                     data-bs-toggle="tooltip" data-bs-html="true">
                                     <span class="fas fa-thumbs-up text-success"></span>
@@ -169,6 +170,7 @@ $these = (!empty($theses))?current($theses):null;
                                 <a      <?php /** @see FormationExterneController::refuserFormationExterneAction()  */ ?>
                                     href="<?php echo $this->url('formation/formation/refuser-formation-externe', ['formationExterne' => $formationExterne->getId()], ['query' => ['redirect' => $returnUrl]], true); ?>"
                                     style="width:80%;"
+                                    class="validation-formation-externe"
                                     title="Refuser cette formation externe"
                                     data-bs-toggle="tooltip" data-bs-html="true">
                                     <span class="fas fa-thumbs-down text-danger"></span>
@@ -177,7 +179,8 @@ $these = (!empty($theses))?current($theses):null;
                                 <?php /** @see FormationExterneController::revoquerFormationExterneAction() */ ?>
                                 <a href="<?php echo $this->url('formation/formation/revoquer-formation-externe', ['formationExterne' => $formationExterne->getId()], ['query' => ['redirect' => $returnUrl]], true); ?>"
                                    title="Révoquer la validation de cette formation externe <br>(Une confirmation avant la révocation vous sera demandée)"
-                                   data-bs-toggle="tooltip" data-bs-html="true"
+                                   class="validation-formation-externe"
+                                   data-bs-toggle="tooltip" data-bs-html="true" data-toggle="confirmationx"
                                 >
                                     <span class="icon icon-unchecked text-danger"></span>
                                 </a>
@@ -226,5 +229,17 @@ $these = (!empty($theses))?current($theses):null;
     $(function() {
         toggleAnnee();
         $("select#annee").on("change", toggleAnnee).selectpicker();
+    });
+
+    document.addEventListener('click', function(event) {
+        const clickedLink = event.target.closest('a.validation-formation-externe');
+
+        if (clickedLink) {
+            document.querySelectorAll('a.validation-formation-externe').forEach(function(link) {
+                link.style.pointerEvents = 'none';
+                link.style.opacity = '0.6';
+                link.style.cursor = 'default';
+            });
+        }
     });
 </script>
