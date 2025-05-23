@@ -5,6 +5,7 @@ Journal des modifications
 - [FIX] Dépendance erronée pour OrigineFinancementSearchFilter dans certaines classes
 - [FIX] Module Soutenance : Génération du document pour la présidence inaccessible
 - [FIX] Module Formation : Possibilité de valider plusieurs fois la même formation externe, ce qui faisait planter ultérieurement la page
+- [FIX] Module Admission : Dossier inaccessible si le numéro de candidature n'était pas renseigné
 
 10.1.0
 ------

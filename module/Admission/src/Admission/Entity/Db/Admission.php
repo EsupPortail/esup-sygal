@@ -36,7 +36,7 @@ class Admission implements HistoriqueAwareInterface, ResourceInterface{
      */
     private $id;
 
-    private string $numeroCandidature;
+    private ?string $numeroCandidature = null;
 
     /**
      * @var Collection
@@ -117,7 +117,7 @@ class Admission implements HistoriqueAwareInterface, ResourceInterface{
         return $this->id;
     }
 
-    public function getNumeroCandidature(): string
+    public function getNumeroCandidature(): ?string
     {
         return $this->numeroCandidature;
     }
