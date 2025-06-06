@@ -34,17 +34,6 @@ $canGererDocument =  $this->isAllowed($object, PresoutenancePrivileges::PRESOUTE
             <div class="row m-2">
                 <h3> Génération et envoi des documents </h3>
                 <div class="col-md-6">
-                    <!-- laisser la possibilité de générer l'avis de soutenance dans le cas où tous les avis sont défavorables -->
-                    <?php if (($proposition->getEtat()->getCode() === Etat::ETABLISSEMENT && $tousLesAvisSontDefavorables) ||
-                        ($proposition->getEtat()->getCode() === Etat::VALIDEE || $proposition->getEtat()->getCode() === Etat::COMPLET)) : ?>
-                        <a  <?php /** @see \Soutenance\Controller\PresoutenanceController::avisSoutenanceAction() */ ?>
-                                    href="<?php echo $this->url("soutenance_{$typeProposition}/presoutenance/avis-soutenance", ['id' => $object->getId()], [], true); ?>"
-                                    class="btn btn-primary action"
-                                    target="_blank"
-                        >
-                            <span class="icon icon-pdf"></span>Générer l'avis de soutenance
-                        </a>
-                    <?php endif; ?>
                     <?php if ($proposition->getEtat()->getCode() === Etat::VALIDEE) : ?>
                         <a  <?php /** @see \Soutenance\Controller\PresoutenanceController::procesVerbalSoutenanceAction() */ ?>
                                 href="<?php echo $this->url("soutenance_{$typeProposition}/presoutenance/proces-verbal-soutenance", ['id' => $object->getId()], [], true); ?>"
@@ -93,7 +82,6 @@ $canGererDocument =  $this->isAllowed($object, PresoutenancePrivileges::PRESOUTE
                 </div>
                 <div class="col-md-6">
                     <?php echo $this->horodatagesParTypes($proposition, [
-                        [HorodatageService::TYPE_EDITION, "Avis de soutenance"],
                         [HorodatageService::TYPE_EDITION, "Procès verbal"],
                         [HorodatageService::TYPE_EDITION, "Rapport de soutenance"],
                         [HorodatageService::TYPE_EDITION, "Rapport technique"],

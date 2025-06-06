@@ -1,11 +1,13 @@
 Journal des modifications
 =========================
+
 10.1.1
 ------
 - [FIX] Dépendance erronée pour OrigineFinancementSearchFilter dans certaines classes
 - [FIX] Module Soutenance : Génération du document pour la présidence inaccessible
 - [FIX] Module Formation : Possibilité de valider plusieurs fois la même formation externe, ce qui faisait planter ultérieurement la page
 - [FIX] Module Admission : Dossier inaccessible si le numéro de candidature n'était pas renseigné
+- [FIX] Bouton 'Générer l'avis de soutenance' : déplacement avant 'Feu vert' et correction des conditions d'affichage.
 
 10.1.0
 ------
