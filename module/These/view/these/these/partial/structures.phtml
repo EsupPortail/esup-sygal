@@ -24,7 +24,7 @@
     <dt class="col-md-3 ps-4">
         Établ. de rattachement de l'UR
     </dt>
-    <dd class="col-md-9 ps-4">
+    <dd class="col-md-9 ps-4 mt-2">
         <?php if (empty($rattachements)): ?>
             <span class="badge bg-secondary text-white" style="font-size:unset">
                 <span class="icon icon-info" style="padding-right: unset"></span>
@@ -33,7 +33,7 @@
         <?php else: ?>
             <ul>
                 <?php foreach ($rattachements as $rattachement): ?>
-                    <li><?php echo $rattachement->getEtablissement()->getStructure() ?></li>
+                    <li><?php echo $this->structure($rattachement->getEtablissement()->getStructure()); ?></li>
                 <?php endforeach ?>
             </ul>
         <?php endif ?>

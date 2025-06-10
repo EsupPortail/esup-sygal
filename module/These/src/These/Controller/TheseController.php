@@ -6,6 +6,8 @@ use Application\Controller\AbstractController;
 use Application\Service\MailConfirmationServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
 use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;
+use Structure\Entity\Db\Etablissement;
+use Structure\Entity\Db\EtablissementRattachement;
 use Validation\Service\ValidationThese\ValidationTheseServiceAwareTrait;
 use Depot\Entity\Db\WfEtape;
 use Depot\Service\Validation\DepotValidationServiceAwareTrait;
@@ -48,6 +50,13 @@ class TheseController extends AbstractController
         $rattachements = [];
         if ($unite !== null) {
             $rattachements = $this->getUniteRechercheService()->findEtablissementRattachement($unite);
+            $structuresDistinctes = [];
+            /** @var EtablissementRattachement $etablissementRattachement */
+            foreach ($rattachements as $etablissementRattachement) {
+                $structuresDistinctes[$etablissementRattachement->getEtablissement()->getStructure()->getId()] = $etablissementRattachement;
+            }
+
+            $rattachements = array_values($structuresDistinctes);
         }
 
         $utilisateurs = [];

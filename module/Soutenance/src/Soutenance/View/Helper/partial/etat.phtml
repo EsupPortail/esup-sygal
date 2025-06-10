@@ -9,8 +9,10 @@ use Soutenance\Entity\Etat;
  */
 
 switch ($etat->getCode()){
-    case Etat::EN_COURS_EXAMEN :
     case Etat::EN_COURS_SAISIE :
+        $iconEtat = "edit";
+        break;
+    case Etat::EN_COURS_EXAMEN :
     case Etat::COMPLET :
         $iconEtat = "hourglass";
         break;
@@ -44,31 +46,33 @@ switch ($etat->getCode()){
 
 
 <style>
+    div.information-etat-card {
+        min-width: 9%;
+        width: max-content;
+    }
     div.information-etat-card.<?php echo Etat::VALIDEE; ?>-etat-card {
         color: darkgreen;
         border-left: 5px solid darkgreen;
-        min-width: 09%;
     }
     div.information-etat-card.<?php echo Etat::REJETEE; ?>-etat-card {
         color: darkred;
         border-left: 5px solid darkred;
-        min-width: 09%;
     }
-    div.information-etat-card.<?php echo Etat::EN_COURS_EXAMEN; ?>-etat-card,
     div.information-etat-card.<?php echo Etat::EN_COURS_SAISIE; ?>-etat-card{
+        color: #ffba00;
+        border-left: 5px solid #ffba00;
+    }
+    div.information-etat-card.<?php echo Etat::EN_COURS_EXAMEN; ?>-etat-card{
         color: darkorange;
         border-left: 5px solid darkorange;
-        min-width: 09%;
     }
     div.information-etat-card.<?php echo Etat::ETABLISSEMENT; ?>-etat-card {
         color: teal;
         border-left: 5px solid teal;
-        min-width: 09%;
     }
     div.information-etat-card.<?php echo Etat::COMPLET; ?>-etat-card {
         color: dodgerblue;
         border-left: 5px solid dodgerblue;
-        min-width: 09%;
     }
 </style>
 

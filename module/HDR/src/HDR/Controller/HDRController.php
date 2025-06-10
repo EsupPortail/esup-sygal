@@ -14,6 +14,7 @@ use Notification\Service\NotifierServiceAwareTrait;
 use Soutenance\Entity\Proposition;
 use Soutenance\Provider\Template\MailTemplates;
 use Soutenance\Service\Notification\SoutenanceNotificationFactoryAwareTrait;
+use Structure\Entity\Db\EtablissementRattachement;
 use Structure\Service\UniteRecherche\UniteRechercheServiceAwareTrait;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\View\Model\CsvModel;
@@ -43,6 +44,13 @@ class HDRController extends AbstractController
         $rattachements = [];
         if ($unite !== null) {
             $rattachements = $this->uniteRechercheService->findEtablissementRattachement($unite);
+            $structuresDistinctes = [];
+            /** @var EtablissementRattachement $etablissementRattachement */
+            foreach ($rattachements as $etablissementRattachement) {
+                $structuresDistinctes[$etablissementRattachement->getEtablissement()->getStructure()->getId()] = $etablissementRattachement;
+            }
+
+            $rattachements = array_values($structuresDistinctes);
         }
 
         $view = new ViewModel([

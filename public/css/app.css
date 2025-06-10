@@ -370,9 +370,9 @@ input[type="checkbox"] {
 .text-structure {
   border-radius: 5px 5px;
   padding: 0 4px 4px 4px;
-  white-space: nowrap;
   margin-top: inherit !important;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08); }
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+  width: fit-content; }
 
 .text-structure:before {
   font-family: "Font Awesome 5 Free", serif;
