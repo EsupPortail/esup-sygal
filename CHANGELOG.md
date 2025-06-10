@@ -1,5 +1,8 @@
 Journal des modifications
 =========================
+10.2.0
+------
+- Module Admission : Initialisation du tableau de bord avec les dossiers d'admissions en cours de saisie/en cours de validation
 
 10.1.1
 ------

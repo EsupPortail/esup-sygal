@@ -119,6 +119,7 @@ class AdmissionRechercheService extends SearchService
                     ->setParameter('sourceCodeUR', $filter->getValue());
             });
         $etatAdmissionSearchFilter = $this->getEtatAdmissionSearchFilter()
+            ->setMultiple()
             ->setDataProvider(function() {
                 return $this->fetchEtatsAdmission();
             });
@@ -216,7 +217,6 @@ class AdmissionRechercheService extends SearchService
             $v = Etat::CODE_VALIDE => Admission::$etatsLibelles[$v],
             $v = Etat::CODE_REJETE => Admission::$etatsLibelles[$v],
             $v = Etat::CODE_ABANDONNE => Admission::$etatsLibelles[$v],
-
         ];
     }
 

@@ -365,6 +365,7 @@ return array(
                         'order' => -200,
                         'label' => 'Admission',
                         'route' => 'admission',
+                        'query' => [AdmissionRechercheService::NAME_etatAdmission => ['C','E']],
                         'resource' => PrivilegeController::getResourceId(AdmissionRechercheController::class, 'index'),
                         'pages' => []
                     ],
@@ -376,6 +377,7 @@ return array(
                         'order' => -200,
                         'label' => 'Mes admissions',
                         'route' => 'admission',
+                        'query' => [AdmissionRechercheService::NAME_etatAdmission => ['C','E']],
                         'resource' => PrivilegeController::getResourceId(AdmissionRechercheController::class, 'index'),
                         'pages' => [
                         ],
@@ -387,6 +389,7 @@ return array(
                         'order' => -200,
                         'label' => 'Nos admissions',
                         'route' => 'admission',
+                        'query' => [AdmissionRechercheService::NAME_etatAdmission => ['C','E']],
                         'resource' => PrivilegeController::getResourceId(AdmissionRechercheController::class, 'index'),
                         'pages' => [
                         ],

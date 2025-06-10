@@ -18,7 +18,7 @@ class EtatAdmissionSearchFilter extends SelectSearchFilter
         $alias = 'admission'; // todo: rendre paramétrable
 
         $qb
-            ->andWhere("$alias.etat = :etat")
+            ->andWhere("$alias.etat in (:etat)")
             ->setParameter('etat', $this->getValue());
     }
 
