@@ -1007,7 +1007,8 @@ p.avis-complem {
   border-radius: 6px;
   border: 1px solid rgba(0, 0, 0, 0.1);
   font-size: 0.875rem;
-  width: 406px; }
+  width: 100%;
+  max-width: 406px; }
 
 .file-icon {
   font-size: 1.5rem;

@@ -254,7 +254,7 @@ echo $this->partial('admission/admission/partial/header', []); ?>
 
 <?php if ($canExportAdmissions) { ?>
     <a href="<?php echo $this->url('admission/generer-export-csv', [], ['query' => $this->queryParams()], true); ?>"
-       class="btn btn-primary"
+       class="btn btn-secondary"
     >
         <span class="icon icon-zip"></span>
         Générer l'export CSV des dossiers d'admissions validés

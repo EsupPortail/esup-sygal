@@ -3,6 +3,7 @@ Journal des modifications
 
 10.1.1
 ------
+- [FIX] Affichage des fichiers/justificatifs pouvait dépasser de leurs conteneurs sur de petits écrans
 - [FIX] Dépendance erronée pour OrigineFinancementSearchFilter dans certaines classes
 - [FIX] Module Soutenance : Génération du document pour la présidence inaccessible
 - [FIX] Module Formation : Possibilité de valider plusieurs fois la même formation externe, ce qui faisait planter ultérieurement la page
