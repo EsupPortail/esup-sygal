@@ -289,6 +289,22 @@ $canGenererDocument = $canFeuVert;
                 Le feu vert pour la soutenance ne peut être donné qu'une fois le dossier complet et validé par l'établissement. <br>
                 Dans le cas où l'ensemble des avis serait défavorable, la soutenance pourra être rejetée par l'établissement.
             </p>
+
+            <!-- la présidence de l'établissement peut passer outre les avis défavorables donc -->
+            <!-- laisser la possibilité de générer l'avis de soutenance dans le cas où tous les avis sont défavorables -->
+            <?php if (($proposition->getEtat()->getCode() === Etat::ETABLISSEMENT && $tousLesAvisSontDefavorables) ||
+                $proposition->getEtat()->getCode() === Etat::COMPLET): ?>
+                <div>
+                    <a  <?php /** @see \Soutenance\Controller\PresoutenanceController::avisSoutenanceAction() */ ?>
+                            href="<?php echo $this->url("soutenance_{$typeProposition}/presoutenance/avis-soutenance", ['id' => $hdr->getId()], [], true); ?>"
+                            class="btn btn-primary action"
+                            target="_blank"
+                    >
+                        <span class="icon icon-pdf"></span>Générer l'avis de soutenance
+                    </a>
+                </div>
+            <?php endif; ?>
+
             <?php if ($canFeuVert) : ?>
                 <?php if ($proposition->getEtat()->getCode() === Etat::COMPLET ||
                     ($tousLesAvisSontDefavorables && !($proposition->getEtat()->getCode() === Etat::VALIDEE || $proposition->getEtat()->getCode() === Etat::REJETEE))) :?>
