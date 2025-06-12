@@ -327,6 +327,7 @@ $canGenererDocument = $canFeuVert;
             <?php endif ?>
 
             <?php echo $this->horodatagesParTypes($proposition, [
+                [HorodatageService::TYPE_EDITION, "Avis de soutenance"],
                 [HorodatageService::TYPE_ETAT, "Annulation de la soutenance"],
                 [HorodatageService::TYPE_ETAT, "Feu vert pour la soutenance"],
             ]); ?>
