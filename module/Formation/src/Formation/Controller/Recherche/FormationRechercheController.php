@@ -36,7 +36,7 @@ class FormationRechercheController extends AbstractRechercheController
 //    {
 //        parent::restrictFilters();
 //
-//        /** @var \Application\Search\Filter\SelectSearchFilter $f */
+//        /** @var \UnicaenSearch\Filter\SelectSearchFilter $f */
 //        $filter = $this->searchService->getFilterByName('responsable');
 //        if ($roleEcoleDoctorale = $this->userContextService->getSelectedRoleEcoleDoctorale()) {
 //            $ed = $roleEcoleDoctorale->getStructure()->getEcoleDoctorale();
@@ -65,7 +65,7 @@ class FormationRechercheController extends AbstractRechercheController
         } else {
             // Cas 2 : recherche avec prise en compte des query params courants
             $this->searchService->init();
-            $this->searchService->processQueryParamsFromController($this);
+            $this->searchService->processQueryParams($this->params()->fromQuery());
             // todo : restreindre en fonction du rôle lorsque d'autres rôles que 'ADMIN_TECH', 'BDD', 'GEST_FORM' seront habilités !
             $qb = $this->searchService->getQueryBuilder(); /** @see \Formation\Service\Formation\Search\FormationSearchService::createQueryBuilder() */
             $formationIds = array_keys($qb->select('f.id')->indexBy('f', 'f.id')->getQuery()->getArrayResult());

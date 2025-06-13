@@ -2,11 +2,7 @@
 
 namespace Formation\Controller\Recherche;
 
-use Application\Search\Controller\SearchControllerTrait2;
-use Application\Search\SearchResultPaginator;
 use Doctrine\ORM\QueryBuilder;
-use Formation\Entity\Db\EnqueteQuestion;
-use Formation\Entity\Db\EnqueteReponse;
 use Formation\Entity\Db\Formateur;
 use Formation\Entity\Db\Repository\EnqueteCategorieRepositoryAwareTrait;
 use Formation\Entity\Db\Repository\EnqueteQuestionRepositoryAwareTrait;
@@ -18,6 +14,8 @@ use Formation\Service\EnqueteReponse\Search\EnqueteReponseSearchService;
 use Individu\Entity\Db\Individu;
 use Laminas\Http\Response;
 use Laminas\View\Model\ViewModel;
+use UnicaenSearch\Controller\SearchControllerTrait;
+use UnicaenSearch\SearchResultPaginator;
 
 /**
  * @property \Formation\Service\EnqueteReponse\Search\EnqueteReponseSearchService $searchService
@@ -29,7 +27,7 @@ class EnqueteReponseRechercheController extends AbstractRechercheController
     use EnqueteQuestionRepositoryAwareTrait;
     use EnqueteCategorieRepositoryAwareTrait;
     use EnqueteReponseServiceAwareTrait;
-    use SearchControllerTrait2 { search as public searchDefault; }
+    use SearchControllerTrait { search as public searchDefault; }
 
     public const SESSION_ROUTE_PARAM_TOUTES = 'toutes';
 
@@ -43,7 +41,8 @@ class EnqueteReponseRechercheController extends AbstractRechercheController
      * Redéfinition de la méthode {@see SearchControllerTrait::search()} pour pouvoir filtrer selon la Session
      * éventuellement spécifié dans la requête.
      *
-     * @return \UnicaenSearch\SearchResultPaginator|\Laminas\Http\Response|\Laminas\Paginator\Paginator
+     * @param callable|null $queryBuilderModifierCallback
+     * @return \Laminas\Http\Response|\UnicaenSearch\SearchResultPaginator
      */
     public function search(?callable $queryBuilderModifierCallback = null): Response|SearchResultPaginator
     {
