@@ -30,7 +30,7 @@ $canGererDocument =  $this->isAllowed($object, PresoutenancePrivileges::PRESOUTE
 
         <!-- documents liés à la soutenance ----------------------------------------------------------------------------->
 
-        <?php if ($canGenererDocument && ($proposition->getEtat()->getCode() === Etat::ETABLISSEMENT || $proposition->getEtat()->getCode() === Etat::VALIDEE || $proposition->getEtat()->getCode() === Etat::COMPLET)) : ?>
+        <?php if ($canGenererDocument && ($proposition->getEtat()->getCode() === Etat::VALIDEE || $proposition->getEtat()->getCode() === Etat::COMPLET)) : ?>
             <div class="row m-2">
                 <h3> Génération et envoi des documents </h3>
                 <div class="col-md-6">

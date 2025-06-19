@@ -207,10 +207,7 @@ $canSimulerRemonter = $this->isAllowed(PresoutenancePrivileges::getResourceId(Pr
     if($proposition->getEtat()->getCode() === Etat::VALIDEE || $proposition->getEtat()->getCode() === Etat::REJETEE){
         $bgcolor = "bg-dark";
     }else {
-        if (!$tousLesEngagements) {
-            $bgcolor = "bg-dark";
-            $cssClass = "etape-encore-non-disponible";
-        } else if (current($validationPDC) !== null && current($validationPDC) !== false) {
+        if (current($validationPDC) !== null && current($validationPDC) !== false) {
             $bgcolor = "bg-success";
         } elseif (current($validationPDC) === null || current($validationPDC) === false) {
             $bgcolor = "bg-warning";
@@ -225,46 +222,31 @@ $canSimulerRemonter = $this->isAllowed(PresoutenancePrivileges::getResourceId(Pr
             <h2>Validation de la page de couverture</h2>
         </div>
         <div class="card-body <?= $cssClass; ?>">
-            <?php if ($tousLesEngagements) : ?>
-                <?php if (current($validationPDC) !== null AND current($validationPDC) !== false) : ?>
-                    <?php
-                        /** @var ValidationThese $validation_pdc */
-                        $validation_pdc = current($validationPDC);
-                    ?>
-                    <div class="alert alert-info">
-                        <span class="icon icon-ok"></span>
-                        La page de couverture a été validée le
-                        <?php echo $validation_pdc->getHistoModification()->format(Constants::DATETIME_FORMAT); ?>
-                        par
-                        <?php echo $validation_pdc->getHistoModificateur()->getDisplayName(); ?>.
-                    </div>
-                <?php else : ?>
-                    <div class="row">
-                        <div class="col-md-8">
-                            <p>Vous pouvez maintenant valider la page de couverture.</p>
-                        </div>
-                        <?php if($this->isAllowed($these, ValidationPrivileges::VALIDATION_PAGE_DE_COUVERTURE)): ?>
-                            <div class="float-end" style="margin-right: 2rem;">
-                                <a
-                                    <?php /** @see \These\Controller\TheseController::validationPageDeCouvertureAction() */ ?>
-                                    href="<?php echo $this->url('these/validation-page-de-couverture', ['these'=> $these->getId()], [], true); ?>" class="btn btn-primary">
-                                    Accéder à la validation de la PDC
-                                </a>
-                            </div>
-                        <?php endif; ?>
-                    </div>
-                <?php endif; ?>
+            <?php if (current($validationPDC) !== null and current($validationPDC) !== false) : ?>
+                <?php
+                /** @var ValidationThese $validation_pdc */
+                $validation_pdc = current($validationPDC);
+                ?>
+                <div class="alert alert-info">
+                    <span class="icon icon-ok"></span>
+                    La page de couverture a été validée le
+                    <?php echo $validation_pdc->getHistoModification()->format(Constants::DATETIME_FORMAT); ?>
+                    par
+                    <?php echo $validation_pdc->getHistoModificateur()->getDisplayName(); ?>.
+                </div>
             <?php else : ?>
-                <div class="col-md-8">
-                    <?php if (empty($rapporteurs)) : ?>
-                        <div class="alert alert-warning">
-                            <span class="icon icon-attention"></span>
-                            Aucun rapporteur déclaré dans la proposition de soutenance
-                        </div>
-                    <?php else: ?>
-                        <div class="alert alert-warning">
-                            <span class="icon icon-attention"></span>
-                            Tous les engagements d'impartialité n'ont pas encore été signés.
+                <div class="row">
+                    <div class="col-md-8">
+                        <p>Vous pouvez maintenant valider la page de couverture.</p>
+                    </div>
+                    <?php if ($this->isAllowed($these, ValidationPrivileges::VALIDATION_PAGE_DE_COUVERTURE)): ?>
+                        <div class="float-end" style="margin-right: 2rem;">
+                            <a
+                                <?php /** @see \These\Controller\TheseController::validationPageDeCouvertureAction() */ ?>
+                                    href="<?php echo $this->url('these/validation-page-de-couverture', ['these' => $these->getId()], [], true); ?>"
+                                    class="btn btn-primary">
+                                Accéder à la validation de la PDC
+                            </a>
                         </div>
                     <?php endif; ?>
                 </div>
