@@ -22,6 +22,7 @@ Journal des modifications
 - [FIX] Affichage des fichiers/justificatifs pouvait dépasser de leurs conteneurs sur de petits écrans
 - [FIX] Dépendance erronée pour OrigineFinancementSearchFilter dans certaines classes
 - [FIX] Module Soutenance : Génération du document pour la présidence inaccessible
+- [FIX] Module Soutenance : Un même individu avec le même role pouvait être associé à plusieurs acteurs 
 - [FIX] Module Formation : Possibilité de valider plusieurs fois la même formation externe, ce qui faisait planter ultérieurement la page
 - [FIX] Module Admission : Dossier inaccessible si le numéro de candidature n'était pas renseigné
 

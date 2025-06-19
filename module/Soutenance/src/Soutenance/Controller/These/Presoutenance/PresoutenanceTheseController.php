@@ -181,6 +181,12 @@ class PresoutenanceTheseController extends PresoutenanceController
 
         /** @var ActeurThese $acteur **/
         $acteur = $form->getData();
+
+        $acteurInBdd = $this->acteurService->getRepository()->findActeurByIndividuAndTheseAndRole($acteur->getIndividu(), $acteur->getThese(), $acteur->getRole());
+        if ($acteurInBdd !== null) {
+            $this->flashMessenger()->addErrorMessage($acteur->getIndividu()." est déjà associé à un membre avec le rôle ".$acteur->getRole());
+            return $this->redirect()->toRoute("soutenance_{$this->type}/presoutenance", ['these' => $this->entity->getId()], [], true);
+        }
         try {
             $this->acteurService->save($acteur);
         }catch(RuntimeException) {

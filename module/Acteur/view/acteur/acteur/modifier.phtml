@@ -5,10 +5,12 @@
  * @see ActeurHDRController::modifierAction()
  * @var \Acteur\Form\ActeurThese\ActeurTheseForm|\Acteur\Form\ActeurHDR\ActeurHDRForm $form
  * @var string $returnUrl
+ * @var Membre $membre
  */
 
 use Acteur\Entity\Db\ActeurHDR;
 use Acteur\Entity\Db\ActeurThese;
+use Soutenance\Entity\Membre;
 
 $this->headTitle()->append("Acteur");
 
@@ -26,6 +28,30 @@ if (!$form->getObject()->getId() && !$form->getObject()->getSource()->getImporta
         </div>
     </div>
 <?php endif ?>
+
+<h3>Informations concernant le membre</h3>
+<table class="table table-extra-condensed">
+    <thead>
+    <tr>
+        <th> Dénomination</th>
+        <th> Rôle</th>
+        <th> Qualité</th>
+        <th> Établissement</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td>    <?php echo $membre->getDenomination(); ?>                                                   </td>
+        <td>    <?php echo $membre->getRole(); ?>                                                           </td>
+        <td>    <?php echo ($membre->getQualite()) ? $membre->getQualite()->getLibelle() : "Non définie"; ?>    </td>
+        <td>    <?php echo $membre->getEtablissement(); ?>                                                  </td>
+    </tr>
+    </tbody>
+</table>
+
+<br>
+<div class="separator"></div>
+<br>
 
 <?php echo $this->form()->openTag($form->prepare()); ?>
 

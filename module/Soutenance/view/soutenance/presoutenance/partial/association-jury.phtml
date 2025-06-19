@@ -73,7 +73,7 @@ $president = $proposition->getObject()->getActeursByRoleCode(Role::CODE_PRESIDEN
                 <th> Rôle</th>
                 <th> Qualité</th>
                 <th> Établissement</th>
-                <th> Id <?php echo $this->appInfos()->nom ?> </th>
+                <th> Informations sur l'acteur </th>
                 <th> Action</th>
             </tr>
             </thead>
@@ -85,7 +85,12 @@ $president = $proposition->getObject()->getActeursByRoleCode(Role::CODE_PRESIDEN
                     <td>    <?php echo $membre->getRole(); ?>                                                           </td>
                     <td>    <?php echo ($membre->getQualite()) ? $membre->getQualite()->getLibelle() : "Non définie"; ?>    </td>
                     <td>    <?php echo $membre->getEtablissement(); ?>                                                  </td>
-                    <td>    <?php echo ($acteurMembre) ? $acteurMembre->getId() . ' ' . $acteurMembre->getIndividu()->getNomComplet() : ''; ?>                  </td>
+                    <td>
+                        <?php if($acteurMembre): ?>
+                            <?php echo $acteurMembre->getIndividu()->getNomComplet(); ?>
+                            <span class="icon icon-info" data-bs-toggle="tooltip" data-bs-html="true" title="ID de l'acteur : <?= $acteurMembre->getId() ?> <br> ID de l'individu associé : <?= $acteurMembre->getIndividu()->getId() ?>"></span>
+                        <?php endif; ?>
+                    </td>
                     <td>
                         <?php if ($canAssocierMembreIndividu): ?>
                             <?php if (!$acteurMembre): ?>
@@ -146,7 +151,7 @@ $president = $proposition->getObject()->getActeursByRoleCode(Role::CODE_PRESIDEN
                     <thead>
                     <tr>
                         <th> Dénomination</th>
-                        <th> Id <?php echo $this->appInfos()->nom ?> </th>
+                        <th> Informations sur l'acteur </th>
                         <th> Action</th>
                     </tr>
                     </thead>

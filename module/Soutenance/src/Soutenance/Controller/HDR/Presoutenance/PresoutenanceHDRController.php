@@ -181,6 +181,12 @@ class PresoutenanceHDRController extends PresoutenanceController
 
         /** @var ActeurHDR $acteur **/
         $acteur = $form->getData();
+
+        $acteurInBdd = $this->acteurService->getRepository()->findActeurByIndividuAndHDRAndRole($acteur->getIndividu(), $acteur->getHDR(), $acteur->getRole());
+        if ($acteurInBdd !== null) {
+            $this->flashMessenger()->addErrorMessage($acteur->getIndividu()." est déjà associé à un membre avec le rôle ".$acteur->getRole());
+            return $this->redirect()->toRoute("soutenance_{$this->type}/presoutenance", ['hdr' => $this->entity->getId()], [], true);
+        }
         try {
             //mise à jour du membre de soutenance
 //        $membre->setActeur($acteur);
