@@ -3,6 +3,7 @@
 use Application\Entity\AnneeUniv;
 use Application\View\Renderer\PhpRenderer;
 use Fichier\Controller\Plugin\UrlFichier;
+use Formation\Entity\Db\Formateur;
 use Formation\Entity\Db\Formation;
 use Formation\Entity\Db\Seance;
 use Formation\Entity\Db\Session;
@@ -33,7 +34,6 @@ $canAjouterSession      = $this->isAllowed(SessionPrivileges::getResourceId(Sess
 $canHistoriserSession   = $this->isAllowed(SessionPrivileges::getResourceId(SessionPrivileges::SESSION_HISTORISER));
 $canSupprimerSession    = $this->isAllowed(SessionPrivileges::getResourceId(SessionPrivileges::SESSION_SUPPRIMER));
 echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace();
-
 ?>
 
 <h1 class="page-header">
@@ -207,6 +207,7 @@ echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace();
         <th>Index</th>
         <th>Établissement organisateur</th>
         <th>Responsable</th>
+        <th>Formateur·trice·s</th>
         <th>Modalité</th>
         <th>Type</th>
         <th>État</th>
@@ -218,6 +219,10 @@ echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace();
     </thead>
     <tbody>
     <?php foreach ($sessions as $session) :
+        /** @var Formateur[] $formateurs */
+        $formateurs = $session["session"]->getFormateurs()->toArray();
+        usort($formateurs, function (Formateur $a, Formateur $b) { return $a->getIndividu()->getNomComplet() > $b->getIndividu()->getNomComplet();});
+
         if($session["session"]->estVisible()) : ?>
             <tr class="<?php echo $session["anneeUniv"]; ?>">
         <?php else: ?>
@@ -235,6 +240,16 @@ echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace();
                     <?php echo $session["session"]->getResponsable()->getNomComplet(); ?>
                 <?php else : ?>
                     Aucun responsable
+                <?php endif; ?>
+            </td>
+            <td>
+                <?php if (empty($formateurs)) : ?>
+                    <em>Aucun·e formateur·trice</em>
+                <?php else : ?>
+                        <?php foreach ($formateurs as $formateur) : ?>
+                            <?php echo $formateur->getIndividu()->getNomComplet(); ?>
+                            <br>
+                        <?php endforeach; ?>
                 <?php endif; ?>
             </td>
             <td> <?php echo $this->modalite($session["session"]); ?> </td>

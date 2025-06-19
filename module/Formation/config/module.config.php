@@ -9,6 +9,8 @@ use Formation\Provider\IdentityProvider;
 use Formation\Provider\IdentityProviderFactory;
 use Formation\Service\Notification\FormationNotificationFactory;
 use Formation\Service\Notification\FormationNotificationFactoryFactory;
+use Formation\Service\Parametre\ParametreService;
+use Formation\Service\Parametre\ParametreServiceFactory;
 use Formation\Service\Url\UrlService;
 use Formation\Service\Url\UrlServiceFactory;
 use Formation\View\Helper\EtatViewHelper;
@@ -66,6 +68,7 @@ return array(
             FormationNotificationFactory::class => FormationNotificationFactoryFactory::class,
             IdentityProvider::class => IdentityProviderFactory::class,
             UrlService::class => UrlServiceFactory::class,
+            ParametreService::class => ParametreServiceFactory::class,
         ],
     ],
 

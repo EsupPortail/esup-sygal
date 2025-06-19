@@ -13,6 +13,7 @@ use Formation\Entity\Db\Inscription;
 use Formation\Entity\Db\Session;
 use Formation\Entity\Db\SessionStructureValide;
 use Formation\Provider\Template\MailTemplates;
+use Formation\Service\Parametre\ParametreServiceAwareTrait;
 use Formation\Service\Url\UrlServiceAwareTrait;
 use Notification\Exception\RuntimeException;
 use Notification\Factory\NotificationFactory;
@@ -33,6 +34,7 @@ class FormationNotificationFactory extends NotificationFactory
     use TemplateVariablePluginManagerAwareTrait;
     use UrlServiceAwareTrait;
     use EmailServiceAwareTrait;
+    use ParametreServiceAwareTrait;
 
     /** INSCRIPTION ***************************************************************************************************/
 
@@ -249,7 +251,7 @@ class FormationNotificationFactory extends NotificationFactory
 //            'inscription'   => $inscription,
 //        ];
         $vars = $this->createTemplateVarsForInscription($inscription);
-
+        $vars['Parametre'] = $this->parametreService;
         $rendu = $this->getRenduService()->generateRenduByTemplateCode(MailTemplates::SESSION_TERMINEE, $vars);
         $mail = $inscription->getDoctorant()->getIndividu()->getEmailPro();
 

@@ -5,6 +5,7 @@ namespace Formation\Service\Notification;
 use Application\Service\Email\EmailService;
 use Application\Service\ListeDiffusion\ListeDiffusionService;
 use Application\Service\Role\RoleService;
+use Formation\Service\Parametre\ParametreService;
 use Formation\Service\Url\UrlService;
 use Interop\Container\ContainerInterface;
 use Notification\Factory\NotificationFactoryFactory;
@@ -52,6 +53,12 @@ class FormationNotificationFactoryFactory extends NotificationFactoryFactory
          */
         $urlService = $container->get(UrlService::class);
         $factory->setUrlService($urlService);
+
+        /**
+         * @var ParametreService $parametreService
+         */
+        $parametreService = $container->get(ParametreService::class);
+        $factory->setParametreService($parametreService);
 
         /** @var EmailService $emailService */
         $emailService = $container->get(EmailService::class);
