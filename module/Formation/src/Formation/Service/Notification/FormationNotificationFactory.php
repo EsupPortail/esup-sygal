@@ -321,6 +321,8 @@ class FormationNotificationFactory extends NotificationFactory
         $doctorant = $these->getDoctorant();
         $vars = [
             'doctorant' => $doctorant,
+            'unite-recherche' => $these->getUniteRecherche(),
+            'etablissement' => $these->getEtablissement(),
         ];
 
         $this->urlService->setVariables([
