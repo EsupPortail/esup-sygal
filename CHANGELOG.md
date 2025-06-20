@@ -24,6 +24,7 @@ Journal des modifications
 - [FIX] Module Soutenance : Génération du document pour la présidence inaccessible
 - [FIX] Module Soutenance : Un même individu avec le même role pouvait être associé à plusieurs acteurs 
 - [FIX] Module Soutenance : Validation de la page de couverture affichée comme non disponible à tort
+- [FIX] Module Soutenance : Suppression d'un pré-rapport (fichier) impossible (encore référencée dans la table soutenance_avis)
 - [FIX] Module Formation : Possibilité de valider plusieurs fois la même formation externe, ce qui faisait planter ultérieurement la page
 - [FIX] Module Admission : Dossier inaccessible si le numéro de candidature n'était pas renseigné
 
