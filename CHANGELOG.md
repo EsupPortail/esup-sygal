@@ -5,6 +5,7 @@ Journal des modifications
 ------
 - Module Admission : Initialisation du tableau de bord avec les dossiers d'admissions en cours de saisie/en cours de validation
 - Module Formation : Ajout d'une macro dans les templates pour le délai de l'enquête
+- Module Formation : Notification lors d'une formation externe ajoutée, envoyée seulement à la Maison du Doctorat et aux responsables de l'ED concernée
 - [FIX] Bouton 'Générer l'avis de soutenance' Thèse : déplacement avant 'Feu vert' et correction des conditions d'affichage.
 - [FIX] Bouton 'Générer l'avis de soutenance' HDR : déplacement avant 'Feu vert' et correction des conditions d'affichage.
 - [FIX] Ajout d'un delete cascade en BDD pour supprimer les justificatifs liés à un fichier supprimé (ex: PV de soutenance).

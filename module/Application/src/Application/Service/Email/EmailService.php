@@ -55,10 +55,10 @@ class EmailService
     /**
      * @return string[]
      */
-    public function fetchEmailEcoleDoctorale(These|HDR $entity) : array
+    public function fetchEmailEcoleDoctorale(These|HDR $entity, string $role = null) : array
     {
         $individuRoles = $this->applicationRoleService->findIndividuRoleByStructure(
-            $entity->getEcoleDoctorale()->getStructure(), null, $entity->getEtablissement());
+            $entity->getEcoleDoctorale()->getStructure(), $role, $entity->getEtablissement());
 
         return $this->collectEmailsFromIndividuRoles($individuRoles);
     }
@@ -66,10 +66,10 @@ class EmailService
     /**
      * @return string[]
      */
-    public function fetchEmailUniteRecherche(These|HDR $entity) : array
+    public function fetchEmailUniteRecherche(These|HDR $entity, string $role = null) : array
     {
         $individuRoles = $this->applicationRoleService->findIndividuRoleByStructure(
-            $entity->getUniteRecherche()->getStructure(), null, $entity->getEtablissement());
+            $entity->getUniteRecherche()->getStructure(), $role, $entity->getEtablissement());
 
         return $this->collectEmailsFromIndividuRoles($individuRoles);
     }

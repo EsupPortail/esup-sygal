@@ -338,7 +338,7 @@ class FormationNotificationFactory extends NotificationFactory
             throw new RuntimeException("Aucune adresse mail trouvée pour la Maison du doctorat (thèse {$these->getId()})");
         }
 
-        $emailsED = $this->emailService->fetchEmailEcoleDoctorale($these);
+        $emailsED = $this->emailService->fetchEmailEcoleDoctorale($these, Role::CODE_RESP_ED);
         if (empty($emailsED)) {
             throw new RuntimeException("Aucune adresse mail trouvée pour l'école doctorale de la thèse {$these->getId()}");
         }
