@@ -1556,14 +1556,18 @@ p.avis-complem {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
+.doctorant-card .card-body {
+  padding: 0.7rem 0.7rem;
+}
+
 .doctorant-card .doctorant-icon {
   margin-right: 10px;
 }
 
 .doctorant-card .doctorant-icon .icon {
   position: relative;
-  width: 20px;
-  height: 20px;
+  width: 25px;
+  height: 25px;
   background-color: var(--secondary-color);
   border-radius: 50%;
   display: flex;
@@ -1577,12 +1581,12 @@ p.avis-complem {
 .doctorant-card .doctorant-icon .badge {
   position: absolute;
   top: -12px;
-  right: -13px;
+  right: -15px;
   background-color: var(--primary-color);
   color: #fff;
   border-radius: 50%;
   padding: 4px 4px;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: bold;
 }
 
