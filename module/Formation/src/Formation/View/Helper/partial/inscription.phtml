@@ -56,7 +56,7 @@ $these = current($doctorant->getTheses());
                 <span>
                     <?php foreach ($doctorant->getTheses() as $these) {
                         if ($these->getEtatThese() === These::ETAT_EN_COURS and $these->estNonHistorise()) {
-                            echo "<br/>";
+//                            echo "<br/>";
                             if($these->getEtablissement()){
                                 echo $this->structure($these->getEtablissement(), false, true);
                             }
@@ -95,7 +95,7 @@ $these = current($doctorant->getTheses());
 
         <div class="doctorant-actions">
             <?php if ($actionListePrincipale OR $actionListeComplementaire OR $actionHistoriser OR $actionSupprimer) : ?>
-                <br/>
+<!--                <br/>-->
                 <?php if ($inscription->estNonHistorise() AND $actionListePrincipale) : ?>
                     <a
                         <?php /** @see \Formation\Controller\InscriptionController::passerListePrincipaleAction() */?>

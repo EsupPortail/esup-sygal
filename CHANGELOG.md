@@ -6,6 +6,7 @@ Journal des modifications
 - Module Admission : Initialisation du tableau de bord avec les dossiers d'admissions en cours de saisie/en cours de validation
 - Module Formation : Ajout d'une macro dans les templates pour le délai de l'enquête
 - Module Formation : Notification lors d'une formation externe ajoutée, envoyée seulement à la Maison du Doctorat et aux responsables de l'ED concernée
+- Module Formation : Réduction de la taille des cards affichant les inscrits à une session de formation
 - Module Rapport d'activités : Changement du bouton "Ajouter un rapport d'activité" en "Compléter le rapport d'activité" et affichage de la mention "annuel 2024-2025" au lieu de "annuel 2024"
 - [FIX] Bouton 'Générer l'avis de soutenance' Thèse : déplacement avant 'Feu vert' et correction des conditions d'affichage.
 - [FIX] Bouton 'Générer l'avis de soutenance' HDR : déplacement avant 'Feu vert' et correction des conditions d'affichage.
