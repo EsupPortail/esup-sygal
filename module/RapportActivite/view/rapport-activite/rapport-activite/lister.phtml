@@ -3,6 +3,7 @@
 namespace RapportActivite;
 
 use Application\Constants;
+use Application\Entity\AnneeUniv;
 use Validation\Entity\Db\TypeValidation;
 use Application\View\Renderer\PhpRenderer;
 use RapportActivite\Entity\Db\RapportActivite;
@@ -88,7 +89,7 @@ $campagneDepotDateFin = $campagneDepotDates[RapportActiviteParametres::CAMPAGNE_
 <?php if ($canAdd): ?>
     <div class="btn-group">
         <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-            Ajouter un rapport d'activité
+            Compléter le rapport d'activité
         </button>
         <div class="dropdown-menu">
             <?php
@@ -101,7 +102,7 @@ $campagneDepotDateFin = $campagneDepotDates[RapportActiviteParametres::CAMPAGNE_
                         'these' => $these->getId(),
                         'estFinContrat' => $options['value'],
                         'anneeUniv' => $option,
-                    ]) ?>"><?php echo $options['label']." ".$option ?></a>
+                    ]) ?>"><?php echo $options['label']." ".AnneeUniv::fromPremiereAnnee($option) ?></a>
                 <?php endforeach; ?>
 
             <?php endforeach ?>
