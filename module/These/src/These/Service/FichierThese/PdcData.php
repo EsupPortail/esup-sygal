@@ -553,8 +553,8 @@ class PdcData
 
         //soutenance
         if(!$this->getDate())                       $warnings[] = "La date de soutenance est manquante";
-        if(count($this->getRapporteurs())<2)        $warnings[] = "Nombre de rapporteurs trop faible (".count($this->getRapporteurs()).")";
-        if(count($this->getDirecteurs())<1)         $warnings[] = "Nombre de directeurs trop faible (".count($this->getDirecteurs()).")";
+        if($this->getRapporteurs() && count($this->getRapporteurs())<2)        $warnings[] = "Nombre de rapporteurs trop faible (".count($this->getRapporteurs()).")";
+        if($this->getDirecteurs() && count($this->getDirecteurs())<1)         $warnings[] = "Nombre de directeurs trop faible (".count($this->getDirecteurs()).")";
 
         //membres du jury
         if ($this->getActeursEnCouverture()) {

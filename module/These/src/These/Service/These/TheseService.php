@@ -207,9 +207,9 @@ class TheseService extends BaseService
     public function fetchInformationsPageDeCouverture(These $these) : PdcData
     {
         $pdcData = new PdcData();
-        $propositions = $these->getPropositionsThese()->toArray();
-        /** @var Proposition $proposition */
-        $proposition = end($propositions);
+        $proposition = $these->getCurrentProposition();
+
+        if($proposition === null) return $pdcData;
 
         //à voir pour supprimer complètement si pas de remontée de la part des fonctionnels
 //        if ($these->getDateSoutenance() !== null) {
