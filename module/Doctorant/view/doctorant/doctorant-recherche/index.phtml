@@ -27,10 +27,10 @@ $queryParams = $this->queryParams();
 $canAjouter = false;//$this->isAllowed(Privileges::getResourceId(DoctorantPrivileges::DOCTORANT_AJOUTER));
 ?>
 
-<?php $this->headTitle($this->translate("Doctorants")) ?>
+<?php $this->headTitle($this->translate("Doctorant·es")) ?>
 
 <h1 class="page-header">
-    <span class="fas fa-user-friends"></span>
+    <span class="fas fa-user-graduate"></span>
     <?php echo $this->translate("Doctorant·es"); ?>
 
     <?php if ($canAjouter): ?>

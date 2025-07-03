@@ -31,7 +31,7 @@ class DoctorantRechercheController extends AbstractController implements SearchC
 
     public function indexAction(): Response|ViewModel
     {
-//        $this->restrictFilters();
+        $this->restrictSearchFilters();
 
         $text = $this->params()->fromQuery('text');
 
@@ -43,23 +43,16 @@ class DoctorantRechercheController extends AbstractController implements SearchC
         /** @var SearchResultPaginator $paginator */
         $paginator = $result;
 
-        $etablissement = true;//$this->searchService->getEtablissementInscSearchFilter()->getValue(); // todo
-//        $etatThese = $this->searchService->getFilterValueByName(TheseSearchService::NAME_etatThese);
-
         return new ViewModel([
             'paginator' => $paginator,
             'text' => $text,
-//            'roleDirecteurThese' => $this->applicationRoleService->getRepository()->findOneBy(['sourceCode' => Role::CODE_DIRECTEUR_THESE]),
-            'displayEtablissement' => !$etablissement,
-//            'displayDateSoutenance' => $etatThese === These::ETAT_SOUTENUE || !$etatThese,
-//            'etatThese' => $etatThese,
             'loadFiltersUrl' => 'doctorant/recherche/filters',
         ]);
     }
 
     public function filtersAction(): ViewModel
     {
-//        $this->restrictFilters();
+        $this->restrictSearchFilters();
 
         $filters = $this->filters();
 
@@ -102,14 +95,14 @@ class DoctorantRechercheController extends AbstractController implements SearchC
      */
     public function notresAction()
     {
-//        $this->restrictFilters();
+        $this->restrictSearchFilters();
 
         $this->searchIfRequired = false;
 
         $viewModel = $this->indexAction();
-        $viewModel->setTemplate('these/these-recherche/index');
+        $viewModel->setTemplate('doctorant/doctorant-recherche/index');
         $viewModel->setVariables([
-            'filtersRoute' => 'these/recherche/notres/filters',
+            'filtersRoute' => 'doctorant/recherche/notres/filters',
         ]);
 
         return $viewModel;
@@ -120,7 +113,7 @@ class DoctorantRechercheController extends AbstractController implements SearchC
      */
     public function notresFiltersAction(): ViewModel
     {
-//        $this->restrictFilters();
+        $this->restrictSearchFilters();
 
         $filters = $this->filters();
 
@@ -128,7 +121,7 @@ class DoctorantRechercheController extends AbstractController implements SearchC
             'filters' => $filters,
             'message' => "coucou!",
         ]);
-        $vm->setTemplate('these/these-recherche/filters');
+        $vm->setTemplate('doctorant/recherche/notres/filters');
 
         return $vm;
     }
@@ -157,12 +150,26 @@ class DoctorantRechercheController extends AbstractController implements SearchC
     {
         $role = $this->userContextService->getSelectedIdentityRole();
 
-        if ($etab = $role->getStructure()?->getEtablissement()) {
-            $filter = $this->searchService->getEtablissementInscSearchFilter();
-            $filter
-                ->setData([$etab])
-                ->setDefaultValueAsObject($etab)
-                ->setAllowsEmptyOption(false);
+        switch (true) {
+            case $role->isEcoleDoctoraleDependant():
+                $filter = $this->searchService->getEcoleDoctoraleSearchFilter();
+                $entity = $role->getStructure()->getEcoleDoctorale();
+                break;
+            case $role->isUniteRechercheDependant():
+                $filter = $this->searchService->getUniteRechercheSearchFilter();
+                $entity = $role->getStructure()->getUniteRecherche();
+                break;
+            case $role->isEtablissementDependant():
+                $filter = $this->searchService->getEtablissementInscSearchFilter();
+                $entity = $role->getStructure()->getEtablissement();
+                break;
+            default:
+                return;
         }
+
+        $filter
+            ->setData([$entity])
+            ->setDefaultValueAsObject($entity)
+            ->setAllowsEmptyOption(false);
     }
 }

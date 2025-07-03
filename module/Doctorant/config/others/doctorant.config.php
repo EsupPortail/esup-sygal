@@ -2,6 +2,7 @@
 
 namespace Doctorant;
 
+use Application\Navigation\ApplicationNavigationFactory;
 use Doctorant\Assertion\DoctorantAssertion;
 use Doctorant\Assertion\DoctorantAssertionFactory;
 use Doctorant\Assertion\These\TheseAssertion;
@@ -121,8 +122,7 @@ return [
                         DoctorantPrivileges::DOCTORANT_CONSULTER_TOUS,
                         DoctorantPrivileges::DOCTORANT_CONSULTER_SIEN,
                     ],
-                    'roles' => 'user', //////////////////////////////////////// todo provisoire !!!!!!!!!!!!
-//                    'assertion'  => DoctorantAssertion::class,
+                    'assertion'  => DoctorantAssertion::class,
                 ],
                 [
                     'controller' => DoctorantController::class,
@@ -133,8 +133,7 @@ return [
                         DoctorantPrivileges::DOCTORANT_MODIFIER_TOUS,
                         DoctorantPrivileges::DOCTORANT_MODIFIER_SIEN,
                     ],
-                    'roles' => 'user', //////////////////////////////////////// todo provisoire !!!!!!!!!!!!
-//                    'assertion'  => DoctorantAssertion::class,
+                    'assertion'  => DoctorantAssertion::class,
                 ],
                 [
                     'controller' => DoctorantController::class,
@@ -308,7 +307,7 @@ return [
                             ],
                             'defaults' => [
                                 /**
-                                 * @see \Doctorant\Controller\DoctorantController::modifierEmailContactAction()
+                                 * @see DoctorantController::modifierEmailContactAction
                                  */
                                 'controller' => DoctorantController::class,
                                 'action' => 'modifier-email-contact',
@@ -324,7 +323,7 @@ return [
                             ],
                             'defaults' => [
                                 /**
-                                 * @see \Doctorant\Controller\DoctorantController::modifierEmailContactConsentAction()
+                                 * @see DoctorantController::modifierEmailContactConsentAction
                                  */
                                 'controller' => DoctorantController::class,
                                 'action' => 'modifier-email-contact-consent',
@@ -337,7 +336,7 @@ return [
                             'route' => '/consentement',
                             'defaults' => [
                                 /**
-                                 * @see \Doctorant\Controller\DoctorantController::consentementAction()
+                                 * @see DoctorantController::consentementAction
                                  */
                                 'controller' => DoctorantController::class,
                                 'action' => 'consentement',
@@ -383,15 +382,40 @@ return [
             ],
         ],
     ],
-    'navigation' => [
+    'navigation'      => [
         'default' => [
             'home' => [
                 'pages' => [
-                    'doctorant' => [
-                        'label' => 'Doctorants',
-                        'route' => 'doctorant',
-
-                    ]
+                    'admin' => [
+                        'pages' => [
+                            'doctorants' => [
+                                'label'    => 'Doctorant·es',
+                                'route'    => 'doctorant',
+                                'resource' => PrivilegeController::getResourceId(DoctorantRechercheController::class, 'index'),
+                                'privilege' => [
+                                    DoctorantPrivileges::DOCTORANT_LISTER_TOUT,
+                                ],
+                                'icon'     => 'fas fa-user-graduate',
+                                'order'    => 65,
+                            ],
+                        ],
+                    ],
+                    /**
+                     * Cette page aura une page fille 'these-1', 'these-2', etc. générées automatiquement.
+                     * @see ApplicationNavigationFactory::processPage()
+                     */
+                    // DEPTH = 1
+                    ApplicationNavigationFactory::NOS_DOCTORANTS_PAGE_ID => [
+                        'order' => -200,
+                        'label' => 'Nos doctorants',
+                        'route' => 'doctorant/recherche/notres',
+                        'resource' => PrivilegeController::getResourceId(DoctorantRechercheController::class, 'index'),
+                        'privilege' => [
+                            DoctorantPrivileges::DOCTORANT_LISTER_SIEN,
+                            DoctorantPrivileges::DOCTORANT_LISTER_TOUT,
+                        ],
+                        'pages' => [],
+                    ],
                 ],
             ],
         ],

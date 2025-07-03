@@ -7,6 +7,7 @@ use Individu\Service\IndividuService;
 use Interop\Container\ContainerInterface;
 use Structure\Search\Etablissement\EtablissementSearchFilter;
 use Structure\Service\Etablissement\EtablissementService;
+use Structure\Service\Structure\StructureService;
 
 class DoctorantSearchServiceFactory
 {
@@ -29,6 +30,10 @@ class DoctorantSearchServiceFactory
         /** @var EtablissementService $etablissementService */
         $etablissementService = $container->get(EtablissementService::class);
         $service->setEtablissementService($etablissementService);
+
+        /** @var StructureService $structureService */
+        $structureService = $container->get(StructureService::class);
+        $service->setStructureService($structureService);
 
         $service->setEtablissementInscSearchFilter(EtablissementSearchFilter::newInstance());
 

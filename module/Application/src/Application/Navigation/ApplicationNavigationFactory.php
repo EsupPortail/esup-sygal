@@ -27,10 +27,11 @@ class ApplicationNavigationFactory extends NavigationFactory
     use TheseServiceAwareTrait;
     use HDRServiceAwareTrait;
 
-    public const THESE_SELECTIONNEE_PAGE_ID = 'THESE_SELECTIONNEE';
-    public const MA_THESE_PAGE_ID = 'MA_THESE';
-    public const MES_THESES_PAGE_ID = 'MES_THESES';
-    public const NOS_THESES_PAGE_ID = 'NOS_THESES';
+    const THESE_SELECTIONNEE_PAGE_ID = 'THESE_SELECTIONNEE';
+    const MA_THESE_PAGE_ID = 'MA_THESE';
+    const MES_THESES_PAGE_ID = 'MES_THESES';
+    const NOS_THESES_PAGE_ID = 'NOS_THESES';
+    const NOS_DOCTORANTS_PAGE_ID = 'NOS_DOCTORANTS';
 
     public const HDR_SELECTIONNEE_PAGE_ID = 'HDR_SELECTIONNEE';
     public const MA_HDR_PAGE_ID = 'MA_HDR';
@@ -159,6 +160,17 @@ class ApplicationNavigationFactory extends NavigationFactory
         if ($page['pages'][$key = self::THESE_SELECTIONNEE_PAGE_ID] ?? null) {
             if ($this->doctorant === null && $this->candidat !== null || $this->pageMaTheseCreated) {
                 // si une page 'Ma thèse' est présente, la page 'Thèse sélectionnée' qui fait doublon est supprimée
+                unset($page['pages'][$key]);
+            }
+        }
+
+        /**
+         * Nos doctorants
+         */
+        if ($page['pages'][$key = self::NOS_DOCTORANTS_PAGE_ID] ?? null) {
+            if ($this->role !== null && ($this->role->isEcoleDoctoraleDependant() || $this->role->isUniteRechercheDependant() || $this->role->isEtablissementDependant())) {
+                $page['visible'] = true;
+            } else {
                 unset($page['pages'][$key]);
             }
         }

@@ -9,7 +9,7 @@ use These\Provider\Privilege\PresidentJuryPrivileges;
  * @var ActeurThese[] $presidents
  */
 
-$this->headTitle("Gestion des comptes associés aux présidents du jury");
+$this->headTitle("Gestion des comptes associés aux président·e·s du jury");
 
 
 function afficherActeur(ActeurThese $a) {
@@ -127,13 +127,13 @@ $canNotifierPresident     = $this->isAllowed(PresidentJuryPrivileges::getResourc
 ?>
 
 <h1 class="page-header">
-    Gestion des comptes associés aux présidents du jury
+    Gestion des comptes associés aux président·e·s du jury
 </h1>
 
 <?php echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace() ?>
 
      <p>
-         Dans le tableau ci-dessous vous retrouvez la liste des présidents de jury remonté dans <?php echo $this->appInfos()->nom ?> pour les thèses en attente de correction.
+         Dans le tableau ci-dessous vous retrouvez la liste des président·e·s de jury remonté dans <?php echo $this->appInfos()->nom ?> pour les thèses en attente de correction.
      </p>
 
     <p>
@@ -245,7 +245,7 @@ $canNotifierPresident     = $this->isAllowed(PresidentJuryPrivileges::getResourc
                 </tr>
             <?php endforeach; ?>
         </tbody>
-        <caption>Liste des présidents du jury de thèses avec des corrections <strong>soutenues dans les 4 derniers mois</strong>.</caption>
+        <caption>Liste des président·e·s du jury de thèses avec des corrections <strong>soutenues dans les 4 derniers mois</strong>.</caption>
     </table>
 </div>
 

@@ -6,6 +6,7 @@ use Acteur\Service\ActeurThese\ActeurTheseServiceAwareTrait;
 use Application\Assertion\AbstractAssertion;
 use Application\Assertion\Exception\FailedAssertionException;
 use Application\Assertion\ThrowsFailedAssertionExceptionTrait;
+use Application\Entity\Db\Role;
 use Application\RouteMatch;
 use Application\Service\UserContextServiceAwareInterface;
 use Doctorant\Entity\Db\Doctorant;
@@ -46,7 +47,7 @@ class DoctorantAssertion extends AbstractAssertion
         }
 
         $entity = $this->getRequestedDoctorant();
-
+        $role = $this->userContextService->getSelectedIdentityRole();
         try {
             switch ($action) {
                 case 'lister':
@@ -55,7 +56,7 @@ class DoctorantAssertion extends AbstractAssertion
 
                 case 'tableau-de-bord':
                 case 'consulter':
-                    if (!$this->assertEntity($entity, DoctorantPrivileges::DOCTORANT_CONSULTER_SIEN)) {
+                    if (!($role->getCode() === Role::CODE_ADMIN_TECH) && !$this->assertEntity($entity, DoctorantPrivileges::DOCTORANT_CONSULTER_SIEN)) {
                         return false;
                     }
                     return true;
@@ -90,6 +91,7 @@ class DoctorantAssertion extends AbstractAssertion
         try {
             switch ($privilege) {
                 case DoctorantPrivileges::DOCTORANT_CONSULTER_SIEN:
+                case DoctorantPrivileges::DOCTORANT_MODIFIER_SIEN:
                     $role = $this->userContextService->getSelectedIdentityRole();
 
                     if ($role->isDoctorant()) {

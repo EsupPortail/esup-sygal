@@ -11,12 +11,13 @@
  * @var bool $canCreateRapportFinContrat
  * @var AnneeUniv $anneeUnivProposition
  * @var PropositionThese $proposition
+ * @var Role $role
  *
  * @see DoctorantController::tableauDeBordAction()
- * /
  */
 
 use Application\Entity\AnneeUniv;
+use Application\Entity\Db\Role;
 use Application\View\Renderer\PhpRenderer;
 use Doctorant\Entity\Db\Doctorant;
 use Doctorant\Provider\Privilege\DoctorantPrivileges;
@@ -34,7 +35,7 @@ $canAccederIndexFormations = $this->isAllowed(Privileges::getResourceId(IndexPri
     $this->isAllowed(Privileges::getResourceId(IndexPrivileges::INDEX_DOCTORANT));
 $canModifierDoctorant =
     $this->isAllowed($doctorant, DoctorantPrivileges::DOCTORANT_MODIFIER_TOUS) ||
-    $this->isAllowed($doctorant, DoctorantPrivileges::DOCTORANT_MODIFIER_TOUS);
+    $this->isAllowed($doctorant, DoctorantPrivileges::DOCTORANT_MODIFIER_SIEN);
 ?>
 
 <h1 class="page-header">
@@ -104,7 +105,12 @@ $canModifierDoctorant =
                     <?php echo $this->partial('doctorant/doctorant/partial/formations-en-cours', ['inscriptions' => $enCours]) ?>
                 </div>
                 <div class="card-footer">
-                    <a href="<?php echo $this->url('formation/catalogue', [], [], true); ?>" class="btn btn-primary">
+                    <?php
+                    //TODO actualiser le lien
+                    $url = $role->isDoctorant() ?
+                    $this->url('formation/index-doctorant', ['doctorant' => $doctorant->getId()], ['fragment' => 'a_venir'], true) :
+                        ""; ?>
+                    <a href="<?php echo $url; ?>" class="btn btn-primary">
                         <span class="icon icon-voir"></span>
                         Accéder au tableau de bord
                     </a>

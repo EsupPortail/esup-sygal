@@ -154,7 +154,7 @@ return [
                     'admin' => [
                         'pages' => [
                             'co-encadrant' => [
-                                'label'    => 'Co-encadrant',
+                                'label'    => 'Co-encadrant·e·s',
                                 'route'    => 'co-encadrant',
                                 'resource' => PrivilegeController::getResourceId(CoEncadrantController::class, 'index'),
                                 'icon' => 'fas fa-user-friends',
