@@ -19,6 +19,7 @@ Journal des modifications
 
 10.1.1
 ------
+- Module Soutenance : Amélioration du workflow dans la pré-soutenance
 - [FIX] Affichage des fichiers/justificatifs pouvait dépasser de leurs conteneurs sur de petits écrans
 - [FIX] Dépendance erronée pour OrigineFinancementSearchFilter dans certaines classes
 - [FIX] Module Soutenance : Génération du document pour la présidence inaccessible

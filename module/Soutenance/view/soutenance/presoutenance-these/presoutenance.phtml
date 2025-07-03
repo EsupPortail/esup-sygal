@@ -431,9 +431,21 @@ $canSimulerRemonter = $this->isAllowed(PresoutenancePrivileges::getResourceId(Pr
         </div>
     </div>
 
+    <!-- DOCUMENT ----------------------------------------------------------------------------------------------------->
+    <?php echo $this->partial('soutenance/presoutenance/partial/documents',
+        [
+            'documentsLiesSoutenance' => $documentsLiesSoutenance,
+            'proposition' => $proposition,
+            'urlFichier' => $urlFichierThese,
+            'typeProposition' => $typeProposition,
+            'canGenererDocument' => $canGenererDocument,
+            'tousLesAvisSontDefavorables' => $tousLesAvisSontDefavorables,
+        ]
+    ); ?>
+
     <?php
     //Délibération dans l'application, seulement si celle-ci a été saisie dans celle-ci
-    if(!$these->getSource()->getImportable()){
+    if(!$these->getSource()->getImportable()):
         $cssClass = null;
         if($proposition->getEtat()->getCode() === Etat::ETABLISSEMENT || $proposition->getEtat()->getCode() === Etat::COMPLET || $proposition->getEtat()->getCode() === Etat::REJETEE) {
             $bgcolor = "bg-dark";
@@ -451,6 +463,10 @@ $canSimulerRemonter = $this->isAllowed(PresoutenancePrivileges::getResourceId(Pr
 
         $canAjouterResultat = $this->isAllowed($these, ThesePrivileges::THESE_DONNER_RESULTAT);
         ?>
+
+        <br>
+        <div class="separator"></div>
+        <br>
 
         <div class="box card">
             <div class="card-header <?php echo $bgcolor; ?> text-white <?= $cssClass ?>">
@@ -491,24 +507,7 @@ $canSimulerRemonter = $this->isAllowed(PresoutenancePrivileges::getResourceId(Pr
                 <?php endif; ?>
             </div>
         </div>
-    <?php } ?>
-
-    <br>
-    <div class="separator"></div>
-    <br>
-
-    <!-- DOCUMENT ----------------------------------------------------------------------------------------------------->
-    <?php echo $this->partial('soutenance/presoutenance/partial/documents',
-        [
-            'documentsLiesSoutenance' => $documentsLiesSoutenance,
-            'proposition' => $proposition,
-            'urlFichier' => $urlFichierThese,
-            'typeProposition' => $typeProposition,
-            'canGenererDocument' => $canGenererDocument,
-            'tousLesAvisSontDefavorables' => $tousLesAvisSontDefavorables,
-        ]
-    ); ?>
-
+    <?php endif; ?>
 <?php endif; ?>
 
 <style>
