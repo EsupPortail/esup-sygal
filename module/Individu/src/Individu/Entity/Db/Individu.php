@@ -498,15 +498,23 @@ class Individu implements
      */
     public function setCivilite(?string $civilite): static
     {
-        if ($civilite !== null && !in_array($civilite, self::CIVILITES)) {
-            // autres valeurs acceptées mais transcodées
-            $civilite = [
-                'M' => self::CIVILITE_M,
-                'F' => self::CIVILITE_MME,
-            ][$civilite] ?? null;
+        // Si la civilité est une clé valide du tableau CIVILITES
+        if ($civilite !== null && array_key_exists($civilite, self::CIVILITES)) {
+            $this->civilite = $civilite;
+            return $this;
         }
 
-        $this->civilite = $civilite;
+        // Sinon on tente une correspondance simple
+        $transcodes = [
+            'M' => self::CIVILITE_M,   // 'M' devient 'M.'
+            'F' => self::CIVILITE_MME, // 'F' devient 'Mme'
+        ];
+
+        if (array_key_exists($civilite, $transcodes)) {
+            $this->civilite = $transcodes[$civilite];
+        } else {
+            $this->civilite = null;
+        }
 
         return $this;
     }

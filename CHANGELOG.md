@@ -30,6 +30,7 @@ Journal des modifications
 - [FIX] Bouton 'Générer l'avis de soutenance' Thèse : déplacement avant 'Feu vert' et correction des conditions d'affichage.
 - [FIX] Bouton 'Générer l'avis de soutenance' HDR : déplacement avant 'Feu vert' et correction des conditions d'affichage.
 - [FIX] Page de couverture thèse: la récupération de la proposition de soutenance n'appelait pas la bonne méthode
+- [FIX] Form Individu : Civilité "M." n'était pas pris en compte lors de l'enregistrement du formulaire
 
 10.1.0
 ------
