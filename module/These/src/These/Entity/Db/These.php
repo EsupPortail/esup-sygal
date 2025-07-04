@@ -56,6 +56,13 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     public const ETAT_SOUTENUE   = 'S';
     public const ETAT_TRANSFEREE = 'U';
 
+    public const ETATS_TOUS = [
+        self::ETAT_EN_COURS,
+        self::ETAT_SOUTENUE,
+        self::ETAT_ABANDONNEE,
+        self::ETAT_TRANSFEREE,
+    ];
+
     public static array $etatsLibelles = [
         self::ETAT_EN_COURS   => "En cours",
         self::ETAT_ABANDONNEE => "Abandonnée",

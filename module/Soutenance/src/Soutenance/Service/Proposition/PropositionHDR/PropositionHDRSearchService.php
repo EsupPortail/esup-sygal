@@ -3,12 +3,9 @@
 namespace Soutenance\Service\Proposition\PropositionHDR;
 
 use Application\QueryBuilder\DefaultQueryBuilder;
-use UnicaenSearch\Filter\SearchFilter;
-use UnicaenSearch\Filter\SelectSearchFilter;
-use UnicaenSearch\SearchService;
-use UnicaenSearch\Sorter\SearchSorter;
 use Doctrine\ORM\QueryBuilder;
 use HDR\Entity\Db\HDR;
+use Soutenance\Search\Proposition\estTerminee\EstTermineeSearchFilterAwareTrait;
 use Structure\Entity\Db\TypeStructure;
 use Structure\Search\Etablissement\EtablissementInscSearchFilterAwareTrait;
 use Structure\Search\Etablissement\EtablissementSearchFilter;
@@ -17,7 +14,10 @@ use Structure\Search\UniteRecherche\UniteRechercheSearchFilterAwareTrait;
 use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
 use Structure\Service\Structure\StructureServiceAwareTrait;
 use Structure\Service\UniteRecherche\UniteRechercheServiceAwareTrait;
-use These\Entity\Db\These;
+use UnicaenSearch\Filter\SearchFilter;
+use UnicaenSearch\Filter\SelectSearchFilter;
+use UnicaenSearch\SearchService;
+use UnicaenSearch\Sorter\SearchSorter;
 
 class PropositionHDRSearchService extends SearchService
 {
@@ -28,6 +28,7 @@ class PropositionHDRSearchService extends SearchService
 
     use EtablissementInscSearchFilterAwareTrait;
     use UniteRechercheSearchFilterAwareTrait;
+    use EstTermineeSearchFilterAwareTrait;
 
     public const NAME_ETAT = 'etat';
 
@@ -97,6 +98,9 @@ class PropositionHDRSearchService extends SearchService
             $uniteRechercheFilter,
             $etatFilter,
         ]);
+        $estTermineeFilter = $this->getEstTermineeSearchFilter('hdr', 'etatHDR', HDR::ETATS_TOUS);
+        $this->addFilter($estTermineeFilter);
+
         $this->addSorters([
             $this->createSorterEtablissement(),
             $this->createSorterUniteRecherche(),

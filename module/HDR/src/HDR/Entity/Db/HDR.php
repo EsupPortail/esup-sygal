@@ -47,6 +47,13 @@ class HDR implements HistoriqueAwareInterface, HasHorodatagesInterface, Resource
         self::ETAT_SOUTENANCE_PROGRAMMEE
     ];
 
+    public const ETATS_TOUS = [
+        self::ETAT_EN_COURS,
+        self::ETAT_SOUTENANCE_PROGRAMMEE,
+        self::ETAT_SOUTENUE,
+        self::ETAT_ABANDONNEE,
+    ];
+
     public static array $etatsLibelles = [
         self::ETAT_EN_COURS   => "En cours",
         self::ETAT_SOUTENANCE_PROGRAMMEE   => "Soutenance programmée",

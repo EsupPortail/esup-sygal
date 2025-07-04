@@ -23,6 +23,8 @@ class Etat implements HistoriqueAwareInterface, SearchFilterValueInterface
     private $code;
     /** @var string */
     private $libelle;
+    /** @var int */
+    private $ordre;
 
     /**
      * @return int
@@ -66,6 +68,22 @@ class Etat implements HistoriqueAwareInterface, SearchFilterValueInterface
     {
         $this->libelle = $libelle;
         return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getOrdre(): int
+    {
+        return $this->ordre;
+    }
+
+    /**
+     * @param int $ordre
+     */
+    public function setOrdre(int $ordre): void
+    {
+        $this->ordre = $ordre;
     }
 
     /**

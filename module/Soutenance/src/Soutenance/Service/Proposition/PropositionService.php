@@ -391,7 +391,7 @@ class PropositionService extends BaseService
     public function findPropositionEtats() : array
     {
         $qb = $this->getEntityManager()->getRepository(Etat::class)->createQueryBuilder('etat')
-            ->orderBy('etat.id');
+            ->orderBy('etat.ordre');
 
         return $qb->getQuery()->getResult();
     }

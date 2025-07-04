@@ -9,6 +9,7 @@
 
         <field name="code"              type="string"       length="64"         column="code"           nullable="false"/>
         <field name="libelle"           type="string"       length="256"        column="libelle"        nullable="false"/>
+        <field name="ordre" type="integer" column="ordre" nullable="false" />
 
         <!-- HISTORISATION ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
         <field name="histoCreation" type="datetime" column="histo_creation" nullable="false"/>
