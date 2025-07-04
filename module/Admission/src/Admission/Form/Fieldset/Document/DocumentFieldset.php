@@ -78,11 +78,6 @@ class DocumentFieldset extends AdmissionBaseFieldset implements InputFilterProvi
         );
 
         $this->add(
-            (new Textarea('argumentaireDirecteurThese'))
-                ->setAttributes(["id" => "argumentaireDirecteurThese"])
-        );
-
-        $this->add(
             (new File('acteNaissance'))
                 ->setLabel("Extrait d'acte de naissance")
                 ->setAttributes(["id" => "ADMISSION_ACTE_NAISSANCE"])

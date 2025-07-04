@@ -26,6 +26,7 @@ echo $this->form($form);
             tinymce.init({
                 selector: '.contenu-page',
                 toolbar: 'undo redo | styleselect | bold italic | bullist numlist | table link email',
+                menubar: false,
                 plugins: 'lists link table email',
                 style_formats: [
                     {title: 'Titre 1', block: 'h2'},

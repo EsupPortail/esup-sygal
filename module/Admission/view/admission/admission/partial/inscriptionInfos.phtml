@@ -1,13 +1,12 @@
 <?php
 
 use Admission\Entity\Db\Admission;
+use Admission\Entity\Db\Etudiant;
 use Admission\Form\Admission\AdmissionForm;
 use Admission\Form\Fieldset\Inscription\InscriptionFieldset;
 use Admission\Provider\Privilege\AdmissionPrivileges;
 use Application\Entity\Db\Role;
 use Application\View\Renderer\PhpRenderer;
-use Laminas\Form\Element\Select;
-use UnicaenApp\Form\Element\SearchAndSelect;
 use UnicaenRenderer\Entity\Db\Rendu;
 use UnicaenRenderer\Provider\Privilege\DocumenttemplatePrivileges;
 
@@ -26,6 +25,8 @@ $form->prepare();
 $canAccederCommentaires = $this->isAllowed($admission,AdmissionPrivileges::ADMISSION_ACCEDER_COMMENTAIRES);
 $canModifier = $this->isAllowed(DocumenttemplatePrivileges::getResourceId(DocumenttemplatePrivileges::DOCUMENTTEMPLATE_MODIFIER));
 
+/** @var Etudiant $etudiant */
+$etudiant = $admission ? $admission->getEtudiant()->first() : null;
 ?>
 <div class="admission-section-form">
     <div class="admission-section-title-container">
@@ -103,6 +104,22 @@ $canModifier = $this->isAllowed(DocumenttemplatePrivileges::getResourceId(Docume
             <?php echo $this->formControlGroup($fieldset->get('titreThese')) ?>
         </div>
     </div>
+    <?php if ($etudiant->getNiveauEtude() == 2): ?>
+        <div class="separator"></div>
+        <div class="row subfield">
+            <div class="col infos-pieces-justificatives-container">
+                <p>Vous avez un autre diplôme qu'un master français (Dérogation) <label class="admission-section-doctype-title-en">&nbsp; / You have a degree other than a French master's (Derogation)</label></p>
+            </div>
+        </div>
+        <div class="row subfield">
+            <div class="col-lg-3 col-sm-12 filename-label">
+                <label data-after=" / Argument of PhD director for the council of the doctoral school mandatory">Argumentaire du directeur de thèse pour le conseil de l'école doctorale obligatoire</label>
+            </div>
+            <div class="col-lg-9 col-sm-12">
+                <?php echo $this->formControlGroup($form->get('inscription')->get('argumentaireDirecteurThese')) ?>
+            </div>
+        </div>
+    <?php endif; ?>
 </div>
 <div class="admission-section-form">
     <div class="admission-section-title-container">
@@ -291,5 +308,30 @@ if($canAccederCommentaires) {
             event.div.modal('hide');
             window.location.reload();
         });
+    });
+
+    $(document).ready(function() {
+        tinymce.remove();
+        tinymce.init({
+            selector: '.tinymce',
+            toolbar: 'newdocument undo redo | bold italic removeformat | bullist',
+            menubar: false,
+            height: 210,
+            resize: true,
+            language: 'fr_FR',
+            plugins: 'lists',
+            statusbar: true,
+            browser_spellcheck : true,
+            branding: false,
+            menu: {},
+            body_id: 'description',
+            setup: function (editor) {
+                editor.on("focusout", function () {
+                    console.log(tinymce.get('description').getContent());
+                    $('textarea').val(tinymce.get('description').getContent());
+                });
+            }
+        });
+        $('select').selectpicker();
     });
 </script>

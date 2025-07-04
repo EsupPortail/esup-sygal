@@ -29,6 +29,7 @@ Journal des modifications
 - [FIX] Module Soutenance : Suppression d'un pré-rapport (fichier) impossible (encore référencée dans la table soutenance_avis)
 - [FIX] Module Formation : Possibilité de valider plusieurs fois la même formation externe, ce qui faisait planter ultérieurement la page
 - [FIX] Module Admission : Dossier inaccessible si le numéro de candidature n'était pas renseigné
+- [FIX] Module Admission : Argumentaire du directeur de thèse pour le conseil de l'école doctorale (dans le cas d'un master étranger) non pris en compte
 - [FIX] Bouton 'Générer l'avis de soutenance' Thèse : déplacement avant 'Feu vert' et correction des conditions d'affichage.
 - [FIX] Bouton 'Générer l'avis de soutenance' HDR : déplacement avant 'Feu vert' et correction des conditions d'affichage.
 - [FIX] Page de couverture thèse: la récupération de la proposition de soutenance n'appelait pas la bonne méthode

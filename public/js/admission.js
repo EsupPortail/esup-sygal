@@ -225,6 +225,7 @@ document.addEventListener("DOMContentLoaded", function() {
     tinymce.remove();
     tinymce.init({
         selector: '.description_commentaires_gestionnaire',
+        menubar: false,
         toolbar: 'undo redo | bold italic | bullist numlist',
         plugins: 'lists link',
         statusbar: true,
@@ -697,6 +698,7 @@ document.addEventListener("DOMContentLoaded", function() {
         tinymce.init({
             selector: 'textarea',
             toolbar: 'undo redo | bold italic | bullist numlist | table link',
+            menubar: false,
             plugins: 'lists link table',
             table_toolbar: "tabledelete | tableinsertrowbefore tableinsertrowafter tabledeleterow | tableinsertcolbefore tableinsertcolafter tabledeletecol",
             statusbar: true,

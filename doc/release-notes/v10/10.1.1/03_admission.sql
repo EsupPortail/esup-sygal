@@ -1,0 +1,1 @@
+alter table admission_inscription add column argumentaire_directeur_these text;

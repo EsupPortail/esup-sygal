@@ -54,14 +54,14 @@ $returnUrl = $this->url('admission/ajouter', ['action' => "document",'individu' 
     <div class="admission-section-title-container">
         <h2 class="admission-section-title">Pièces justificatives<label class="admission-section-title-en">&nbsp; /  Supporting documents</label></h2>
     </div>
-    <?php if($admission && $admission->getEtat()->getCode() === Etat::CODE_EN_COURS_SAISIE){ ?>
+    <?php if($admission && $admission->getEtat()->getCode() === Etat::CODE_EN_COURS_SAISIE): ?>
         <div class="admission-informations-container">
             <i class="fas fa-info-circle"></i>
             <p>
                 Chaque pièce justificative ajoutée ci-dessous est automatiquement enregistrée
             </p>
         </div>
-    <?php } ?>
+    <?php endif; ?>
     <div class="row subfield">
         <div class="col infos-pieces-justificatives-container">
             <p>Obligatoires<label class="admission-section-doctype-title-en">&nbsp; / Required</label></p>
@@ -114,22 +114,7 @@ $returnUrl = $this->url('admission/ajouter', ['action' => "document",'individu' 
         'fieldsetCharteDoctoratSignee' => $fieldset->get('charteDoctoratSignee'),
         'role' => $role
     ]);
-    if ($etudiant->getNiveauEtude() == 2) { ?>
-        <div class="row subfield">
-            <div class="col infos-pieces-justificatives-container">
-                <p>Vous avez un autre diplôme qu'un master français (Dérogation) <label class="admission-section-doctype-title-en">&nbsp; / If other than a French Master's degree (Derogation)</label></p>
-            </div>
-        </div>
-        <div class="row subfield">
-            <div class="col-lg-3 col-sm-12 filename-label">
-                <label data-after=" / Argument of PhD director for the council of the doctoral school mandatory">Argumentaire du directeur de thèse pour le conseil de l'école doctorale obligatoire</label>
-            </div>
-            <div class="col-lg-9 col-sm-12">
-                <?php echo $this->formControlGroup($fieldset->get('argumentaireDirecteurThese')) ?>
-            </div>
-        </div>
-    <?php }
-    if ($etudiant->getNiveauEtude() == 2 && $etudiant->getTypeDiplomeAutre() == 1) { ?>
+    if ($etudiant->getNiveauEtude() == 2 && $etudiant->getTypeDiplomeAutre() == 1) : ?>
         <div class="row subfield">
             <div class="col infos-pieces-justificatives-container">
                 <p>Vous êtes titulaire d'un titre étranger<label class="admission-section-doctype-title-en">&nbsp; / If the student has a foreign qualification</label></p>
@@ -151,8 +136,8 @@ $returnUrl = $this->url('admission/ajouter', ['action' => "document",'individu' 
             'documents' => $documents,
             'admission' => $admission,
         ]);
-    } ?>
-    <?php if ($etudiant->getNiveauEtude() == 2 && $etudiant->getTypeDiplomeAutre() == 2){ ?>
+    endif; ?>
+    <?php if ($etudiant->getNiveauEtude() == 2 && $etudiant->getTypeDiplomeAutre() == 2): ?>
         <div class="row subfield">
             <div class="col infos-pieces-justificatives-container">
                 <p>Si l'étudiant est titulaire d'un diplôme français ne conférant pas le grade de master</p>
@@ -164,39 +149,39 @@ $returnUrl = $this->url('admission/ajouter', ['action' => "document",'individu' 
             'documents' => $documents,
             'admission' => $admission,
         ]);
-    } ?>
-    <?php if ($inscription && ($inscription->getConfidentialite() || $inscription->getCoTutelle() || $inscription->getCoEncadrement())) { ?>
+    endif; ?>
+    <?php if ($inscription && ($inscription->getConfidentialite() || $inscription->getCoTutelle() || $inscription->getCoEncadrement())) : ?>
         <div class="row subfield">
             <div class="col infos-pieces-justificatives-container">
                 <p>Spécificité(s) demandée(s)<label class="admission-section-doctype-title-en">&nbsp; /  Specificities requested</label></p>
             </div>
         </div>
-        <?php if ($inscription->getConfidentialite()) { ?>
+        <?php if ($inscription->getConfidentialite()) : ?>
             <div class="row subfield">
                 <div class="col-lg-3 col-sm-12 filename-label">
                     <?php echo $this->formlabel($fieldset->get('documentsDemandeConfidentialite')) ?>
                 </div>
             </div>
-        <?php } ?>
-        <?php if ($inscription->getCoTutelle()) {
+        <?php endif; ?>
+        <?php if ($inscription->getCoTutelle()) :
             echo $this->partial('admission/partial/document/document', [
                 'fieldset' => $fieldset->get('documentsCotutelle'),
                 'documents' => $documents,
                 'admission' => $admission,
             ]);
-        } ?>
-        <?php if ($inscription->getCoEncadrement()) {
+        endif; ?>
+        <?php if ($inscription->getCoEncadrement()) :
             echo $this->partial('admission/partial/document/document', [
                 'fieldset' => $fieldset->get('documentsCoencadrement'),
                 'documents' => $documents,
                 'admission' => $admission,
             ]);
-        }
-    } ?>
+        endif;
+    endif; ?>
 </div>
 
 <?php
-if($canAccederCommentaires) {
+if($canAccederCommentaires) :
     echo $this->partial('admission/partial/verification/verification', [
         'admission' => $admission,
         'fcg' => $this->formControlGroup(),
@@ -204,10 +189,10 @@ if($canAccederCommentaires) {
         'element' => !empty($admission) && !empty($admission->getDocument()->first()) ? $admission->getDocument() : null,
         'elementVerification' => !empty($admission) && !empty($admission->getDocument()->first()) ? $admission->getDocument()->first()->getVerificationDocument() : null,
     ]);
-}
+endif;
 
 //Permet d'enregistrer les commentaires entrés par la/le gestionnaire du dossier
-if ($canVerifierAdmission) { ?>
+if ($canVerifierAdmission) : ?>
     <div class="admission-enregistrer-verification-container" style="display:none;">
         <div class="admission-informations-container">
             <i class="fas fa-info-circle"></i>
@@ -219,11 +204,11 @@ if ($canVerifierAdmission) { ?>
                class="multipage-nav submit btn btn-success enregistrer-verification-btn" value="Enregistrer les modifications">
         <?php echo $this->formControlGroup($fieldset->get('enregistrerVerification')); ?>
     </div>
-<?php } ?>
+<?php endif; ?>
 
 <div class="row notifier-dossier-incomplet">
     <?php
-    if($canNotifierDossierIncomplet && !$admission->isDossierComplet()){
+    if($canNotifierDossierIncomplet && !$admission->isDossierComplet()):
         //Permettre aux gestionnaires de notifier l'étudiant que son dossier est incomplet ?>
         <a class="btn access-notification-dossier-incomplet-btn required" data-operation="NotificationDossierIncomplet">
             <span class="icon icon-notify"></span>
@@ -252,7 +237,7 @@ if ($canVerifierAdmission) { ?>
                 </div>
             </div>
         </div>
-    <?php } ?>
+    <?php endif; ?>
 </div>
 <div class="admission-section-form">
     <div class="admission-section-title-container">
@@ -271,44 +256,44 @@ if ($canVerifierAdmission) { ?>
         'role' => $role
     ]);
 
-    if ($canGenererRecapitulatif) { ?>
+    if ($canGenererRecapitulatif) : ?>
         <a class="btn btn-primary"
            href="<?php echo $this->url('admission/generer-recapitulatif', ['admission' => $admission->getId()], [], true); ?>"
            target="_blank">
             <span class="icon icon-pdf" title="Télécharger le récapitulatif" data-bs-toggle="tooltip" data-bs-html="true"></span>
             Télécharger le récapitulatif du dossier d'admission
         </a>
-    <?php }
+    <?php endif;
 
     //Affichage du bouton seulement si l'on peut gérer un récap signé
     //ou soit que le dossier ne soit pas plus en cours de saisie et que le récap soit déjà uploadé
-    if($canAccederRecapitulatifSigne){
+    if($canAccederRecapitulatifSigne):
         $recapSigneDejaTeleverse = isset($documents[$fieldset->get('recapitulatifDossierSigne')->getAttribute('id')]);
-        if($canGererRecapitulatifSigne || $recapSigneDejaTeleverse){ ?>
+        if($canGererRecapitulatifSigne || $recapSigneDejaTeleverse): ?>
             <a class="btn btn-primary access-recap-signe-btn" role="button" data-bs-toggle="collapse" href="#file-recap-signe-container" aria-expanded="false" aria-controls="file-recap-signe-container">
-                <?php if ($canGererRecapitulatifSigne && !$recapSigneDejaTeleverse) { ?>
+                <?php if ($canGererRecapitulatifSigne && !$recapSigneDejaTeleverse) : ?>
                     <span class="icon icon-televerser" title="Télécharger le récapitulatif"></span>
                     Téléverser le récapitulatif signé
-                <?php } else { ?>
+                <?php else : ?>
                     <span class="icon icon-voir" title="Télécharger le récapitulatif"></span>
                     Accéder au récapitulatif signé
-                <?php } ?>
+                <?php endif; ?>
             </a>
             <div class="collapse <?php echo $recapSigneDejaTeleverse ? "show" : null;?>" id="file-recap-signe-container">
-                <?php if ($canGererRecapitulatifSigne) {
+                <?php if ($canGererRecapitulatifSigne) :
                     echo $this->partial('admission/partial/document/document', [
                         'fieldset' => $fieldset->get('recapitulatifDossierSigne')->setAttribute('disabled', false),
                         'documents' => $documents,
                         'admission' => $admission,
                     ]);
-                } else {
+                else :
                     echo $this->partial('admission/partial/document/document', [
                         'fieldset' => $fieldset->get('recapitulatifDossierSigne'),
                         'documents' => $documents,
                         'admission' => $admission,
                     ]);
-                } ?>
+                endif; ?>
             </div>
-        <?php }
-    } ?>
+        <?php endif;
+    endif; ?>
 </div>

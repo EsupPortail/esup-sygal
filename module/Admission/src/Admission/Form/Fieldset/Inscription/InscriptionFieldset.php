@@ -296,6 +296,14 @@ class InscriptionFieldset extends AdmissionBaseFieldset implements InputFilterPr
         );
 
         $this->add(
+            (new Textarea('argumentaireDirecteurThese'))
+                ->setAttributes([
+                    "id" => 'argumentaireDirecteurThese',
+                    "class" => 'tinymce'
+                ])
+        );
+
+        $this->add(
             (new Hidden('coDirecteur'))
         );
 
@@ -522,6 +530,10 @@ class InscriptionFieldset extends AdmissionBaseFieldset implements InputFilterPr
                 'filters' => [
                     ['name' => ToNull::class], /** nécessaire et suffisant pour mettre la relation à null */
                 ],
+            ],
+            'argumentaireDirecteurThese' => [
+                'name' => 'argumentaireDirecteurThese',
+                'required' => false,
             ],
             'prenomCodirecteurThese' => [
                 'name' => 'prenomCodirecteurThese',

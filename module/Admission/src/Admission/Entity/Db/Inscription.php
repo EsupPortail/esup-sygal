@@ -130,6 +130,11 @@ class Inscription implements HistoriqueAwareInterface{
     /**
      * @var string|null
      */
+    private $argumentaireDirecteurThese;
+
+    /**
+     * @var string|null
+     */
     private $prenomCodirecteurThese;
 
     /**
@@ -675,6 +680,22 @@ class Inscription implements HistoriqueAwareInterface{
     public function getDirecteur()
     {
         return $this->directeur;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getArgumentaireDirecteurThese(): ?string
+    {
+        return $this->argumentaireDirecteurThese;
+    }
+
+    /**
+     * @param string|null $argumentaireDirecteurThese
+     */
+    public function setArgumentaireDirecteurThese(?string $argumentaireDirecteurThese): void
+    {
+        $this->argumentaireDirecteurThese = $argumentaireDirecteurThese;
     }
 
     /**

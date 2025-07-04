@@ -14,6 +14,7 @@
         <field name="nomDirecteurThese" type="string" column="nom_directeur_these" length="60" nullable="true"/>
         <field name="prenomDirecteurThese" type="string" column="prenom_directeur_these" length="60" nullable="true"/>
         <field name="emailDirecteurThese" type="string" column="mail_directeur_these" length="60" nullable="true"/>
+        <field name="argumentaireDirecteurThese" type="string" column="argumentaire_directeur_these" length="9999" nullable="true"/>
         <field name="nomCodirecteurThese" type="string" column="nom_codirecteur_these" length="60" nullable="true"/>
         <field name="prenomCodirecteurThese" type="string" column="prenom_codirecteur_these" length="60" nullable="true"/>
         <field name="emailCodirecteurThese" type="string" column="mail_codirecteur_these" length="60" nullable="true"/>

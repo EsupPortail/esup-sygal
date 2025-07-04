@@ -203,26 +203,26 @@ class AdmissionController extends AdmissionAbstractController {
         /** @var Admission $admission */
         $admission = $this->getAdmission();
 
-            if(!empty($admission)) {
+        if (!empty($admission)) {
             $data = $this->multipageForm($this->admissionForm)->getFormSessionData();
             $this->admissionForm->bind($admission);
-            $canModifierAdmission  = $this->isAllowed($admission,AdmissionPrivileges::ADMISSION_MODIFIER_TOUS_DOSSIERS_ADMISSION) || $this->isAllowed($admission, AdmissionPrivileges::ADMISSION_MODIFIER_SON_DOSSIER_ADMISSION);
-            if(!$canModifierAdmission){
+            $canModifierAdmission = $this->isAllowed($admission, AdmissionPrivileges::ADMISSION_MODIFIER_TOUS_DOSSIERS_ADMISSION) || $this->isAllowed($admission, AdmissionPrivileges::ADMISSION_MODIFIER_SON_DOSSIER_ADMISSION);
+            if (!$canModifierAdmission) {
                 /** @var FinancementFieldset $financement */
                 $financement = $this->admissionForm->get('financement');
                 $financement->disableModificationFieldset();
             }
-            if($data['_fieldset'] == "inscription"){
+            if ($data['_fieldset'] == "inscription") {
                 //Enregistrement des informations de l'inscription
                 $this->enregistrerInscription($data, $admission);
-            }elseif($data['_fieldset'] == "document"){
+            } elseif ($data['_fieldset'] == "document") {
                 //Enregistrement des informations de financement
                 $this->enregistrerDocument($data, $admission);
             }
             /** @var Inscription $inscription */
             $inscription = $admission->getInscription()->first();
             $etablissementInscription = $inscription instanceof Inscription ? $inscription?->getEtablissementInscription() : null;
-            if($etablissementInscription && $etablissementInscription->getStructure()->getSigle()){
+            if ($etablissementInscription && $etablissementInscription->getStructure()->getSigle()) {
                 //Enregistrement des templates si l'établissement ne les possèdes pas encore
                 $this->admissionService->createTemplatesForEtablissement($etablissementInscription);
             }
