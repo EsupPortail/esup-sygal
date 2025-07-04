@@ -161,7 +161,12 @@ $president = $proposition->getObject()->getActeursByRoleCode(Role::CODE_PRESIDEN
                         ?>
                             <tr>
                                 <td>    <?php echo $acteur->getIndividu()->getNomComplet(); ?>                                                   </td>
-                                <td>    <?php echo $isPresident ? $president->getId() . ' ' . $president->getIndividu()->getNomComplet() : ''; ?>                  </td>
+                                <td>
+                                    <?php if($isPresident): ?>
+                                        <?php echo $president->getIndividu()->getNomComplet(); ?>
+                                        <span class="icon icon-info" data-bs-toggle="tooltip" data-bs-html="true" title="ID de l'acteur : <?= $president->getId() ?> <br> ID de l'individu associé : <?= $president->getIndividu()->getId() ?>"></span>
+                                    <?php endif; ?>
+                                </td>
                                 <td>
                                     <?php if ($canAssocierMembreIndividu): ?>
                                         <?php if ($aucunPresidentJuryDeclare): ?>
@@ -181,7 +186,7 @@ $president = $proposition->getObject()->getActeursByRoleCode(Role::CODE_PRESIDEN
                                             </a>
                                         <?php endif; ?>
                                     <?php else: ?>
-                                        <?php if (!$aucunPresidentJuryDeclare): ?>
+                                        <?php if ($aucunPresidentJuryDeclare): ?>
                                             <span class="fas fa-link"
                                                   title="Vous n'avez pas les droits nécessaires pour déclarer ce membre en tant que président du jury"
                                                   data-bs-toggle="tooltip"
