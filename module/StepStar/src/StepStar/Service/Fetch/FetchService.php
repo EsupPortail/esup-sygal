@@ -133,8 +133,8 @@ class FetchService
             ->leftJoin('ed.structure', 'eds')
             ->leftJoin('ur.structure', 'urs')
             ->leftJoin('t.acteurs', 'a', Join::WITH, 'a.histoDestruction is null')
-            ->leftJoin('a.individu', 'ai', Join::WITH, 'ai.histoDestruction is null')
-            ->leftJoin('a.role', 'r', Join::WITH, 'r.histoDestruction is null')
+            ->leftJoin('a.individu', 'ai')
+            ->leftJoin('a.role', 'r')
             ->andWhereNotHistorise()
             ->orderBy('es.sourceCode, t.id');
 

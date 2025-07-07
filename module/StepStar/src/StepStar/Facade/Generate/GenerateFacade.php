@@ -31,7 +31,14 @@ class GenerateFacade
     public const TEF_DIR_NAME = 'tef';
 
     /**
-     * Le *chemin absolu* du répertoire créé par le module et dans lequel sont générés le fichier
+     * Préfixe (ou "début") du *chemin absolu* du répertoire à créer et dans lequel sont générés les fichiers.
+     * Un hash sera concaténé à ce préfixe pour prévenir la collision de répertoires.
+     * Ex : '/tmp/sygal_stepstar_'
+     */
+    private string $outputDirPathPrefix;
+
+    /**
+     * Le *chemin absolu* du répertoire créé par le module et dans lequel sont générés les fichiers
      *  XML intermédiaire (dans un sous répertoire dédié) et les fichiers TEF (idem).
      * @var string
      */
@@ -57,13 +64,26 @@ class GenerateFacade
      * Spécifie le *préfixe du chemin* du répertoire qui sera créé par le module et dans lequel seront générés le fichier
      * XML intermédiaire (dans un sous répertoire dédié) et les fichiers TEF (idem).
      *
-     * Exemple : '/tmp/sygal_stepstar_' donnera lieu à la création de répertoires comme ça :
+     * Exemple : '/tmp/sygal_stepstar_' donnera lieu à la création de répertoires suivante :
      *   - /tmp/sygal_stepstar_660165360b1c3/xml : pour le fichier XML intermédiaire,
      *   - /tmp/sygal_stepstar_660165360b1c3/tef : pour les fichiers TEF.
      */
     public function setOutputDirPathPrefix(string $outputDirPathPrefix): void
     {
-        $this->outputDirPath = uniqid($outputDirPathPrefix);
+        $this->outputDirPathPrefix = $outputDirPathPrefix;
+        $this->outputDirPath = uniqid($this->outputDirPathPrefix, true);
+        $this->xmlThesesOutputDirPath = $this->generateXmlThesesOutputDirPath($this->outputDirPath);
+        $this->tefOutputDirPath = $this->generateTefOutputDirPath($this->outputDirPath);
+    }
+
+    private function generateXmlThesesOutputDirPath(string $parentDirPath): string
+    {
+        return $parentDirPath . '/' . self::XML_DIR_NAME;
+    }
+
+    private function generateTefOutputDirPath(string $parentDirPath): string
+    {
+        return $parentDirPath . '/' . self::TEF_DIR_NAME;
     }
 
     /**
@@ -92,7 +112,10 @@ class GenerateFacade
     }
 
     /**
-     * Generation du fichier XML intermediaire (1 pour N theses) & des fichiers TEF (1 par these).
+     * Generation :
+     *   - fichier XML intermediaire (1 pour N theses)
+     *   - fichiers TEF (1 par these).
+     *
      * **Un Log unique est créé pour cette opération.**
      *
      * @param array $theses Thèses concernées
@@ -102,15 +125,21 @@ class GenerateFacade
      */
     public function generateFilesForTheses(array $theses, string $command, ?string $tag = null): Log
     {
-        $this->xmlThesesOutputDirPath = $this->generateXmlThesesOutputDirPath();
-        $this->tefOutputDirPath = $this->generateTefOutputDirPath();
-
         $operation = Log::OPERATION__GENERATION_XML;
         $this->newLog($operation, $command, $tag);
         $this->success = true;
         try {
+            // fichier XML intermediaire (1 pour N theses)
             $this->genererXmlFileForThesesToDir($theses);
-            $this->generateTefFilesFromDir();
+
+            // fichiers TEF (1 par these)
+            $tefFilesPaths = $this->generateTefFilesFromDir();
+            if (count($tefFilesPaths) !== count($theses)) {
+                throw new Exception(sprintf(
+                    "Le nombre de fichiers TEF générés (%d) devrait être égal au nombre de thèses spécifiées (%d).",
+                    count($tefFilesPaths), count($theses)
+                ));
+            }
         } catch (Exception $e) {
             $this->appendExceptionToLog($e);
             $this->success = false;
@@ -118,16 +147,6 @@ class GenerateFacade
         $this->log->setSuccess($this->success);
 
         return $this->log;
-    }
-
-    private function generateXmlThesesOutputDirPath(): string
-    {
-        return $this->outputDirPath . '/' . self::XML_DIR_NAME;
-    }
-
-    private function generateTefOutputDirPath(): string
-    {
-        return $this->outputDirPath . '/' . self::TEF_DIR_NAME;
     }
 
     /**
@@ -138,7 +157,7 @@ class GenerateFacade
     private function genererXmlFileForThesesToDir(array $theses): string
     {
         if (!is_dir($this->xmlThesesOutputDirPath)) {
-            $ok = mkdir($this->xmlThesesOutputDirPath, 0777, true);
+            $ok = mkdir($this->xmlThesesOutputDirPath, 0600, true);
             if (!$ok) {
                 throw new Exception("Impossible de créer le répertoire '$this->xmlThesesOutputDirPath'.");
             }
@@ -189,9 +208,11 @@ class GenerateFacade
     }
 
     /**
+     * @return string[] Liste des chemins des fichiers TEF générés.
+     *
      * @throws \Exception
      */
-    private function generateTefFilesFromDir(): void
+    private function generateTefFilesFromDir(): array
     {
         $this->appendToLog(sprintf(
             "Generation des fichiers TEF (1 par these) dans %s, a partir du repertoire %s :",
@@ -226,6 +247,8 @@ class GenerateFacade
         } else {
             $this->log->setTefFilePath($paths[0]);
         }
+
+        return $paths;
     }
 
     /**

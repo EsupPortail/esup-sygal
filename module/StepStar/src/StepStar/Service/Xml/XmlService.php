@@ -332,13 +332,18 @@ class XmlService
         return $validTheses;
     }
 
-    /**
-     * @param array $these
-     */
-    private function validateThese(array $these)
+    private function validateThese(array $these): void
     {
         Assert::notNull($these['ecoleDoctorale'], sprintf("La thèse %d n'est liée à aucune ED", $these['id']));
         Assert::notNull($these['uniteRecherche'], sprintf("La thèse %d n'est liée à aucune UR", $these['id']));
+
+        Assert::notEmpty(
+            $this->extractCodeEtudiant($these),
+            sprintf("Aucun code disponible pour le doctorant %s de la thèse %d.",
+                $these['doctorant']['individu']['nomPatronymique'],
+                $these['id']
+            )
+        );
     }
 
     /**
@@ -427,7 +432,7 @@ class XmlService
 
         $data = [
             // doctorant
-            self::CODE_ETUDIANT => $these['doctorant']['individu']['supannId'], // NB: identifiant unique considéré par STEP-STAR comme immuable
+            self::CODE_ETUDIANT => $this->extractCodeEtudiant($these), // NB: identifiant unique considéré par STEP-STAR comme immuable
             self::CODE_INE => $these['doctorant']['ine'],
             self::PPN_DOCTORANT => $these['doctorant']['individu']['idRef'] ?? null,
             self::NOM_ETUDIANT => $these['doctorant']['individu']['nomPatronymique'] ?: $these['doctorant']['individu']['nomUsuel'],
@@ -548,6 +553,11 @@ class XmlService
         $data[self::RAPPORTEUR_JURY] = $this->extractIndividus($rapporteurs) ?: null;
 
         return array_filter($data);
+    }
+
+    private function extractCodeEtudiant(array $these): ?string
+    {
+        return $these['doctorant']['individu']['supannId'] ?: $these['doctorant']['codeApprenantInSource'];
     }
 
     private function extractStructureEtablissement(array $these): array
