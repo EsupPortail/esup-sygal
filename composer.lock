@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "4ecb66d7ce6529fdcdacc201260b96b5",
+    "content-hash": "992f0b9f317016bb70a3ad39a0dc4b9a",
     "packages": [
         {
             "name": "apereo/phpcas",
@@ -11545,11 +11545,11 @@
         },
         {
             "name": "unicaen/search",
-            "version": "dev-master",
+            "version": "dev-release_1.1.0",
             "source": {
                 "type": "git",
                 "url": "https://git.unicaen.fr/lib/unicaen/search.git",
-                "reference": "e56cc8012b57e138935ae46ab5d79476bba6a1be"
+                "reference": "12f70e5005d503aa9952a615be8ee01eb11dfba3"
             },
             "require": {
                 "doctrine/doctrine-orm-module": "^5.3",
@@ -11577,7 +11577,7 @@
                 ]
             },
             "description": "Module Unicaen proposant la création de pages de recherche en BDD et de filtres normalisés",
-            "time": "2025-05-07T14:53:36+00:00"
+            "time": "2025-06-13T13:11:08+00:00"
         },
         {
             "name": "unicaen/shell",

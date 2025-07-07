@@ -61,7 +61,7 @@
         "unicaen/parametre": "^6.0",
         "unicaen/pdf": "^6.1",
         "unicaen/renderer": "dev-release_7.0.6",
-        "unicaen/search": "dev-master",
+        "unicaen/search": "dev-release_1.1.0",
         "unicaen/sql": "dev-master",
         "unicaen/sygal-api": "dev-master",
         "unicaen/utilisateur": "^6.3"
