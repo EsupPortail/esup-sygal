@@ -12,6 +12,7 @@ Journal des modifications
 - [FIX] Bouton 'Générer l'avis de soutenance' HDR : déplacement avant 'Feu vert' et correction des conditions d'affichage.
 - [FIX] Ajout d'un delete cascade en BDD pour supprimer les justificatifs liés à un fichier supprimé (ex: PV de soutenance).
 - [FIX] Module STEP-STAR : correction du plantage en cas d'utilisation du filtre établissement dans la recherche de logs.  
+- [FIX] Doctorant : initialisation du 'code_apprenant_in_source' pour le cas où le doctorant est créé dans l'application (source SyGAL).  
 
 10.1.1
 ------

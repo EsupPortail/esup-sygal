@@ -136,6 +136,7 @@ class DoctorantService extends BaseService
         $doctorant->setEtablissement($etablissement);
         $doctorant->setSource($this->sourceService->fetchApplicationSource());
         $doctorant->setSourceCode($this->sourceService->genereateSourceCode());
+        $doctorant->setCodeApprenantInSource(uniqid());
 
         return $doctorant;
     }
