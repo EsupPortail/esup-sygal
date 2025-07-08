@@ -4,6 +4,7 @@ Journal des modifications
 10.2.0
 ------
 - Module Admission : Initialisation du tableau de bord avec les dossiers d'admissions en cours de saisie/en cours de validation
+- Module Formation : nouvel export Excel multi-onglet des formations/sessions/séances.
 - Module Formation : Ajout d'une macro dans les templates pour le délai de l'enquête
 - Module Formation : Notification lors d'une formation externe ajoutée, envoyée seulement à la Maison du Doctorat et aux responsables de l'ED concernée
 - Module Formation : Réduction de la taille des cards affichant les inscrits à une session de formation

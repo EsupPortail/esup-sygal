@@ -1,7 +1,6 @@
 --
--- 10.x ?
+-- 10.2.0
 --
-
 
 WITH d(code, lib, ordre) AS (
     SELECT 'exporter-xls', 'Exporter les formations/sessions/séances au format Excel', 1000
@@ -15,10 +14,9 @@ ON CONFLICT (CATEGORIE_ID, CODE) DO UPDATE SET LIBELLE = excluded.LIBELLE,
                                                ORDRE = excluded.ORDRE;
 
 select privilege__grant_privileges_to_profiles('formation_formation',
-    ARRAY['exporter-xls'],
-    ARRAY['ADMIN_TECH', 'BDD']
-);
-
+                                               ARRAY['exporter-xls'],
+                                               ARRAY['ADMIN_TECH', 'BDD']
+       );
 
 
 drop view if exists v_extract_formation;
@@ -101,7 +99,6 @@ FROM formation_seance sea
 WHERE sea.histo_destruction IS NULL;
 
 
-
 -- drop view if exists v_extract_formation_enquete;
 --
 -- create or replace view v_extract_formation_enquete as
@@ -121,7 +118,6 @@ WHERE sea.histo_destruction IS NULL;
 --          JOIN formation_enquete_categorie ec ON eq.categorie_id = ec.id AND eq.histo_destruction IS NULL
 -- WHERE er.histo_destruction IS NULL
 -- ORDER BY fs.formation_id DESC, ec.libelle, eq.libelle;
-
 
 
 drop view if exists v_extract_formation_presence;
@@ -162,9 +158,9 @@ select f.id                                                                     
                  join structure s on s.id = ed.structure_id
                  join pre_these t on ed.id = t.ecole_doct_id and t.rank = 1 and t.doctorant_id = d.id) as these_ur,
        'D' || (select count(distinct annee_univ)
-        from these_annee_univ tau
-                 join pre_these t on t.id = tau.these_id and t.rank = 1 and t.doctorant_id = d.id
-        where tau.histo_destruction is null)                                                           as these_annee_doctorat,
+               from these_annee_univ tau
+                        join pre_these t on t.id = tau.these_id and t.rank = 1 and t.doctorant_id = d.id
+               where tau.histo_destruction is null)                                                           as these_annee_doctorat,
        (select string_agg(distinct annee_univ::varchar, ', ')
         from these_annee_univ tau
                  join pre_these t on t.id = tau.these_id and t.rank = 1 and t.doctorant_id = d.id
@@ -183,6 +179,5 @@ from formation_inscription fi
          join etablissement eorga on fsess.site_id = eorga.id
          left join formation_presence fp
                    on fi.id = fp.inscription_id and fp.seance_id = fs.id and fp.histo_destruction is null
--- where f.id = 87
 order by f.id, fsess.id, fs.id, di.nom_patronymique, di.prenom1
 ;
