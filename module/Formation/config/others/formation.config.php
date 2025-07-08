@@ -2,11 +2,22 @@
 
 namespace Formation;
 
+use Application\Export\Xlsx\Manager\XlsxExportManager;
+use Application\Export\Xlsx\Manager\XlsxExportManagerFactory;
+use Application\Export\Xlsx\Writer\ExcelDataTables\ExcelDataTablesXlsxWriter;
 use Application\Navigation\ApplicationNavigationFactory;
+use Formation\Assertion\Formation\FormationAssertion;
+use Formation\Assertion\Formation\FormationAssertionFactory;
 use Formation\Controller\FormationController;
 use Formation\Controller\FormationControllerFactory;
 use Formation\Controller\Recherche\FormationRechercheController;
 use Formation\Controller\Recherche\FormationRechercheControllerFactory;
+use Formation\Export\Xlsx\Formation\EnqueteDataProvider;
+use Formation\Export\Xlsx\Formation\EnqueteDataProviderFactory;
+use Formation\Export\Xlsx\Formation\EtablissementExplodeDataProcessor;
+use Formation\Export\Xlsx\Formation\EtablissementExplodeDataProcessorFactory;
+use Formation\Export\Xlsx\Formation\FormationStatsXlsxExport;
+use Formation\Export\Xlsx\Formation\FormationStatsXlsxExportFactory;
 use Formation\Form\Formation\FormationForm;
 use Formation\Form\Formation\FormationFormFactory;
 use Formation\Form\Formation\FormationHydrator;
@@ -22,6 +33,54 @@ use UnicaenPrivilege\Guard\PrivilegeController;
 use UnicaenPrivilege\Provider\Rule\PrivilegeRuleProvider;
 
 return [
+    'xlsx_export_manager' => [
+        'exports' => [
+            FormationStatsXlsxExport::class => [
+                'writer_class' => ExcelDataTablesXlsxWriter::class,
+                'input_file_path' => __DIR__ . '/../../resources/formation_stats_export_v2.xlsx',
+                'data_tabs' => [
+                    // 'Nom de l'onglet dans le .xlsx' => [
+                    //     'source_type' => Type de la source de données : 'db' ou 'service'.
+                    //     'source' => Nom de la vue en base de données, ou nom du service (implémentant XlsxExportTabDataProviderInterface).
+                    //     'columns' => Tableau des noms des colonnes, ou noms des colonnes séparaés par une virgule/tabulation. Inutile pour une source de type 'service'.
+                    // ],
+                    FormationStatsXlsxExport::FORMATION_DATA_TAB => [
+                        'source_type' => 'db',
+                        'source' => 'v_extract_formation',
+                        'columns' => 'module_libelle formation_id	formation_titre	session_id	session_intervenants	session_modalite	session_type	session_structures_valides	session_etab_orga	session_responsable	session_nb_nonclasses	session_nb_liste_princ	session_nb_liste_compl	seance_id	seance_annee_debut	seance_debut	seance_fin	seance_nb_h	seance_nb_presents	seance_nb_absents	seance_nb_presents_etab',
+                        'data_processors' => [
+                            [
+                                'name' => EtablissementExplodeDataProcessor::class,
+                                'columns' => ['seance_nb_presents_etab'], // colonnes à "exploser"
+                                'preserve_columns' => true,
+                            ],
+                        ],
+                    ],
+//                    FormationStatsXlsxExport::ENQUETE_DATA_TAB => [
+//                        'source_type' => 'db',
+//                        'source' => 'v_extract_formation_enquete',
+//                        'columns' => 'formation_id	formation_libelle	session_id	question_categorie	question_libelle	reponse_niveau	reponse_commentaire	reponse_date',
+//                    ],
+                    FormationStatsXlsxExport::ENQUETE_DATA_TAB => [
+                        'source_type' => 'service',
+                        'source' => EnqueteDataProvider::class,
+                    ],
+                    FormationStatsXlsxExport::DOCTORANT_DATA_TAB => [
+                        'source_type' => 'db',
+                        'source' => 'v_extract_formation_presence',
+                        'columns' => 'formation_id,formation_libelle,session_id,session_intervenant,session_modalite,session_type,session_etab_orga,doctorant_id,doctorant_nom_usuel,doctorant_nom_patronymique,doctorant_prenoms,doctorant_etablissement,these_ed,these_ur,these_annee_doctorat,these_annees_inscription,session_date_inscription,seance_id,seance_debut,seance_statut_presence',
+                    ],
+                ],
+            ],
+        ],
+        'factories' => [
+            FormationStatsXlsxExport::class => FormationStatsXlsxExportFactory::class,
+        ],
+        'aliases' => [
+            FormationStatsXlsxExport::CODE => FormationStatsXlsxExport::class,
+        ],
+    ],
+
     'bjyauthorize' => [
         'rule_providers' => [
             PrivilegeRuleProvider::class => [
@@ -45,6 +104,15 @@ return [
                     ],
                     'privileges' => [
                         FormationPrivileges::FORMATION_INDEX,
+                    ],
+                ],
+                [
+                    'controller' => FormationRechercheController::class,
+                    'action' => [
+                        'exporter-xls',
+                    ],
+                    'privileges' => [
+                        FormationPrivileges::FORMATION_EXPORTER_XLS,
                     ],
                 ],
                 [
@@ -150,6 +218,17 @@ return [
                                     ],
                                 ],
                             ],
+                            'exporter-xls' => [
+                                'type'  => Segment::class,
+                                'may_terminate' => true,
+                                'options' => [
+                                    'route'    => '/exporter/xls/:code[/formation/:formation[/session/:session]]',
+                                    'defaults' => [
+                                        /** @see FormationRechercheController::exporterXlsAction() */
+                                        'action' => 'exporter-xls',
+                                    ],
+                                ],
+                            ],
                             'afficher' => [
                                 'type'  => Segment::class,
                                 'may_terminate' => true,
@@ -251,6 +330,12 @@ return [
         'factories' => [
             FormationService::class => FormationServiceFactory::class,
             FormationSearchService::class => FormationSearchServiceFactory::class,
+            XlsxExportManager::class => XlsxExportManagerFactory::class,
+            FormationAssertion::class => FormationAssertionFactory::class,
+
+            FormationStatsXlsxExport::class => FormationStatsXlsxExportFactory::class,
+            EnqueteDataProvider::class => EnqueteDataProviderFactory::class,
+            EtablissementExplodeDataProcessor::class => EtablissementExplodeDataProcessorFactory::class,
         ],
     ],
     'controllers'     => [

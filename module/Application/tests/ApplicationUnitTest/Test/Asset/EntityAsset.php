@@ -124,7 +124,6 @@ class EntityAsset
         $e->setCodeUniteRecherche('UMR0000');
         $e->setTitre("Thèse de test");
         $e->setEtatThese(These::ETAT_EN_COURS);
-        $e->setLibelleDiscipline('PHILOSOPHIE');
         $e->setResultat(These::RESULTAT_ADMIS);
         $e->setSourceCode(uniqid());
 

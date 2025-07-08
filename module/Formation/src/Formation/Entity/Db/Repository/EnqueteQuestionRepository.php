@@ -2,12 +2,16 @@
 
 namespace Formation\Entity\Db\Repository;
 
-use Doctrine\ORM\EntityRepository;
+use Application\Entity\Db\Repository\DefaultEntityRepository;
+use Application\QueryBuilder\DefaultQueryBuilder;
 use Formation\Entity\Db\EnqueteQuestion;
-use UnicaenApp\Service\EntityManagerAwareTrait;
 use Laminas\Mvc\Controller\AbstractActionController;
+use UnicaenApp\Service\EntityManagerAwareTrait;
 
-class EnqueteQuestionRepository extends EntityRepository
+/**
+ * @method DefaultQueryBuilder createQueryBuilder($alias, $indexBy = null)
+ */
+class EnqueteQuestionRepository extends DefaultEntityRepository
 {
     use EntityManagerAwareTrait;
 
@@ -24,20 +28,12 @@ class EnqueteQuestionRepository extends EntityRepository
         return $question;
     }
 
-//    /**
-//     * @param string $alias
-//     * @return QueryBuilder
-//     */
-//    public function createQB(string $alias) : QueryBuilder
-//    {
-//        $qb = $this->createQueryBuilder($alias)
-//            ->join($alias.".module", "module")->addSelect("module")
-//            ->leftJoin($alias.".inscriptions", "inscription")->addSelect("inscription")
-//            ->leftJoin($alias.".seances", "seance")->addSelect("seance")
-//            ->leftJoin($alias.".etat", "etat")->addSelect("etat")
-//        ;
-//        return $qb;
-//    }
-//
+    public function findAll()
+    {
+        $qb = $this->createQueryBuilder('eq')
+            ->andWhereNotHistorise('eq')
+            ->addOrderBy('eq.ordre', 'ASC');
 
+        return $qb->getQuery()->getResult();
+    }
 }

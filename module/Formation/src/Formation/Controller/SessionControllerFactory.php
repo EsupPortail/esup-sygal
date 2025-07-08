@@ -2,24 +2,25 @@
 
 namespace Formation\Controller;
 
+use Application\Export\Xlsx\Manager\XlsxExportManager;
 use Application\Service\AnneeUniv\AnneeUnivService;
+use Doctrine\ORM\EntityManager;
 use Fichier\Service\Fichier\FichierStorageService;
+use Formation\Form\Session\SessionForm;
 use Formation\Service\Formation\FormationService;
+use Formation\Service\Inscription\InscriptionService;
 use Formation\Service\Justificatif\JustificatifService;
 use Formation\Service\Notification\FormationNotificationFactory;
 use Formation\Service\Presence\PresenceService;
 use Formation\Service\Session\Search\SessionSearchService;
+use Formation\Service\Session\SessionService;
 use Formation\Service\SessionStructureValide\SessionStructureValideService;
+use Interop\Container\ContainerInterface;
+use Laminas\View\Renderer\PhpRenderer;
+use Notification\Service\NotifierService;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Structure\Service\Etablissement\EtablissementService;
-use Doctrine\ORM\EntityManager;
-use Formation\Form\Session\SessionForm;
-use Formation\Service\Inscription\InscriptionService;
-use Notification\Service\NotifierService;
-use Formation\Service\Session\SessionService;
-use Interop\Container\ContainerInterface;
-use Laminas\View\Renderer\PhpRenderer;
 
 class SessionControllerFactory {
 
@@ -86,6 +87,10 @@ class SessionControllerFactory {
         /** @var \Formation\Service\Notification\FormationNotificationFactory $formationNotificationFactory */
         $formationNotificationFactory = $container->get(FormationNotificationFactory::class);
         $controller->setFormationNotificationFactory($formationNotificationFactory);
+
+        /** @var XlsxExportManager $formationXlsxExportManager */
+        $formationXlsxExportManager = $container->get(XlsxExportManager::class);
+        $controller->setFormationXlsxExportManager($formationXlsxExportManager);
 
         return $controller;
     }

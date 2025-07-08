@@ -3,6 +3,7 @@
 namespace Formation\Controller;
 
 use Application\Controller\AbstractController;
+use Application\Export\Xlsx\Manager\XlsxExportManagerAwareTrait;
 use Application\RouteMatch;
 use Application\Service\AnneeUniv\AnneeUnivServiceAwareTrait;
 use Fichier\Entity\Db\NatureFichier;
@@ -12,6 +13,7 @@ use Fichier\Service\NatureFichier\NatureFichierServiceAwareTrait;
 use Fichier\Service\Storage\Adapter\Exception\StorageAdapterException;
 use Formation\Entity\Db\Formation;
 use Formation\Entity\Db\Session;
+use Formation\Export\Xlsx\Formation\FormationStatsXlsxExport;
 use Formation\Form\Formation\FormationFormAwareTrait;
 use Formation\Service\Formation\FormationServiceAwareTrait;
 use Formation\Service\Module\ModuleServiceAwareTrait;
@@ -37,6 +39,7 @@ class FormationController extends AbstractController
     use NatureFichierServiceAwareTrait;
     use FichierServiceAwareTrait;
     use FichierStorageServiceAwareTrait;
+    use XlsxExportManagerAwareTrait;
 
     use EtablissementServiceAwareTrait;
 
@@ -64,6 +67,7 @@ class FormationController extends AbstractController
             'anneeUnivCourante' => $anneeUnivCourante,
             'anneesUniv' => $this->formationService->getAnneesUnivAsOptions($sessions),
             'urlFichierPlugin' => $this->urlFichier(),
+            'exports' => [$this->formationXlsxExportManager->get(FormationStatsXlsxExport::CODE)],
         ]);
     }
 

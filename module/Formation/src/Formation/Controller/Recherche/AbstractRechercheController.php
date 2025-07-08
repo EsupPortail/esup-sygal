@@ -23,12 +23,9 @@ class AbstractRechercheController extends AbstractController implements SearchCo
     protected string $filtersActionTemplate = 'formation/filters';
     protected string $title;
 
-    /**
-     * @return ViewModel|Response
-     */
-    public function indexAction()
+    public function indexAction(bool $searchIfRequested = false): Response|ViewModel
     {
-        $result = $this->search();
+        $result = $searchIfRequested ? $this->searchIfRequested(): $this->search();
         if ($result instanceof Response) {
             return $result;
         }
@@ -40,7 +37,7 @@ class AbstractRechercheController extends AbstractController implements SearchCo
             'paginator' => $paginator,
             'routeName' => $this->routeName,
             'returnUrl' => $this->getRequest()->getRequestUri(),
-            'delai' => $this->getParametreService()?$this->getParametreService()->getValeurForParametre(FormationParametres::CATEGORIE, FormationParametres::DELAI_ENQUETE):null,
+            'delai' => $this->getParametreService()?->getValeurForParametre(FormationParametres::CATEGORIE, FormationParametres::DELAI_ENQUETE),
         ]);
         $model->setTemplate($this->indexActionTemplate);
 
@@ -62,5 +59,10 @@ class AbstractRechercheController extends AbstractController implements SearchCo
         $model->setTemplate($this->filtersActionTemplate);
 
         return $model;
+    }
+
+    protected function restrictFilters(): void
+    {
+        // ...
     }
 }

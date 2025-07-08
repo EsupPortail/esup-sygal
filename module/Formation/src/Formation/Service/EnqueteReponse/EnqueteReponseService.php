@@ -3,8 +3,10 @@
 namespace Formation\Service\EnqueteReponse;
 
 use Doctrine\ORM\ORMException;
+use Formation\Entity\Db\EnqueteQuestion;
 use Formation\Entity\Db\EnqueteReponse;
 use Formation\Entity\Db\Repository\EnqueteReponseRepository;
+use Laminas\Http\Response;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Service\EntityManagerAwareTrait;
 
@@ -95,6 +97,39 @@ class EnqueteReponseService {
         return $reponse;
     }
 
-    /** FACADE ********************************************************************************************************/
+
+    /**
+     * Prépare/met en forme les données concernant les résultats/réponses aux enquêtes spécifiées.
+     *
+     * @param array<EnqueteReponse> $enqueteReponses
+     * @param array<EnqueteQuestion> $enqueteQuestions
+     * @return array ['array' => $array, 'histogramme' => $histogramme]
+     */
+    public function prepareResultatsEnquetes(array $enqueteReponses, array $enqueteQuestions): array
+    {
+        $histogramme = [];
+        foreach ($enqueteQuestions as $question) {
+            $histogramme[$question->getId()] = [];
+            foreach (EnqueteReponse::NIVEAUX as $clef => $value) {
+                $histogramme[$question->getId()][$clef] = 0;
+            }
+        }
+
+        $array = [];
+        foreach ($enqueteReponses as $reponse) {
+            $question = $reponse->getQuestion()->getId();
+            $inscription = $reponse->getInscription()->getId();
+
+            $niveau = $reponse->getNiveau();
+            $description = $reponse->getDescription();
+
+            $array[$inscription]["Niveau_" . $question] = EnqueteReponse::NIVEAUX[$niveau];
+            $array[$inscription]["Commentaire_" . $question] = $description;
+
+            $histogramme[$question][$niveau]++;
+        }
+
+        return [$array, $histogramme];
+    }
 
 }

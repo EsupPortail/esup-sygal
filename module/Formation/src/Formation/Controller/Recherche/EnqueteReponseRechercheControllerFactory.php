@@ -6,6 +6,7 @@ use Formation\Entity\Db\EnqueteCategorie;
 use Formation\Entity\Db\EnqueteQuestion;
 use Formation\Entity\Db\Formateur;
 use Formation\Entity\Db\Session;
+use Formation\Service\EnqueteReponse\EnqueteReponseService;
 use Formation\Service\EnqueteReponse\Search\EnqueteReponseSearchService;
 use Psr\Container\ContainerInterface;
 use UnicaenParametre\Service\Parametre\ParametreService;
@@ -43,6 +44,10 @@ class EnqueteReponseRechercheControllerFactory
         /** @var \Formation\Entity\Db\Repository\FormateurRepository $repository */
         $repository = $em->getRepository(Formateur::class);
         $controller->setFormateurRepository($repository);
+
+        /** @var \Formation\Service\EnqueteReponse\EnqueteReponseService $enqueteReponseService */
+        $enqueteReponseService = $container->get(EnqueteReponseService::class);
+        $controller->setEnqueteReponseService($enqueteReponseService);
 
         /** @var \Formation\Service\EnqueteReponse\Search\EnqueteReponseSearchService $searchService */
         $searchService = $container->get(EnqueteReponseSearchService::class);

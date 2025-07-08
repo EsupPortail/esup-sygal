@@ -11,6 +11,7 @@ use Laminas\Paginator\Paginator as LaminasPaginator;
  * @var LaminasPaginator $paginator
  * @var string $routeName
  * @var string $returnUrl
+ * @var \Application\Export\Xlsx\XlsxExportInterface[] $exports
  *
  * @see \Formation\Controller\Recherche\FormationRechercheController::indexAction()
  */
@@ -21,6 +22,7 @@ $canAfficherFormation      = $this->isAllowed(FormationPrivileges::getResourceId
 $canAjouterFormation       = $this->isAllowed(FormationPrivileges::getResourceId(FormationPrivileges::FORMATION_AJOUTER));
 $canHistoriserFormation    = $this->isAllowed(FormationPrivileges::getResourceId(FormationPrivileges::FORMATION_HISTORISER));
 $canSupprimerFormation     = $this->isAllowed(FormationPrivileges::getResourceId(FormationPrivileges::FORMATION_SUPPRIMER));
+$canExporterFormations     = $this->isAllowed(FormationPrivileges::getResourceId(FormationPrivileges::FORMATION_EXPORTER_XLS));
 ?>
 
 <h1 class="page-header"><?php echo $title ?></h1>
@@ -46,6 +48,15 @@ $canSupprimerFormation     = $this->isAllowed(FormationPrivileges::getResourceId
         <span class="icon icon-ajouter"></span>
         Ajouter une formation
     </a>
+<?php endif; ?>
+
+<?php if ($canExporterFormations) : ?>
+    <?php echo $this->partial('formation/formation/partial/exporter_btn_group', [
+        'formation' => null,
+        'session' => null,
+        'exports' => $exports,
+        'redirect' => $this->url(null, [], [], true),
+    ]); ?>
 <?php endif; ?>
 
 

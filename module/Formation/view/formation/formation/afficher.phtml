@@ -13,12 +13,14 @@ use Formation\Provider\Privilege\SessionPrivileges;
 
 /**
  * @var PhpRenderer $this
- * @see \Formation\Controller\FormationController::afficherAction()
  * @var Formation $formation
  * @var Session[] $sessions
  * @var array $anneesUniv
  * @var AnneeUniv $anneeUnivCourante
  * @var UrlFichier $urlFichierPlugin
+ * @var \Application\Export\Xlsx\XlsxExportInterface[] $exports
+ *
+ * @see \Formation\Controller\FormationController::afficherAction()
  */
 
 $pageTitle = '' . $formation->getLibelle();
@@ -28,16 +30,18 @@ $canAfficherModule      = $this->isAllowed(ModulePrivileges::getResourceId(Modul
 
 $canIndexFormation      = $this->isAllowed(FormationPrivileges::getResourceId(FormationPrivileges::FORMATION_INDEX));
 $canModifierFormation   = $this->isAllowed(FormationPrivileges::getResourceId(FormationPrivileges::FORMATION_MODIFIER));
+$canExporterFormation   = $this->isAllowed(FormationPrivileges::getResourceId(FormationPrivileges::FORMATION_EXPORTER_XLS));
 
 $canAfficherSession     = $this->isAllowed(SessionPrivileges::getResourceId(SessionPrivileges::SESSION_AFFICHER));
 $canAjouterSession      = $this->isAllowed(SessionPrivileges::getResourceId(SessionPrivileges::SESSION_AJOUTER));
 $canHistoriserSession   = $this->isAllowed(SessionPrivileges::getResourceId(SessionPrivileges::SESSION_HISTORISER));
 $canSupprimerSession    = $this->isAllowed(SessionPrivileges::getResourceId(SessionPrivileges::SESSION_SUPPRIMER));
-echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace();
 ?>
 
+<?php echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace(); ?>
+
 <h1 class="page-header">
-    <?php echo $pageTitle; ?>
+    <span class="formation-typage">Formation</span> <?php echo $pageTitle; ?>
 </h1>
 
 <div style="display: flex; gap: 2px;">
@@ -63,6 +67,15 @@ echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace();
             <span class="icon icon-modifier"></span>
             Modifier les informations
         </a>
+    <?php endif; ?>
+
+    <?php if ($canExporterFormation) : ?>
+        <?php echo $this->partial('formation/formation/partial/exporter_btn_group', [
+            'formation' => $formation,
+            'session' => null,
+            'exports' => $exports,
+            'redirect' => $this->url(null, [], [], true),
+        ]); ?>
     <?php endif; ?>
 </div>
 
