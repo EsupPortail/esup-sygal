@@ -66,7 +66,8 @@
         "unicaen/search": "dev-release_1.1.0",
         "unicaen/sql": "dev-master",
         "unicaen/sygal-api": "dev-master",
-        "unicaen/utilisateur": "^6.3"
+        "unicaen/utilisateur": "^6.3",
+        "unicaen/avis": "dev-main"
     },
     "minimum-stability": "dev",
     "prefer-stable": true,

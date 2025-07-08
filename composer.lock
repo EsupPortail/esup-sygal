@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e2bfa6baa1d97e783a65c472292bd960",
+    "content-hash": "c4f9d2986a7565fa67e2c0253e5a0796",
     "packages": [
         {
             "name": "apereo/phpcas",
@@ -11528,6 +11528,55 @@
             "time": "2025-04-09T12:25:50+00:00"
         },
         {
+            "name": "unicaen/avis",
+            "version": "dev-main",
+            "source": {
+                "type": "git",
+                "url": "https://git.unicaen.fr/lib/unicaen/avis.git",
+                "reference": "84e106d7cf1a3b146f845f53180de36e0c83e2e5"
+            },
+            "require": {
+                "doctrine/doctrine-laminas-hydrator": "^2.0 || ^3.0",
+                "doctrine/doctrine-orm-module": "^5.0 || ^6.0",
+                "laminas/laminas-config": "^3.2",
+                "laminas/laminas-eventmanager": "^3.2",
+                "laminas/laminas-filter": "^2.0 || ^3.0",
+                "laminas/laminas-form": "^3.0",
+                "laminas/laminas-http": "^2.10",
+                "laminas/laminas-hydrator": "^3.0 || ^4.0",
+                "laminas/laminas-i18n": "^2.9",
+                "laminas/laminas-inputfilter": "^2.0 || ^3.0",
+                "laminas/laminas-mvc": "^3.1",
+                "laminas/laminas-mvc-i18n": "^1.1",
+                "laminas/laminas-navigation": "^2.9",
+                "laminas/laminas-permissions-acl": "^2.0",
+                "laminas/laminas-router": "^3.1",
+                "laminas/laminas-servicemanager": "^3.4",
+                "laminas/laminas-session": "^2.8",
+                "laminas/laminas-stdlib": "^3.2",
+                "laminas/laminas-validator": "^2.0 || ^3.0",
+                "laminas/laminas-view": "^2.11",
+                "php": ">=8.0",
+                "webmozart/assert": "^1.10"
+            },
+            "require-dev": {
+                "laminas/laminas-test": "^3.2",
+                "phpunit/phpunit": "^5.6"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "UnicaenAvis": "src/",
+                    "UnicaenAvisTest": "tests/"
+                },
+                "classmap": [
+                    "./Module.php"
+                ]
+            },
+            "description": "Module Unicaen de gestion des avis",
+            "time": "2025-07-09T07:24:14+00:00"
+        },
+        {
             "name": "unicaen/bjy-authorize",
             "version": "6.1.4",
             "source": {
@@ -15045,7 +15094,8 @@
         "unicaen/renderer": 20,
         "unicaen/search": 20,
         "unicaen/sql": 20,
-        "unicaen/sygal-api": 20
+        "unicaen/sygal-api": 20,
+        "unicaen/avis": 20
     },
     "prefer-stable": true,
     "prefer-lowest": false,
