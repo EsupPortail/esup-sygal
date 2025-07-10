@@ -51,10 +51,10 @@ class IndexController extends AbstractController
         $anneeUnivCourante = $this->anneeUnivService->courante();
         $formationsExternes = [];
         if($doctorant) {
-            $debut = $this->anneeUnivService->computeDateDebut($anneeUnivCourante);
-            $fin = $this->anneeUnivService->computeDateFin($anneeUnivCourante);
-            $ouvertes = $this->getEntityManager()->getRepository(Session::class)->findSessionsByDoctorant($doctorant, Etat::CODE_OUVERTE, $debut, $fin, true);
-            $preparations = $this->getEntityManager()->getRepository(Session::class)->findSessionsByDoctorant($doctorant, Etat::CODE_PREPARATION, $debut, $fin, true);
+            // formations ouvertes et en préparation SANS CRITÈRES DE DATES pour afficher aussi celles de l'année univ suivantes
+            $ouvertes = $this->getEntityManager()->getRepository(Session::class)->findSessionsByDoctorant($doctorant, Etat::CODE_OUVERTE, verifDatePublication: true);
+            $preparations = $this->getEntityManager()->getRepository(Session::class)->findSessionsByDoctorant($doctorant, Etat::CODE_PREPARATION, verifDatePublication: true);
+
             /** @var Inscription[] $inscription */
             $inscriptions = $this->getEntityManager()->getRepository(Inscription::class)->findInscriptionsByDoctorant($doctorant);
 

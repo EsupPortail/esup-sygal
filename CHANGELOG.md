@@ -15,6 +15,7 @@ Journal des modifications
 - [FIX] Module STEP-STAR : correction du plantage en cas d'utilisation du filtre établissement dans la recherche de logs.  
 - [FIX] Module STEP-STAR : serrages de vis pour tenter d'éviter les problèmes difficiles à reproduire.
 - [FIX] Doctorant : initialisation du 'code_apprenant_in_source' pour le cas où le doctorant est créé dans l'application (source SyGAL).
+- [FIX] Page 'Mes formations' : suppression des critères de dates pour l'affichage au doctorant des formation ouvertes et en préparation.
 
 10.1.1
 ------
