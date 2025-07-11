@@ -2,6 +2,137 @@
 -- 10.2.0
 --
 
+--
+-- paramètres
+--
+INSERT INTO unicaen_parametre_parametre (categorie_id, code, libelle, description, valeur, ordre)
+select cp.id,
+       'SPEC_ANNEE_UNIV_DATE_DEBUT_FORMATION',
+       'Spécification de la date de début d''année universitaire pour le module Formation',
+       'Spécification de la date de début d''une année universitaire, *fonction de la date de bascule*, pour le module Formation',
+       '01/09/%s 00:00:00',
+       30
+from unicaen_parametre_categorie cp
+where cp.code = 'FORMATION';
+INSERT INTO unicaen_parametre_parametre (categorie_id, code, libelle, description, valeur, ordre)
+select cp.id,
+       'SPEC_ANNEE_UNIV_DATE_FIN_FORMATION',
+       'Spécification de la date de fin d''année universitaire pour le module Formation',
+       'Spécification de la date de fin d''une année universitaire, *fonction de la date de bascule*, pour le module Formation',
+       '31/08/%s 23:59:59',
+       31
+from unicaen_parametre_categorie cp
+where cp.code = 'FORMATION';
+INSERT INTO public.unicaen_parametre_parametre (categorie_id, code, libelle, description, valeur, ordre)
+select cp.id,
+       'SPEC_ANNEE_UNIV_DATE_BASCULE_FORMATION',
+       'Spécification pour la date de bascule d''année universitaire pour le module Formation',
+       'Spécification pour calculer la date de bascule d''une année universitaire sur la suivante, pour le module Formation',
+       '-7 months',
+       32
+from unicaen_parametre_categorie cp
+where cp.code = 'FORMATION';
+
+
+
+--
+-- procédure
+--
+
+drop function if exists unicaen_parametre_fetch_parametre(varchar, varchar);
+create or replace function unicaen_parametre_fetch_parametre(categorie_code varchar, param_code varchar)
+    returns unicaen_parametre_parametre
+    language plpgsql
+as
+$$declare
+    param unicaen_parametre_parametre;
+begin
+    select p.* into param
+    from unicaen_parametre_parametre p
+             join unicaen_parametre_categorie cp on p.categorie_id = cp.id and cp.code = categorie_code
+    where p.code = param_code;
+    if param is null then
+        raise exception 'Anomalie : paramètre % introuvable (catégorie %) !', param_code, categorie_code;
+    end if;
+    ----raise notice 'unicaen_parametre_fetch_parametre() : %', param;
+
+    return param;
+end
+$$;
+
+
+drop function if exists annee_univ_compute_premiere_annee_from_date(timestamptz);
+create or replace function annee_univ_compute_premiere_annee_from_date(date timestamptz) returns smallint
+    language plpgsql
+as
+$$declare
+    specDate unicaen_parametre_parametre;
+begin
+    -- fetch du paramètre SPEC_DATE_BASCULE, ex : '-10 months' (ce qui revient à basculer le 01/11)
+    specDate = unicaen_parametre_fetch_parametre('ANNEE_UNIV', 'SPEC_DATE_BASCULE');
+    --raise notice 'annee_univ_compute_premiere_annee_from_date() : %', specDate.valeur;
+
+    return date_part('year', (date + specDate.valeur::interval)); -- ex : 2022
+end
+$$;
+
+
+drop view v_extract_formation_presence;
+drop view v_extract_formation;
+drop function if exists  annee_univ_compute_from_date(timestamptz);
+create or replace function annee_univ_compute_from_date(date timestamptz) returns varchar
+    language plpgsql
+as
+$$declare
+    premiereAnnee smallint;
+begin
+    premiereAnnee = annee_univ_compute_premiere_annee_from_date(date);
+    --raise notice 'annee_univ_compute_from_date() : %', premiereAnnee;
+
+    return premiereAnnee || '/' || (premiereAnnee::smallint + 1); -- ex : '2022/2023'
+end
+$$;
+
+
+drop function if exists annee_univ_compute_date_debut(smallint);
+create or replace function annee_univ_compute_date_debut(anneeUnivPremiereAnnee smallint) returns timestamptz
+    language plpgsql
+as
+$$declare
+    specDate unicaen_parametre_parametre;
+begin
+    -- fetch du paramètre SPEC_ANNEE_UNIV_DATE_DEBUT, ex : '01/11/%s 00:00:00'
+    specDate = unicaen_parametre_fetch_parametre('ANNEE_UNIV'::varchar, 'SPEC_ANNEE_UNIV_DATE_DEBUT'::varchar);
+    --raise notice 'annee_univ_compute_date_debut() : %', specDate.valeur;
+
+    return to_timestamp(replace(specDate.valeur, '%s', anneeUnivPremiereAnnee::varchar), 'DD/MM/YYYY HH24:MI:SS');
+end
+$$;
+
+
+drop function if exists annee_univ_compute_date_fin(smallint);
+create or replace function annee_univ_compute_date_fin(anneeUnivPremiereAnnee smallint) returns timestamptz
+    language plpgsql
+as
+$$declare
+    specDate unicaen_parametre_parametre;
+begin
+    -- fetch du paramètre SPEC_ANNEE_UNIV_DATE_FIN, ex : '31/10/%s 23:59:59'
+    specDate = unicaen_parametre_fetch_parametre('ANNEE_UNIV', 'SPEC_ANNEE_UNIV_DATE_FIN');
+    --raise notice 'annee_univ_compute_date_fin() : %', specDate.valeur;
+    --raise notice 'annee_univ_compute_date_fin() : %', replace(specDate.valeur, '%s', anneeUnivPremiereAnnee::varchar);
+
+    return to_timestamp(replace(specDate.valeur, '%s', anneeUnivPremiereAnnee::varchar), 'DD/MM/YYYY HH24:MI:SS');
+end
+$$;
+
+
+
+
+--
+-- privilèges
+--
+
 WITH d(code, lib, ordre) AS (
     SELECT 'exporter-xls', 'Exporter les formations/sessions/séances au format Excel', 1000
 )
@@ -18,6 +149,12 @@ select privilege__grant_privileges_to_profiles('formation_formation',
                                                ARRAY['ADMIN_TECH', 'BDD']
        );
 
+
+
+
+--
+-- vues
+--
 
 drop view if exists v_extract_formation;
 
@@ -49,11 +186,24 @@ SELECT m.libelle                                                                
         WHERE sess.id = fi.session_id
           AND fi.histo_destruction IS NULL
           AND fi.liste IS NULL)                                                     AS session_nb_nonclasses,
+
        (SELECT count(fi.id) AS count
         FROM formation_inscription fi
         WHERE sess.id = fi.session_id
           AND fi.histo_destruction IS NULL
           AND fi.liste::text = 'P'::text)                                           AS session_nb_liste_princ,
+
+       (SELECT string_agg(tmp.str, ', '::text) AS string_agg
+        FROM (SELECT (de.source_code::text || ':'::text) || count(*) AS str
+              FROM formation_inscription fi
+               JOIN doctorant d ON fi.doctorant_id = d.id
+               JOIN etablissement de ON d.etablissement_id = de.id
+              WHERE sess.id = fi.session_id
+                AND fi.histo_destruction IS NULL
+                AND fi.liste::text = 'P'::text
+              GROUP BY de.source_code
+              ORDER BY de.source_code) tmp)                                           AS session_nb_liste_princ_etab,
+
        (SELECT count(fi.id) AS count
         FROM formation_inscription fi
         WHERE sess.id = fi.session_id
@@ -61,10 +211,12 @@ SELECT m.libelle                                                                
           AND fi.liste::text = 'C'::text)                                           AS session_nb_liste_compl,
        sea.id                                                                       AS seance_id,
        EXTRACT(year FROM sea.debut)                                                 AS seance_annee_debut,
-       to_char(sea.debut, 'DD/MM/YYYY HH24:MI'::text)                               AS seance_debut,
-       to_char(sea.fin, 'DD/MM/YYYY HH24:MI'::text)                                 AS seance_fin,
-       date_part('hour'::text, sea.fin - sea.debut) +
-       date_part('min'::text, sea.fin - sea.debut) / 60::double precision           AS seance_nb_h,
+       to_char(sea.debut, 'DD/MM/YYYY'::text)                                       AS seance_debut,
+       to_char(sea.fin, 'DD/MM/YYYY'::text)                                         AS seance_fin,
+       annee_univ_compute_from_date(sea.debut)                                      as seance_debut_annee_univ,
+       sea.debut                                                                    AS seance_debut_ts,
+       sea.fin                                                                      AS seance_fin_ts,
+       extract(epoch from (sea.fin - sea.debut)) / 3600                             AS seance_nb_h,
        (SELECT count(fp.id) AS count
         FROM formation_presence fp
         WHERE fp.seance_id = sea.id
@@ -121,13 +273,14 @@ WHERE sea.histo_destruction IS NULL;
 
 
 drop view if exists v_extract_formation_presence;
+
 create or replace view v_extract_formation_presence as
-with pre_these as (select 'NB : un doctorant peut avoir 2 thèses' as rem,
-                          t.id,
+with pre_these as (select t.id,
                           t.doctorant_id,
                           t.ecole_doct_id,
                           t.unite_rech_id,
-                          rank() OVER (PARTITION BY doctorant_id) as rank
+                          rank() OVER (PARTITION BY doctorant_id) as rank,
+                          case when rank() OVER (PARTITION BY doctorant_id) > 1 then 'Ce doctorant a plusieurs thèses !' else null end rem
                    from these t
                    where t.histo_destruction is null
                      and t.etat_these in ('E', 'S'))
@@ -144,6 +297,10 @@ select f.id                                                                     
            else 'Mixte' end                                                                            as session_modalite,
        fsess.type                                                                                      as session_type,
        eorga.source_code                                                                               as session_etab_orga,
+       (select sum(extract(epoch from (sea.fin - sea.debut)) / 3600)
+        from formation_seance sea
+        where sea.session_id = fsess.id
+          and sea.histo_destruction is null)                                                           as session_nb_heures,
        d.id                                                                                            as doctorant_id,
        di.nom_usuel                                                                                    as doctorant_nom_usuel,
        di.nom_patronymique                                                                             as doctorant_nom_patronymique,
@@ -154,9 +311,9 @@ select f.id                                                                     
                  join structure s on s.id = ed.structure_id
                  join pre_these t on ed.id = t.ecole_doct_id and t.doctorant_id = d.id)                as these_ed,
        (select string_agg(distinct s.code, ', ')
-        from unite_rech ed
-                 join structure s on s.id = ed.structure_id
-                 join pre_these t on ed.id = t.ecole_doct_id and t.rank = 1 and t.doctorant_id = d.id) as these_ur,
+        from unite_rech ur
+                 join structure s on s.id = ur.structure_id
+                 join pre_these t on ur.id = t.unite_rech_id and t.rank = 1 and t.doctorant_id = d.id) as these_ur,
        'D' || (select count(distinct annee_univ)
                from these_annee_univ tau
                         join pre_these t on t.id = tau.these_id and t.rank = 1 and t.doctorant_id = d.id
@@ -166,9 +323,27 @@ select f.id                                                                     
                  join pre_these t on t.id = tau.these_id and t.rank = 1 and t.doctorant_id = d.id
         where tau.histo_destruction is null)                                                           as these_annees_inscription,
        fi.histo_creation                                                                               as session_date_inscription,
+       fi.liste,
+       case fi.liste
+           when 'P' then 'Liste principale'
+           when 'C' then 'Liste complémentaire'
+           else 'Non classé' end                                                                       as session_statut_inscription,
        fs.id                                                                                           as seance_id,
-       fs.debut                                                                                        as seance_debut,
-       case when fp.temoin = 'O' then 'Présent·e' else 'Absent·e' end                                  as seance_statut_presence
+       extract(epoch from (fs.fin - fs.debut)) / 3600                                                  as seance_nb_heures,
+       to_char(fs.debut, 'DD/MM/YYYY'::text)                                                           as seance_debut,
+       to_char(fs.fin, 'DD/MM/YYYY'::text)                                                             as seance_fin,
+       annee_univ_compute_from_date(fs.debut)                                                          as seance_debut_annee_univ,
+       fs.debut                                                                                        as seance_debut_ts,
+       fs.fin                                                                                          as seance_fin_ts,
+       case when fi.liste = 'P' then
+         case when fp.temoin = 'O' then 'Présent·e' else 'Absent·e' end
+       else null end                                                                                   as seance_statut_presence,
+       (SELECT sum(extract(epoch from (fs.fin - fs.debut)) / 3600)
+        FROM formation_presence fp
+        join formation_seance fs on fp.seance_id = fs.id and fs.histo_destruction is null
+        WHERE fp.inscription_id = fi.id
+          AND fp.histo_destruction IS NULL
+          AND fp.temoin = 'O')                                                                         as session_nb_heures_suivies_par_doctorant
 from formation_inscription fi
          join formation_session fsess on fi.session_id = fsess.id and fsess.histo_destruction is null
          join formation_formation f on fsess.formation_id = f.id and f.histo_destruction is null
@@ -177,7 +352,6 @@ from formation_inscription fi
          join individu di on di.id = d.individu_id and di.histo_destruction is null
          join etablissement e on d.etablissement_id = e.id
          join etablissement eorga on fsess.site_id = eorga.id
-         left join formation_presence fp
-                   on fi.id = fp.inscription_id and fp.seance_id = fs.id and fp.histo_destruction is null
-order by f.id, fsess.id, fs.id, di.nom_patronymique, di.prenom1
+         left join formation_presence fp on fi.id = fp.inscription_id and fp.seance_id = fs.id and fp.histo_destruction is null
+--order by f.id, fsess.id, fs.id, di.nom_patronymique, di.prenom1
 ;

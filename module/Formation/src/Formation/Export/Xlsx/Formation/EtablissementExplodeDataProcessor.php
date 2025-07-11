@@ -24,7 +24,7 @@ class EtablissementExplodeDataProcessor extends ExplodeDataProcessor
         Assert::allIsInstanceOf($etablissements, Etablissement::class);
         $this->etablissements = $etablissements;
 
-        // codes = source_code des établissements, ex : ['INSA', 'UCN', 'ULHN', 'URN']
+        // codes possibles pour l'explosion = source_code des établissements, ex : ['INSA', 'UCN', 'ULHN', 'URN']
         $this->codes = array_map(
             fn(Etablissement $e) => $this->extractEtablissementCode($e),
             $this->etablissements

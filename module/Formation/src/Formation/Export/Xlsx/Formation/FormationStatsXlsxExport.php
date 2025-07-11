@@ -2,6 +2,8 @@
 
 namespace Formation\Export\Xlsx\Formation;
 
+use Application\Constants;
+use Application\Entity\AnneeUniv;
 use Application\Export\Xlsx\AbstractXlsxExport;
 use Application\Export\Xlsx\XlsxExportDataProviderInterface;
 use Doctrine\DBAL\Exception;
@@ -25,6 +27,7 @@ class FormationStatsXlsxExport extends AbstractXlsxExport
 
     private ?array $formationsIds = null;
     private ?int $sessionId = null;
+    private ?AnneeUniv $anneeUniv = null;
 
     public function getHtmlDescription(): string
     {
@@ -41,6 +44,7 @@ class FormationStatsXlsxExport extends AbstractXlsxExport
     {
         $this->setFormationsIds($context['formationsIds'] ?? null);
         $this->setSessionId($context['sessionId'] ?? null);
+        $this->setAnneeUniv($context['anneeUniv'] ?? null);
 
         parent::setContext($context);
     }
@@ -53,6 +57,11 @@ class FormationStatsXlsxExport extends AbstractXlsxExport
     public function setSessionId(int|null $sessionId): void
     {
         $this->sessionId = $sessionId;
+    }
+
+    public function setAnneeUniv(?AnneeUniv $anneeUniv): void
+    {
+        $this->anneeUniv = $anneeUniv;
     }
 
     protected function loadConfig(): void
@@ -112,6 +121,11 @@ class FormationStatsXlsxExport extends AbstractXlsxExport
         if ($this->sessionId !== null) {
             $wheres[] = "session_id = :sessionId";
             $params['sessionId'] = $this->sessionId;
+        }
+        if ($this->anneeUniv !== null) {
+            $wheres[] = "seance_debut_ts >= :anneeUnivDebut AND seance_fin_ts <= :anneeUnivFin";
+            $params['anneeUnivDebut'] = $this->anneeUniv->getDateDebut()->format(Constants::DATETIME_FORMAT_DB);
+            $params['anneeUnivFin'] = $this->anneeUniv->getDateFin()->format(Constants::DATETIME_FORMAT_DB);
         }
         if ($wheres) {
             $sql .= " where " . implode(' and ', $wheres);

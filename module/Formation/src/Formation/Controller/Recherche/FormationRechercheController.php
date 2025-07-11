@@ -3,6 +3,7 @@
 namespace Formation\Controller\Recherche;
 
 use Application\Export\Xlsx\Manager\XlsxExportManagerAwareTrait;
+use Formation\Service\Formation\Search\FormationSearchService;
 use Laminas\Http\Response;
 use Laminas\View\Model\ViewModel;
 
@@ -64,8 +65,9 @@ class FormationRechercheController extends AbstractRechercheController
             $context['formationsIds'] = [$formationId];
         } else {
             // Cas 2 : recherche avec prise en compte des query params courants
+            $queryParams = $this->params()->fromQuery();
             $this->searchService->init();
-            $this->searchService->processQueryParams($this->params()->fromQuery());
+            $this->searchService->processQueryParams($queryParams);
             // todo : restreindre en fonction du rôle lorsque d'autres rôles que 'ADMIN_TECH', 'BDD', 'GEST_FORM' seront habilités !
             $qb = $this->searchService->getQueryBuilder(); /** @see \Formation\Service\Formation\Search\FormationSearchService::createQueryBuilder() */
             $formationIds = array_keys($qb->select('f.id')->indexBy('f', 'f.id')->getQuery()->getArrayResult());
@@ -75,6 +77,10 @@ class FormationRechercheController extends AbstractRechercheController
             }
 
             $context['formationsIds'] = $formationIds;
+
+            if ($anneeUniv = $this->searchService->getFilterValueByName(FormationSearchService::NAME_anneeUniv)) {
+                $context['anneeUniv'] = $anneeUniv;
+            }
         }
 
         if ($sessionId = $this->params()->fromRoute('session')) {

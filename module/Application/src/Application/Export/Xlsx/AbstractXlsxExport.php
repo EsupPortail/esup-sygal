@@ -156,6 +156,8 @@ abstract class AbstractXlsxExport implements XlsxExportInterface
             $data = $processor->processData($data);
         }
 
+        $this->applyColumnValueFiltersForTab($tabName, $data);
+
         return $data;
     }
 
@@ -226,6 +228,16 @@ abstract class AbstractXlsxExport implements XlsxExportInterface
         return $tabConfig['data_processors'] ?? [];
     }
 
+    /**
+     * @return array<\UnicaenDbImport\Filter\ColumnValue\ColumnValueFilterInterface>
+     */
+    protected function getColumnValueFiltersForTab(string $tabName): array
+    {
+        $tabConfig = $this->getConfigForTab($tabName);
+
+        return $tabConfig['column_value_filters'] ?? [];
+    }
+
     protected function getColumnsForTab(string $tabName): array
     {
         $tabConfig = $this->getConfigForTab($tabName);
@@ -242,5 +254,14 @@ abstract class AbstractXlsxExport implements XlsxExportInterface
         Assert::isArray($viewColumns, "Les colonnes pour l'onglet $tabName doivent être spécifié au format string ou array");
 
         return $viewColumns;
+    }
+
+    private function applyColumnValueFiltersForTab(string $tabName, array &$data): void
+    {
+        foreach ($data as &$datum) {
+            foreach ($this->getColumnValueFiltersForTab($tabName) as $filter) {
+                $datum = $filter->filter($datum);
+            }
+        }
     }
 }

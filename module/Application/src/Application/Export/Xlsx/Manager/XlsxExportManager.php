@@ -4,15 +4,17 @@ namespace Application\Export\Xlsx\Manager;
 
 use Application\Export\Xlsx\AbstractXlsxExport;
 use Application\Export\Xlsx\Writer\XlsxWriterManagerAwareTrait;
-use Application\Export\Xlsx\XlsxExportInterface;
 use Application\Export\Xlsx\XlsxExportDataProcessorInterface;
 use Application\Export\Xlsx\XlsxExportDataProviderInterface;
+use Application\Export\Xlsx\XlsxExportInterface;
 use Laminas\ServiceManager\AbstractPluginManager;
+use UnicaenDbImport\Config\ColumnValueFilterConfigFactoryTrait;
 use Webmozart\Assert\Assert;
 
 class XlsxExportManager extends AbstractPluginManager
 {
     use XlsxWriterManagerAwareTrait;
+    use ColumnValueFilterConfigFactoryTrait;
 
     protected $instanceOf = XlsxExportInterface::class;
     protected array $exports;
@@ -41,6 +43,7 @@ class XlsxExportManager extends AbstractPluginManager
     /**
      * @throws \Psr\Container\ContainerExceptionInterface
      * @throws \Psr\Container\NotFoundExceptionInterface
+     * @throws \UnicaenDbImport\Config\ConfigException
      */
     protected function prepareOptionsForExport(string $name, ?array $options = null): array
     {
@@ -79,6 +82,10 @@ class XlsxExportManager extends AbstractPluginManager
 
                 $exportConfig['data_tabs'][$tabName][$key][$i] = $service;
             }
+
+            // remplacement de chaque spec de filtre de colonne par l'instance du filtre
+            $columnValueFilters = $this->getColumnValueFilters($tabConfig, 'column_value_filters', $this->creationContext);
+            $exportConfig['data_tabs'][$tabName]['column_value_filters'] = $columnValueFilters;
         }
 
         return array_merge_recursive($options, $exportConfig);

@@ -13,6 +13,7 @@ class FormationSearchServiceFactory implements FactoryInterface
     /**
      * @throws \Psr\Container\ContainerExceptionInterface
      * @throws \Psr\Container\NotFoundExceptionInterface
+     * @throws \Doctrine\ORM\Exception\NotSupported
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null): FormationSearchService
     {

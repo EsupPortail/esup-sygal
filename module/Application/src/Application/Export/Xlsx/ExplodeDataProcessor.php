@@ -112,13 +112,13 @@ class ExplodeDataProcessor implements XlsxExportDataProcessorInterface
     {
         $transformedRow = [];
 
-        // parcours des colonnes pour en exploser/décliner certaines par établissement
+        // parcours des colonnes pour en exploser/décliner certaines
         foreach ($row as $col => $value) {
             if (in_array($col, $columnsToTransform)) {
                 if ($this->preserveColumns) {
                     $transformedRow[$col] = $value;
                 }
-                // explosion/déclinaison par établissement
+                // explosion/déclinaison
                 $array = $this->explodeColumn($value, $col);
                 $transformedRow += $array;
             } else {

@@ -4,6 +4,7 @@ namespace Formation\Entity\Db\Repository;
 
 use Application\Entity\Db\Repository\DefaultEntityRepository;
 use Application\QueryBuilder\DefaultQueryBuilder;
+use Doctrine\ORM\Query\Expr\Join;
 use Formation\Entity\Db\Formation;
 use Formation\Entity\Db\Module;
 use Formation\Entity\Db\Session;
@@ -108,19 +109,28 @@ class FormationRepository extends DefaultEntityRepository
         return $qb->getQuery()->getResult();
     }
 
-    public function fetchDistinctAnneesUnivFormation(string $ordre='ASC', bool $keep_histo = false) : array
+    /**
+     * Fetche toutes les années correspondant aux diverses dates de début/fin des séances.
+     *
+     * @return array<int>
+     */
+    public function fetchDistinctAnneesSeances(string $ordre = 'ASC', bool $keep_histo = false): array
     {
         $qb = $this->createQueryBuilder('formation')
-            ->leftJoin('formation.sessions', 'session')->addSelect('session')
-            ->leftJoin('session.seances', 'seance')->addSelect('seance')
+            ->join('formation.sessions', 'session')
+            ->join('session.seances', 'seance')
             ->distinct()
             ->select("YEAR(seance.debut) as annee")
             ->orderBy("annee", $ordre);
 
-        if (!$keep_histo) $qb = $qb->andWhere('session.histoDestruction IS NULL');
+        if (!$keep_histo) {
+            $qb
+                ->andWhereNotHistorise('session')
+                ->andWhereNotHistorise('seance');
+        }
 
-        return array_map(function($value) {
-            return current($value);
+        return array_map(function ($value) {
+            return (int) current($value);
         }, $qb->getQuery()->getScalarResult());
     }
 }

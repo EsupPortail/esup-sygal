@@ -16,10 +16,16 @@ class AnneeUnivServiceFactory
         /** @var \UnicaenParametre\Service\Parametre\ParametreService $parametreService */
         $parametreService = $container->get(ParametreService::class);
 
-        return new AnneeUnivService(
+        /** @var \Doctrine\DBAL\Connection $connection */
+        $connection = $container->get('doctrine.connection.orm_default');
+
+        $service = new AnneeUnivService(
             $parametreService->getParametreByCode('ANNEE_UNIV', 'SPEC_DATE_BASCULE')->getValeur(),
             $parametreService->getParametreByCode('ANNEE_UNIV', 'SPEC_ANNEE_UNIV_DATE_DEBUT')->getValeur(),
             $parametreService->getParametreByCode('ANNEE_UNIV', 'SPEC_ANNEE_UNIV_DATE_FIN')->getValeur()
         );
+        $service->setConnection($connection);
+
+        return $service;
     }
 }

@@ -4,17 +4,19 @@ namespace Formation\Service\Formation\Search;
 
 use Application\Entity\AnneeUniv;
 use Application\QueryBuilder\DefaultQueryBuilder;
-use UnicaenSearch\Filter\SearchFilter;
-use UnicaenSearch\Filter\SelectSearchFilter;
-use UnicaenSearch\Filter\TextSearchFilter;
-use UnicaenSearch\SearchService;
-use UnicaenSearch\Sorter\SearchSorter;
+use Application\Search\AnneeUniv\AnneeUnivSearchFilter;
+use Application\Service\AnneeUniv\AnneeUnivService;
 use Application\Service\AnneeUniv\AnneeUnivServiceAwareTrait;
 use Doctrine\ORM\QueryBuilder;
 use Formation\Entity\Db\Interfaces\HasModaliteInterface;
 use Formation\Entity\Db\Repository\FormationRepositoryAwareTrait;
 use Structure\Search\Etablissement\EtablissementSearchFilter;
 use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
+use UnicaenSearch\Filter\SearchFilter;
+use UnicaenSearch\Filter\SelectSearchFilter;
+use UnicaenSearch\Filter\TextSearchFilter;
+use UnicaenSearch\SearchService;
+use UnicaenSearch\Sorter\SearchSorter;
 
 class FormationSearchService extends SearchService
 {
@@ -57,7 +59,7 @@ class FormationSearchService extends SearchService
             $structureFilter,
             $libelleFilter,
             $modaliteFilter,
-            $anneeUnivFilter->setAllowsNoneValueOption()->setAllowsEmptyValueOption(false)->setDefaultValue($debut->format('Y')),
+            $anneeUnivFilter->setAllowsEmptyValueOption(false)->setDefaultValue($debut->format('Y')),
         ]);
 
         $this->addSorters([
@@ -80,8 +82,10 @@ class FormationSearchService extends SearchService
     {
         // ATTENTION à bien sélectionner les relations utilisées par les filtres/tris et parcourues côté vue.
         $queryBuilder = $this->formationRepository->createQueryBuilder('f');
-        $queryBuilder->leftJoin('f.sessions', 'session')->addSelect('session')
+        $queryBuilder
+            ->leftJoin('f.sessions', 'session')->addSelect('session')
             ->leftJoin('session.seances', 'seance')->addSelect('seance');
+
         return $queryBuilder;
     }
 
@@ -146,28 +150,15 @@ class FormationSearchService extends SearchService
         return $filter;
     }
 
-    /**
-     * @return SelectSearchFilter
-     */
-    private function createAnneeUnivFilter(): SelectSearchFilter
+    private function createAnneeUnivFilter(): AnneeUnivSearchFilter
     {
-        $filter = new SelectSearchFilter(
-            "An. univ.",
-            self::NAME_anneeUniv
-        );
-
-        $filter->setQueryBuilderApplier(function(SearchFilter $filter, QueryBuilder $qb, string $alias = 'session') {
-            $filterValue = $filter->getValue();
-            $annee = $filterValue === 'NULL' ? $this->anneeUnivService->courante() : AnneeUniv::fromPremiereAnnee((int)$filterValue);
-            $debut = $this->anneeUnivService->computeDateDebut($annee);
-            $fin = $this->anneeUnivService->computeDateFin($annee);
-            if($filterValue !== 'NULL'){
-                if ($debut !== null && $fin !== null) {
-                    $qb->andWhere('seance.debut >= :debut')->setParameter('debut', $debut)
-                        ->andWhere('seance.fin <= :fin')->setParameter('fin', $fin);
-                }
-            }
-        });
+        /** @var AnneeUnivSearchFilter $filter */
+        $filter = $this->searchFilterPluginManager->get(AnneeUnivSearchFilter::class);
+        $filter
+            ->setLabel("An. univ.")
+            ->setName(self::NAME_anneeUniv)
+            ->setWhereFieldDateMin('seance.debut')
+            ->setWhereFieldDateMax('seance.fin');
 
         return $filter;
     }
@@ -176,21 +167,19 @@ class FormationSearchService extends SearchService
 
     private function fetchAnneesUniv(SelectSearchFilter $filter): array
     {
-        $formations = $this->formationRepository->findAll();
-        $anneesUniv = [];
-        foreach ($formations as $formation) {
-            $sessions = $formation->getSessions()->toArray();
-            foreach ($sessions as $session) {
-                $anneeUniv = $session->getDateDebut() ? $this->anneeUnivService->fromDate($session->getDateDebut()) : $this->anneeUnivService->courante();
-                if(!isset($anneesUniv[$anneeUniv->getPremiereAnnee()])) $anneesUniv[$anneeUniv->getPremiereAnnee()] = $anneeUniv->getAnneeUnivToString();
-            }
+        $annees = $this->formationRepository->fetchDistinctAnneesSeances();
+
+        if (!$annees) {
+            return [$this->anneeUnivService->courante()];
         }
 
-        uksort($anneesUniv, function($a, $b) {
-            return $a <=> $b;
-        });
-
-        return $anneesUniv;
+        return array_map(function($annee) {
+            $anneeUniv = AnneeUniv::fromPremiereAnnee($annee);
+            $anneeUniv
+                ->setDateDebut($this->anneeUnivService->computeDateDebut($anneeUniv))
+                ->setDateFin($this->anneeUnivService->computeDateFin($anneeUniv));
+            return $anneeUniv;
+        }, $annees);
     }
 
     /********************************** SORTERS ****************************************/
