@@ -271,6 +271,10 @@ class SessionSearchService extends SearchService
 
     private function createTypeSorter(): SearchSorter
     {
-        return new SearchSorter("Type", self::NAME_type);
+        $sorter = new SearchSorter("Type", self::NAME_type);
+        $sorter->setQueryBuilderApplier(function (SearchSorter $sorter, QueryBuilder $qb){
+                $qb->addOrderBy('struct.sigle', $sorter->getDirection());
+        });;
+        return $sorter;
     }
 }
