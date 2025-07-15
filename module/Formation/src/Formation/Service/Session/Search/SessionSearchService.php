@@ -87,6 +87,7 @@ class SessionSearchService extends SearchService
             $this->createEtatSorter(),
             $this->createModaliteSorter(),
             $this->createSeancesSorter(),
+            $this->createTypeSorter(),
         ]);
 
         //tri affichant des sessions affichées
@@ -266,5 +267,10 @@ class SessionSearchService extends SearchService
             $qb->addOrderBy('seance.debut', $sorter->getDirection());
         });
         return $sorter;
+    }
+
+    private function createTypeSorter(): SearchSorter
+    {
+        return new SearchSorter("Type", self::NAME_type);
     }
 }
