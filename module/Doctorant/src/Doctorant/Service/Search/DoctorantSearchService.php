@@ -2,12 +2,9 @@
 
 namespace Doctorant\Service\Search;
 
-use UnicaenSearch\Filter\SearchFilter;
-use UnicaenSearch\Filter\TextSearchFilter;
-use UnicaenSearch\SearchService;
-use UnicaenSearch\Sorter\SearchSorter;
-use Doctrine\ORM\QueryBuilder;
+use Application\QueryBuilder\DefaultQueryBuilder;
 use Doctorant\Service\DoctorantServiceAwareTrait;
+use Doctrine\ORM\QueryBuilder;
 use Individu\Service\IndividuServiceAwareTrait;
 use Structure\Entity\Db\TypeStructure;
 use Structure\Search\EcoleDoctorale\EcoleDoctoraleSearchFilterAwareTrait;
@@ -16,6 +13,11 @@ use Structure\Search\Etablissement\EtablissementSearchFilter;
 use Structure\Search\UniteRecherche\UniteRechercheSearchFilterAwareTrait;
 use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
 use Structure\Service\Structure\StructureServiceAwareTrait;
+use UnicaenSearch\Filter\SearchFilter;
+use UnicaenSearch\Filter\SelectSearchFilter;
+use UnicaenSearch\Filter\TextSearchFilter;
+use UnicaenSearch\SearchService;
+use UnicaenSearch\Sorter\SearchSorter;
 
 class DoctorantSearchService extends SearchService
 {
@@ -27,6 +29,11 @@ class DoctorantSearchService extends SearchService
     use EtablissementInscSearchFilterAwareTrait;
     use UniteRechercheSearchFilterAwareTrait;
     use EcoleDoctoraleSearchFilterAwareTrait;
+
+    /**
+     * @var EtablissementSearchFilter
+     */
+    private $etablissementTheseSearchFilter;
 
     protected function createQueryBuilder(): QueryBuilder
     {
@@ -137,5 +144,15 @@ class DoctorantSearchService extends SearchService
         );
 
         return $sorter;
+    }
+
+    /**
+     * @param EtablissementSearchFilter $etablissementTheseSearchFilter
+     * @return DoctorantSearchService
+     */
+    public function setEtablissementTheseSearchFilter(EtablissementSearchFilter $etablissementTheseSearchFilter): DoctorantSearchService
+    {
+        $this->etablissementTheseSearchFilter = $etablissementTheseSearchFilter;
+        return $this;
     }
 }

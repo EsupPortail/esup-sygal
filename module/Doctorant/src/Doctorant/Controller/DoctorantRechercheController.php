@@ -3,10 +3,6 @@
 namespace Doctorant\Controller;
 
 use Application\Controller\AbstractController;
-use Application\Search\Controller\SearchControllerInterface;
-use Application\Search\Controller\SearchControllerTrait;
-use Application\Search\SearchResultPaginator;
-use Application\Search\SearchServiceAwareTrait;
 use Application\Service\Role\ApplicationRoleServiceAwareTrait;
 use Doctorant\Provider\Privilege\DoctorantPrivileges;
 use Doctorant\Service\DoctorantServiceAwareTrait;
@@ -15,6 +11,9 @@ use Laminas\Http\Response;
 use Laminas\View\Model\ViewModel;
 use UnexpectedValueException;
 use UnicaenPrivilege\Provider\Privilege\Privileges;
+use UnicaenSearch\Controller\SearchControllerInterface;
+use UnicaenSearch\Controller\SearchControllerTrait;
+use UnicaenSearch\SearchServiceAwareTrait;
 
 /**
  * @property \Doctorant\Service\Search\DoctorantSearchService $searchService
@@ -170,6 +169,6 @@ class DoctorantRechercheController extends AbstractController implements SearchC
         $filter
             ->setData([$entity])
             ->setDefaultValueAsObject($entity)
-            ->setAllowsEmptyOption(false);
+            ->setAllowsEmptyValueOption(false);
     }
 }

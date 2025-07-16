@@ -35,7 +35,7 @@ class DoctorantSearchServiceFactory
         $structureService = $container->get(StructureService::class);
         $service->setStructureService($structureService);
 
-        $service->setEtablissementInscSearchFilter(EtablissementSearchFilter::newInstance());
+        $service->setEtablissementTheseSearchFilter(new EtablissementSearchFilter());
 
         return $service;
     }

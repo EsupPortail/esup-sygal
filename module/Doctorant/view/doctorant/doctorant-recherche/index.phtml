@@ -1,16 +1,11 @@
 <?php
 
-use Acteur\Filter\ActeurThese\ActeursTheseFormatter;
-use Application\Entity\Db\Role;
 use Application\Filter\IdifyFilter;
 use Application\Search\SearchResultPaginator;
 use Application\View\Renderer\PhpRenderer;
+use Doctorant\Entity\Db\Doctorant;
 use Doctorant\Provider\Privilege\DoctorantPrivileges;
 use Laminas\Paginator\Paginator;
-use These\Entity\Db\These;
-use These\Provider\Privilege\ThesePrivileges;
-use These\Service\These\TheseSorter;
-use UnicaenPrivilege\Provider\Privilege\Privileges;
 
 /**
  * @var PhpRenderer $this
@@ -61,21 +56,25 @@ $canAjouter = false;//$this->isAllowed(Privileges::getResourceId(DoctorantPrivil
     <table class="table table-bordered table-extra-condensed">
         <tr>
             <th>Id</th>
-            <th>Nom patronymique Prénoms</th>
+            <th>Nom d'usage</th>
+            <th>Nom patronymique</th>
+            <th>Prénom 1</th>
             <th>Adresse électronique</th>
             <th>Date de naissance</th>
             <th>INE</th>
             <th>Établissement</th>
             <th class="action">Action</th>
         </tr>
-        <?php /** @var \Doctorant\Entity\Db\Doctorant $doctorant */
+        <?php /** @var Doctorant $doctorant */
         foreach ($paginator as $doctorant): ?>
             <?php
             $canConsulter =
                 $this->isAllowed($doctorant, DoctorantPrivileges::DOCTORANT_CONSULTER_TOUS) ||
                 $this->isAllowed($doctorant, DoctorantPrivileges::DOCTORANT_CONSULTER_SIEN);
-            $canModifier = false;//$this->isAllowed($doctorant, DoctorantPrivileges::DOCTORANT_MODIFIER);
-            $canSupprimer = false;//$this->isAllowed($doctorant, DoctorantPrivileges::DOCTORANT_SUPPRIMER);
+            $canModifier = $this->isAllowed($doctorant, DoctorantPrivileges::DOCTORANT_MODIFIER_SIEN) ||
+                $this->isAllowed($doctorant, DoctorantPrivileges::DOCTORANT_MODIFIER_TOUS);
+            $canSupprimer = false;
+            $individu = $doctorant->getIndividu();
             ?>
             <tr>
                 <td>
@@ -90,7 +89,9 @@ $canAjouter = false;//$this->isAllowed(Privileges::getResourceId(DoctorantPrivil
                         <?php endif ?>
                     </span>
                 </td>
-                <td><?php echo $doctorant->getIndividu()->getNomCompletFormatter()->avecAutresPrenoms()->f() ?></td>
+                <td><?php echo $individu->getNomUsuel() ?></td>
+                <td><?php echo $individu->getNomPatronymique() ?></td>
+                <td><?php echo $individu->getPrenom1() ?></td>
                 <td><?php echo $doctorant->getIndividu()->getEmailPro() ?></td>
                 <td><?php echo $doctorant->getIndividu()->getDateNaissanceToString() ?></td>
                 <td><?php echo $doctorant->getIne() ?></td>

@@ -21,10 +21,12 @@ use Application\Entity\Db\Role;
 use Application\View\Renderer\PhpRenderer;
 use Doctorant\Entity\Db\Doctorant;
 use Doctorant\Provider\Privilege\DoctorantPrivileges;
+use Formation\Controller\IndexController;
 use Formation\Entity\Db\Inscription;
 use Formation\Provider\Privilege\IndexPrivileges;
 use Soutenance\Entity\PropositionThese;
 use These\Entity\Db\These;
+use UnicaenPrivilege\Guard\PrivilegeController;
 use UnicaenPrivilege\Provider\Privilege\Privileges;
 
 $appName = $this->appInfos()->nom;
@@ -32,7 +34,8 @@ $appName = $this->appInfos()->nom;
 $these = current($doctorant->getTheses());
 
 $canAccederIndexFormations = $this->isAllowed(Privileges::getResourceId(IndexPrivileges::INDEX_AFFICHER)) ||
-    $this->isAllowed(Privileges::getResourceId(IndexPrivileges::INDEX_DOCTORANT));
+    $this->isAllowed(Privileges::getResourceId(IndexPrivileges::INDEX_DOCTORANT)) ||
+    $this->isAllowed(Privileges::getResourceId(IndexPrivileges::INDEX_GESTION));
 $canModifierDoctorant =
     $this->isAllowed($doctorant, DoctorantPrivileges::DOCTORANT_MODIFIER_TOUS) ||
     $this->isAllowed($doctorant, DoctorantPrivileges::DOCTORANT_MODIFIER_SIEN);
@@ -61,7 +64,7 @@ $canModifierDoctorant =
                 <div class="card-header these-card-header text-white">
                     <h2 class="first">
                         <span class="fas fa-graduation-cap"></span>
-                        <?php echo $this->translate("Doctorant"); ?>
+                        <?php echo $this->translate("Doctorant·e"); ?>
                     </h2>
                 </div>
                 <div class="card-body">
@@ -71,7 +74,7 @@ $canModifierDoctorant =
                     <div class="card-footer">
                         <a href="<?php echo $this->url('doctorant/modifier', ['doctorant' => $doctorant->getId()]) ?>"
                            class="btn btn-primary"
-                           title="Accéder à la page de modification de cet doctorant">
+                           title="Accéder à la page de modification de ce doctorant">
                             <span class="icon icon-modifier"></span>
                             Modifier le doctorant
                         </a>
@@ -104,17 +107,21 @@ $canModifierDoctorant =
                 <div class="card-body">
                     <?php echo $this->partial('doctorant/doctorant/partial/formations-en-cours', ['inscriptions' => $enCours]) ?>
                 </div>
-                <div class="card-footer">
-                    <?php
-                    //TODO actualiser le lien
-                    $url = $role->isDoctorant() ?
-                    $this->url('formation/index-doctorant', ['doctorant' => $doctorant->getId()], ['fragment' => 'a_venir'], true) :
-                        ""; ?>
-                    <a href="<?php echo $url; ?>" class="btn btn-primary">
-                        <span class="icon icon-voir"></span>
-                        Accéder au tableau de bord
-                    </a>
-                </div>
+                <?php
+                if($role->isDoctorant()):
+                    $url = $this->url('formation/index-doctorant', ['doctorant' => $doctorant->getId()], ['fragment' => 'a_venir'], true);
+                elseif(PrivilegeController::getResourceId(IndexController::class, 'index-gestion')):
+                    $url = $this->url('formation/index-gestion', ['these' => $these->getId()], ['fragment' => 'inscription'], true);
+                endif;
+
+                if(isset($url)):?>
+                    <div class="card-footer">
+                        <a href="<?php echo $url; ?>" class="btn btn-primary">
+                            <span class="icon icon-voir"></span>
+                            Accéder au tableau de bord
+                        </a>
+                    </div>
+                <?php endif; ?>
             </div>
         </div>
     <?php endif; ?>
