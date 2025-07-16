@@ -11,6 +11,7 @@ use Laminas\Form\Element\Hidden;
 use Laminas\Form\Element\Text;
 use Laminas\Form\Form;
 use Laminas\InputFilter\InputFilterProviderInterface;
+use Laminas\Validator\Regex;
 
 /**
  * @method Doctorant getObject()
@@ -86,6 +87,22 @@ class DoctorantForm extends Form implements InputFilterProviderInterface
                 'filters' => [
                     ['name' => StringTrim::class],
                     ['name' => ToNull::class],
+                ],
+            ],
+            'orcid' => [
+                'required' => false,
+                'filters' => [
+                    ['name' => 'StringTrim'],
+                    ['name' => 'StripTags'],
+                ],
+                'validators' => [
+                    [
+                        'name' => Regex::class,
+                        'options' => [
+                            'pattern' => '/^(\d{4}-){3}\d{3}[\dX]$/',
+                            'message' => 'L’ORCID doit être au format 0000-0000-0000-0000, le dernier caractère peut-être un chiffre ou X',
+                        ],
+                    ],
                 ],
             ],
         ];

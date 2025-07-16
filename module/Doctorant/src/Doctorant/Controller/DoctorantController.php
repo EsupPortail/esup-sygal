@@ -75,7 +75,11 @@ class DoctorantController extends AbstractController implements SearchController
         $title = $this->params('title') ?: "Tableau de bord de $doctorant";
         $vm = new ViewModel([
             'title' => $title,
-            'role' =>  $this->userContextService->getSelectedIdentityRole()
+            'role' =>  $this->userContextService->getSelectedIdentityRole(),
+            'modifierEmailContactUrl' => $this->urlDoctorant()->modifierEmailContactUrl($doctorant, true),
+            'modifierEmailContactConsentUrl' => $this->urlDoctorant()->modifierEmailContactConsentUrl(
+                $doctorant,
+                $this->url()->fromRoute(null, [], [], true)),
         ]);
         $vm->setVariables($this->tableauDeBordDoctorantFacade->getVariablesForTableauDeBord($doctorant));
 

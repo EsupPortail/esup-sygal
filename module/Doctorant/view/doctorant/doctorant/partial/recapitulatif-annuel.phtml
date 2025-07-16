@@ -46,7 +46,9 @@ $annees = array_map(function(AnneeUnivInterface $anneeUniv) {
 $derniereAnneeUniv = AnneeUniv::fromPremiereAnnee(max($annees));
 
 if(is_array($anneesUniv)):
-    krsort($anneesUniv);
+    usort($anneesUniv, function($a, $b) {
+        return $b->getPremiereAnnee() <=> $a->getPremiereAnnee();
+    });
     /** @var TheseAnneeUniv $annee */
     foreach($anneesUniv as $annee) : ?>
         <?php

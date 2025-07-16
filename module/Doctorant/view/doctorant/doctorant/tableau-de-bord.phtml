@@ -12,6 +12,8 @@
  * @var AnneeUniv $anneeUnivProposition
  * @var PropositionThese $proposition
  * @var Role $role
+ * @var string $modifierEmailContactUrl
+ * @var string $modifierEmailContactConsentUrl
  *
  * @see DoctorantController::tableauDeBordAction()
  */
@@ -39,6 +41,10 @@ $canAccederIndexFormations = $this->isAllowed(Privileges::getResourceId(IndexPri
 $canModifierDoctorant =
     $this->isAllowed($doctorant, DoctorantPrivileges::DOCTORANT_MODIFIER_TOUS) ||
     $this->isAllowed($doctorant, DoctorantPrivileges::DOCTORANT_MODIFIER_SIEN);
+
+$emailContactModifiedEvent = 'email-contact-modified-event';
+$emailContactConsentModifiedEvent = 'email-contact-consent-modified-event';
+$modifierGeneralitesEvent = 'event-modifier-generalites';
 ?>
 
 <h1 class="page-header">
@@ -68,18 +74,14 @@ $canModifierDoctorant =
                     </h2>
                 </div>
                 <div class="card-body">
-                    <?php echo $this->partial('doctorant/doctorant/partial/fiche-doctorant', ['these' => $these]) ?>
+                    <?php echo $this->partial('doctorant/doctorant/partial/fiche-doctorant',
+                        [
+                            'these' => $these,
+                            'modifierEmailContactUrl' => $modifierEmailContactUrl,
+                            'modifierEmailContactConsentUrl' => $modifierEmailContactConsentUrl,
+                        ])
+                    ?>
                 </div>
-                <?php if ($canModifierDoctorant && !$doctorant->estHistorise()): ?>
-                    <div class="card-footer">
-                        <a href="<?php echo $this->url('doctorant/modifier', ['doctorant' => $doctorant->getId()]) ?>"
-                           class="btn btn-primary"
-                           title="Accéder à la page de modification de ce doctorant">
-                            <span class="icon icon-modifier"></span>
-                            Modifier le doctorant
-                        </a>
-                    </div>
-                <?php endif ?>
             </div>
         </div>
     </div>
@@ -164,3 +166,25 @@ $canModifierDoctorant =
         font-size: inherit !important;
     }
 </style>
+
+
+<script>
+    $(function () {
+        var body = $("body");
+
+        body.on("modification-doctorant", function (event) {
+            event.div.modal('hide'); // ferme la fenêtre modale
+            window.location.reload();
+        });
+
+        body.on("<?php echo $emailContactModifiedEvent ?>", function (event) {
+            // L'email de contact vient d'être modifié.
+            event.div.modal('hide'); // ferme la fenêtre modale
+            window.location.reload();
+        });
+        body.on("<?php echo $emailContactConsentModifiedEvent ?>", function (event) {
+            // Le consentement vient d'être modifié.
+            event.div.modal('hide'); // ferme la fenêtre modale
+        });
+    })
+</script>
