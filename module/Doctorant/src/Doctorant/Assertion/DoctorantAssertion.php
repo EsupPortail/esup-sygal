@@ -47,17 +47,6 @@ class DoctorantAssertion extends AbstractAssertion
 
         try {
             switch ($action) {
-                case 'lister':
-                case 'rechercher':
-                    return true;
-
-//                case 'tableau-de-bord':
-//                case 'consulter':
-//                    if (!($role->getCode() === Role::CODE_ADMIN_TECH) && !$this->assertEntity($entity, DoctorantPrivileges::DOCTORANT_CONSULTER_SIEN)) {
-//                        return false;
-//                    }
-//                    return true;
-
                 case 'modifier-email-contact':
                 case 'modifier-email-contact-consent':
                     if (! $this->isUtilisateurEgaleCeDoctorant($entity)) {

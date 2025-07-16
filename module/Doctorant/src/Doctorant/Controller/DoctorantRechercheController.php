@@ -13,6 +13,7 @@ use UnexpectedValueException;
 use UnicaenPrivilege\Provider\Privilege\Privileges;
 use UnicaenSearch\Controller\SearchControllerInterface;
 use UnicaenSearch\Controller\SearchControllerTrait;
+use UnicaenSearch\SearchResultPaginator;
 use UnicaenSearch\SearchServiceAwareTrait;
 
 /**
@@ -30,7 +31,7 @@ class DoctorantRechercheController extends AbstractController implements SearchC
 
     public function indexAction(): Response|ViewModel
     {
-        $this->restrictSearchFilters();
+        $this->restrictFiltersFromStructureRole();
 
         $text = $this->params()->fromQuery('text');
 
@@ -51,7 +52,7 @@ class DoctorantRechercheController extends AbstractController implements SearchC
 
     public function filtersAction(): ViewModel
     {
-        $this->restrictSearchFilters();
+        $this->restrictFiltersFromStructureRole();
 
         $filters = $this->filters();
 
@@ -94,7 +95,7 @@ class DoctorantRechercheController extends AbstractController implements SearchC
      */
     public function notresAction()
     {
-        $this->restrictSearchFilters();
+        $this->restrictFiltersFromStructureRole();
 
         $this->searchIfRequired = false;
 
@@ -112,7 +113,7 @@ class DoctorantRechercheController extends AbstractController implements SearchC
      */
     public function notresFiltersAction(): ViewModel
     {
-        $this->restrictSearchFilters();
+        $this->restrictFiltersFromStructureRole();
 
         $filters = $this->filters();
 
@@ -123,26 +124,6 @@ class DoctorantRechercheController extends AbstractController implements SearchC
         $vm->setTemplate('doctorant/recherche/notres/filters');
 
         return $vm;
-    }
-
-    /**
-     * Méthode donnant l'occasion de modifier/restreindre les filtres de recherche
-     * (ex : restreindre un select à la seule ED autorisée à l'utilisateur).
-     */
-    public function restrictSearchFilters(): void
-    {
-        if ($this->isAllowed(Privileges::getResourceId(DoctorantPrivileges::DOCTORANT_LISTER_TOUT))) {
-            // aucune restriction
-            return;
-        }
-        if (!$this->isAllowed(Privileges::getResourceId(DoctorantPrivileges::DOCTORANT_LISTER_SIEN))) {
-            throw new UnexpectedValueException(
-                "Anomalie : l'action aurait dû être bloquée en amont (controller guard) car l'utilisateur n'a aucun des privilèges suivants : " .
-                implode(', ', [DoctorantPrivileges::DOCTORANT_LISTER_TOUT, DoctorantPrivileges::DOCTORANT_LISTER_SIEN])
-            );
-        }
-
-        $this->restrictFiltersFromStructureRole();
     }
 
     private function restrictFiltersFromStructureRole(): void
