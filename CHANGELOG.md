@@ -1,6 +1,24 @@
 Journal des modifications
 =========================
 
+10.2.1
+------
+- Module Soutenance : Amélioration du workflow dans la pré-soutenance
+- [FIX] HDR : Méthode [getLibelleDiscipline] non trouvée
+- [FIX] Affichage des fichiers/justificatifs pouvait dépasser de leurs conteneurs sur de petits écrans
+- [FIX] Dépendance erronée pour OrigineFinancementSearchFilter dans certaines classes
+- [FIX] Module Soutenance : Génération du document pour la présidence inaccessible
+- [FIX] Module Soutenance : Un même individu avec le même role pouvait être associé à plusieurs acteurs
+- [FIX] Module Soutenance : Validation de la page de couverture affichée comme non disponible à tort
+- [FIX] Module Soutenance : Suppression d'un pré-rapport (fichier) impossible (encore référencée dans la table soutenance_avis)
+- [FIX] Module Formation : Possibilité de valider plusieurs fois la même formation externe, ce qui faisait planter ultérieurement la page
+- [FIX] Module Admission : Dossier inaccessible si le numéro de candidature n'était pas renseigné
+- [FIX] Module Admission : Argumentaire du directeur de thèse pour le conseil de l'école doctorale (dans le cas d'un master étranger) non pris en compte
+- [FIX] Bouton 'Générer l'avis de soutenance' Thèse : déplacement avant 'Feu vert' et correction des conditions d'affichage.
+- [FIX] Bouton 'Générer l'avis de soutenance' HDR : déplacement avant 'Feu vert' et correction des conditions d'affichage.
+- [FIX] Page de couverture thèse: la récupération de la proposition de soutenance n'appelait pas la bonne méthode
+- [FIX] Form Individu : Civilité "M." n'était pas pris en compte lors de l'enregistrement du formulaire
+
 10.2.0
 ------
 - Module Admission : Initialisation du tableau de bord avec les dossiers d'admissions en cours de saisie/en cours de validation
@@ -16,24 +34,6 @@ Journal des modifications
 - [FIX] Module STEP-STAR : serrages de vis pour tenter d'éviter les problèmes difficiles à reproduire.
 - [FIX] Doctorant : initialisation du 'code_apprenant_in_source' pour le cas où le doctorant est créé dans l'application (source SyGAL).
 - [FIX] Page 'Mes formations' : suppression des critères de dates pour l'affichage au doctorant des formation ouvertes et en préparation.
-
-10.1.1
-------
-- Module Soutenance : Amélioration du workflow dans la pré-soutenance
-- [FIX] HDR : Méthode [getLibelleDiscipline] non trouvée
-- [FIX] Affichage des fichiers/justificatifs pouvait dépasser de leurs conteneurs sur de petits écrans
-- [FIX] Dépendance erronée pour OrigineFinancementSearchFilter dans certaines classes
-- [FIX] Module Soutenance : Génération du document pour la présidence inaccessible
-- [FIX] Module Soutenance : Un même individu avec le même role pouvait être associé à plusieurs acteurs 
-- [FIX] Module Soutenance : Validation de la page de couverture affichée comme non disponible à tort
-- [FIX] Module Soutenance : Suppression d'un pré-rapport (fichier) impossible (encore référencée dans la table soutenance_avis)
-- [FIX] Module Formation : Possibilité de valider plusieurs fois la même formation externe, ce qui faisait planter ultérieurement la page
-- [FIX] Module Admission : Dossier inaccessible si le numéro de candidature n'était pas renseigné
-- [FIX] Module Admission : Argumentaire du directeur de thèse pour le conseil de l'école doctorale (dans le cas d'un master étranger) non pris en compte
-- [FIX] Bouton 'Générer l'avis de soutenance' Thèse : déplacement avant 'Feu vert' et correction des conditions d'affichage.
-- [FIX] Bouton 'Générer l'avis de soutenance' HDR : déplacement avant 'Feu vert' et correction des conditions d'affichage.
-- [FIX] Page de couverture thèse: la récupération de la proposition de soutenance n'appelait pas la bonne méthode
-- [FIX] Form Individu : Civilité "M." n'était pas pris en compte lors de l'enregistrement du formulaire
 
 10.1.0
 ------

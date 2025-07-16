@@ -7,6 +7,9 @@ ALTER TABLE soutenance_avis
             REFERENCES fichier_these(id)
             ON DELETE CASCADE;
 
+alter table soutenance_avis
+    drop constraint if exists soutenance_avis_fichier_hdr_id_fkey;
+
 ALTER TABLE soutenance_avis
     ADD CONSTRAINT soutenance_avis_fichier_hdr_id_fk
         FOREIGN KEY (fichier_hdr_id)
