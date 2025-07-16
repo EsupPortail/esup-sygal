@@ -77,8 +77,8 @@ end
 $$;
 
 
-drop view v_extract_formation_presence;
-drop view v_extract_formation;
+drop view if exists v_extract_formation_presence;
+drop view if exists v_extract_formation;
 drop function if exists  annee_univ_compute_from_date(timestamptz);
 create or replace function annee_univ_compute_from_date(date timestamptz) returns varchar
     language plpgsql
