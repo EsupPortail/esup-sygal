@@ -317,6 +317,7 @@ return array(
 //            'UnicaenApp\Service\EntityManagerAwareInitializer',
 //        ],
     ],
+
     'public_files' => [
         'head_scripts' => [
             '040_tinymce' => "/vendor/tinymce-6.3.0/js/tinymce/tinymce.min.js",
@@ -330,10 +331,13 @@ return array(
         'inline_scripts' => [
             '070_bootstrap-select' => '/vendor/bootstrap-select-1.14.0-beta3/js/bootstrap-select.min.js',
             '070_bootstrap-select-fr' => '/vendor/bootstrap-select-1.14.0-beta3/js/i18n/defaults-fr_FR.js',
+            '080_select2' => 'vendor/select2-4.0.13/dist/js/select2.min.js',
+            '902_tinymce' => '/vendor/tinymce_7.6.0/js/tinymce/tinymce.min.js',
         ],
         'stylesheets'           => [
             '050_bootstrap-theme' => false,
             '066_charte' => '/css/charte.css',
+            '080_select2' => 'vendor/select2-4.0.13/dist/css/select2.min.css',
             '200_fa' => '/vendor/fontawesome-free-5.12.0-web/css/all.min.css',
             '300_bs' => '/vendor/bootstrap-select-1.14.0-beta3/css/bootstrap-select.min.css',
             '400_faa' => '/vendor/font-awesome-animation.min.css',

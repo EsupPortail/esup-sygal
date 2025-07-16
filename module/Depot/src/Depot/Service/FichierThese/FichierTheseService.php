@@ -10,6 +10,7 @@ use Depot\Entity\Db\FichierThese;
 use Depot\Entity\Db\Repository\FichierTheseRepository;
 use Depot\Filter\NomFichierFusionPdcEtTheseFormatter;
 use Depot\Filter\NomFichierTheseFormatter;
+use Depot\Service\ConventionDeMiseEnLigne\Exporter\ConventionDeMiseEnLigneExporterAwareTrait;
 use Depot\Service\FichierThese\Exception\DepotImpossibleException;
 use Depot\Service\FichierThese\Exception\ValidationImpossibleException;
 use Depot\Service\PageDeCouverture\PageDeCouverturePdfExporterAwareTrait;
@@ -30,6 +31,7 @@ use Fichier\Service\VersionFichier\VersionFichierServiceAwareTrait;
 use Fichier\Validator\Exception\CinesErrorException;
 use Fichier\Validator\FichierCinesValidator;
 use Laminas\Http\Response;
+use Mpdf\MpdfException;
 use Retraitement\Service\RetraitementServiceAwareTrait;
 use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
 use These\Entity\Db\These;
@@ -46,6 +48,7 @@ class FichierTheseService extends BaseService
     use RetraitementServiceAwareTrait;
     use EtablissementServiceAwareTrait;
     use PageDeCouverturePdfExporterAwareTrait;
+    use ConventionDeMiseEnLigneExporterAwareTrait;
     use ShellCommandRunnerTrait;
 
     /**
@@ -201,22 +204,25 @@ class FichierTheseService extends BaseService
         try {
             $estArchivable = $this->fichierCinesValidator->isValid($filePath);
             $message = $estArchivable ? "Le fichier est archivable" : current($this->fichierCinesValidator->getMessages());
+            $result = $this->fichierCinesValidator->getResult();
         }
         catch (CinesErrorException $cee) { // erreur possible à identifier
             $estArchivable = null;
             $message = $cee->getMessage();
             $exceptionThrown = $cee;
+            $result = $this->fichierCinesValidator->getResult();
         }
         catch (RuntimeException $re) { // erreur non identifiée
             $estArchivable = null;
             $message = "Le test d'archivabilité a rencontré un problème : " . $re->getMessage();
             $exceptionThrown = $re;
+            $result = 'Aucun résultat';
         }
 
         $resultat = [
             'estValide' => $estArchivable,
-            'resultat'      => $this->fichierCinesValidator->getResult(),
-            'message'       => $message,
+            'resultat' => $result,
+            'message' => $message,
         ];
 
         $this->validiteFichierService->clearValiditesFichier($fichierThese);
@@ -459,6 +465,19 @@ class FichierTheseService extends BaseService
             $this->pageDeCouverturePdfExporter->export('export.pdf');
             exit;
         }
+    }
+
+    public function generateConventionDeMiseEnLigne(These $these, VersionFichier $version): void
+    {
+        $this->conventionDeMiseEnLigneExporter->setThese($these);
+        $this->conventionDeMiseEnLigneExporter->setVersionFichier($version);
+
+        try {
+            $this->conventionDeMiseEnLigneExporter->export('Convention_MEL.pdf');
+        } catch (MpdfException $e) {
+            throw new RuntimeException("Erreur rencontrée pendant la génération de la convention !", null, $e);
+        }
+        exit;
     }
 
     /**

@@ -1,20 +1,19 @@
 <?php
 
-use Depot\Entity\Db\MetadonneeThese;
-use These\Entity\Db\These;
-use Depot\Filter\MotsClesFormatter;
-use Depot\Form\RdvBuTheseForm;
-use Depot\Provider\Privilege\DepotPrivileges;
 use Application\View\Renderer\PhpRenderer;
+use Depot\Entity\Db\MetadonneeThese;
+use Depot\Filter\MotsClesFormatter;
+use Depot\Provider\Privilege\DepotPrivileges;
+use These\Entity\Db\These;
 
 /**
- * @var                $this PhpRenderer
- * @var These          $these
- * @var string         $title
+ * @var PhpRenderer $this
+ * @var These $these
+ * @var string $title
  * @var \Depot\Form\RdvBuTheseForm $form
- * @var bool           $pageCouvValidee
+ * @var bool $pageCouvValidee
  *
- * @method string formControlGroup()
+ * @see \Depot\Controller\DepotController::modifierRdvBuAction()
  */
 
 $canEditMotsClesRameau = $this->isAllowed(DepotPrivileges::getResourceId(DepotPrivileges::THESE_SAISIE_MOT_CLE_RAMEAU));
@@ -56,8 +55,14 @@ $fcg = $this->formControlGroup();
                 <?php echo $fcg($form->get('versionArchivableFournie')) ?>
                 <?php echo $fcg($form->get('attestationsRemplies')) ?>
                 <?php echo $fcg($form->get('conventionMelSignee')) ?>
+
                 <?php if ($form->has('exemplPapierFourni')): ?>
                     <?php echo $fcg($form->get('exemplPapierFourni')) ?>
+                <?php endif ?>
+                <?php if ($message = $form->getRemiseExemplairePapierRequiredResult()->message): ?>
+                    <div class="alert alert-info"><span class="icon icon-info"></span>
+                        <?= $message ?>
+                    </div>
                 <?php endif ?>
             </p>
         </div>

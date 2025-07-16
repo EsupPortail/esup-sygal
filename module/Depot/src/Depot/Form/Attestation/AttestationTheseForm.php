@@ -6,61 +6,27 @@ use Application\Utils\FormUtils;
 use Depot\Entity\Db\Attestation;
 use Laminas\Form\Form;
 use Laminas\InputFilter\InputFilterProviderInterface;
-use These\Entity\Db\These;
 
 class AttestationTheseForm extends Form implements InputFilterProviderInterface
 {
-    protected $text = "L’auteur certifie que...";
+    protected bool $depotExemplairePapierTheseEnabled;
+    protected string $text = "L’auteur certifie que...";
 
-    /**
-     * @return mixed
-     */
-    public function getText()
+    public function setDepotExemplairePapierTheseEnabled(?bool $enabled = true): static
+    {
+        $this->depotExemplairePapierTheseEnabled = $enabled;
+        return $this;
+    }
+
+    public function getText(): string
     {
         return $this->text;
     }
 
     /**
-     * @param string $text
-     * @return $this
-     */
-    public function setText($text)
-    {
-        $this->text = $text;
-
-        return $this;
-    }
-
-    /**
-     * @var These
-     */
-    private $these;
-
-    /**
-     * @param These $these
-     * @return static
-     */
-    public function setThese($these)
-    {
-        $this->these = $these;
-
-        return $this;
-    }
-
-    private $disableExemplaireImprimeConformeAVersionDeposee = false;
-
-    /**
-     * @param bool $disable
-     */
-    public function disableExemplaireImprimeConformeAVersionDeposee(bool $disable = true)
-    {
-        $this->disableExemplaireImprimeConformeAVersionDeposee = $disable;
-    }
-
-    /**
      * NB: hydrateur injecté par la factory
      */
-    public function init()
+    public function init(): void
     {
         $this->setObject(new Attestation());
 
@@ -103,10 +69,7 @@ class AttestationTheseForm extends Form implements InputFilterProviderInterface
         FormUtils::addSaveButton($this);
     }
 
-    /**
-     * @return Form
-     */
-    public function prepare()
+    public function prepare(): static
     {
         parent::prepare();
 
@@ -122,20 +85,17 @@ class AttestationTheseForm extends Form implements InputFilterProviderInterface
             $attestation->getThese()->getCorrectionAutorisee() ? "corrigée" : ""
         ));
 
-        if ($this->disableExemplaireImprimeConformeAVersionDeposee) {
+        if (! $this->depotExemplairePapierTheseEnabled) {
             $this->remove('exemplaireImprimeConformeAVersionDeposee');
         }
 
         return $this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function getInputFilterSpecification()
+    public function getInputFilterSpecification(): array
     {
         return [
-            $name = 'versionDeposeeEstVersionRef' => [
+            'versionDeposeeEstVersionRef' => [
                 'required'   => true,
                 'validators' => [
                     [
@@ -146,8 +106,8 @@ class AttestationTheseForm extends Form implements InputFilterProviderInterface
                     ],
                 ],
             ],
-            $name = 'exemplaireImprimeConformeAVersionDeposee' => [
-                'required'   => ! $this->disableExemplaireImprimeConformeAVersionDeposee,
+            'exemplaireImprimeConformeAVersionDeposee' => [
+                'required'   => $this->depotExemplairePapierTheseEnabled,
                 'validators' => [
                     [
                         'name'    => 'NotEmpty',

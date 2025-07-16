@@ -12,27 +12,22 @@ class DiffusionHydrator extends DoctrineObject implements EntityManagerAwareInte
     use EntityManagerAwareTrait;
 
     /**
-     * Extract values from an object
-     *
-     * @param  Diffusion $diffusion
-     * @return array
+     * @param Diffusion $object
      */
-    public function extract($diffusion): array
+    public function extract($object): array
     {
-        $data = parent::extract($diffusion);
+        $data = parent::extract($object);
 
-        $data['confidentielle'] = $diffusion->getThese()->getDateFinConfidentialite() !== null ? Diffusion::CONFIDENTIELLE_OUI : Diffusion::CONFIDENTIELLE_NON;
-        $data['dateFinConfidentialite'] = $diffusion->getThese()->getDateFinConfidentialite();
+        $data['confidentielle'] = $object->getThese()->getDateFinConfidentialite() !== null ? Diffusion::CONFIDENTIELLE_OUI : Diffusion::CONFIDENTIELLE_NON;
+        $data['dateFinConfidentialite'] = $object->getThese()->getDateFinConfidentialite();
 
         return $data;
     }
 
     /**
-     * Hydrate $object with the provided $data.
-     *
-     * @param  array     $data
-     * @param  Diffusion $object
-     * @return Diffusion
+     * @param array $data
+     * @param Diffusion $object
+     * @return \Depot\Entity\Db\Diffusion
      */
     public function hydrate(array $data, $object): Diffusion
     {
@@ -58,6 +53,7 @@ class DiffusionHydrator extends DoctrineObject implements EntityManagerAwareInte
             case Diffusion::AUTORISATION_OUI_IMMEDIAT:
                 $diff->setAutorisEmbargoDuree(null);
                 $diff->setAutorisMotif(null);
+                $diff->setAutorisPretPapier(null);
                 break;
             case Diffusion::AUTORISATION_NON:
                 $diff->setAutorisEmbargoDuree(null);

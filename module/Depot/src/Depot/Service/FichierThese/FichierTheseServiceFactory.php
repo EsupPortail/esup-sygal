@@ -2,6 +2,7 @@
 
 namespace Depot\Service\FichierThese;
 
+use Depot\Service\ConventionDeMiseEnLigne\Exporter\ConventionDeMiseEnLigneExporter;
 use Depot\Service\PageDeCouverture\PageDeCouverturePdfExporter;
 use Fichier\Service\Fichier\FichierService;
 use Fichier\Service\Fichier\FichierStorageService;
@@ -14,10 +15,8 @@ use Structure\Service\Etablissement\EtablissementService;
 class FichierTheseServiceFactory
 {
     /**
-     * Create service
-     *
-     * @param ContainerInterface $container
-     * @return \Depot\Service\FichierThese\FichierTheseService
+     * @throws \Psr\Container\ContainerExceptionInterface
+     * @throws \Psr\Container\NotFoundExceptionInterface
      */
     public function __invoke(ContainerInterface $container): FichierTheseService
     {
@@ -30,6 +29,7 @@ class FichierTheseServiceFactory
          * @var \Fichier\Service\ValiditeFichier\ValiditeFichierService $validiteFichierService
          * @var RetraitementService $retraitementService
          * @var EtablissementService $etablissementService
+         * @var ConventionDeMiseEnLigneExporter $conventionDeMiseEnLigneExporter
          */
         $fichierService = $container->get(FichierService::class);
         $fileService = $container->get(FichierStorageService::class);
@@ -37,6 +37,7 @@ class FichierTheseServiceFactory
         $validiteFichierService = $container->get('ValiditeFichierService');
         $retraitementService = $container->get('RetraitementService');
         $etablissementService = $container->get('EtablissementService');
+        $conventionDeMiseEnLigneExporter = $container->get(ConventionDeMiseEnLigneExporter::class);
         $pdcPdfExporter = $this->createPageDeCouverturePdfExporter($container);
 
         $service = new FichierTheseService();
@@ -48,6 +49,7 @@ class FichierTheseServiceFactory
         $service->setValiditeFichierService($validiteFichierService);
         $service->setRetraitementService($retraitementService);
         $service->setEtablissementService($etablissementService);
+        $service->setConventionDeMiseEnLigneExporter($conventionDeMiseEnLigneExporter);
         $service->setPageDeCouverturePdfExporter($pdcPdfExporter);
 
         return $service;

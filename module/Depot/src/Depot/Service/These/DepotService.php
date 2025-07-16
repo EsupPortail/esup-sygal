@@ -2,6 +2,7 @@
 
 namespace Depot\Service\These;
 
+use Acteur\Service\ActeurThese\ActeurTheseServiceAwareTrait;
 use Application\Service\AuthorizeServiceAwareTrait;
 use Application\Service\BaseService;
 use Application\Service\Notification\ApplicationNotificationFactoryAwareTrait;
@@ -15,14 +16,15 @@ use Depot\Entity\Db\Diffusion;
 use Depot\Entity\Db\MetadonneeThese;
 use Depot\Entity\Db\RdvBu;
 use Depot\Event\EventsInterface;
-use Depot\Rule\AutorisationDiffusionRule;
-use Depot\Rule\SuppressionAttestationsRequiseRule;
+use Depot\Rule\RemiseExemplairePapierRuleAwareTrait;
+use Depot\Rule\Result\RemiseExemplairePapierRequiredResult;
+use Depot\Rule\SuppressionAttestationsRequiseRuleAwareTrait;
 use Depot\Service\FichierThese\FichierTheseServiceAwareTrait;
 use Depot\Service\Notification\DepotNotificationFactoryAwareTrait;
 use Depot\Service\Validation\DepotValidationServiceAwareTrait;
 use Doctrine\DBAL\Exception as DBALException;
-use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\Exception\ORMException;
+use Doctrine\ORM\OptimisticLockException;
 use Fichier\Entity\Db\NatureFichier;
 use Fichier\Entity\Db\VersionFichier;
 use Fichier\Service\Fichier\FichierStorageServiceAwareTrait;
@@ -33,10 +35,10 @@ use Laminas\EventManager\ListenerAggregateInterface;
 use Laminas\EventManager\ListenerAggregateTrait;
 use Notification\Service\NotifierServiceAwareTrait;
 use Soutenance\Service\Membre\MembreServiceAwareTrait;
+use stdClass;
 use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
 use These\Entity\Db\Repository\TheseRepository;
 use These\Entity\Db\These;
-use Acteur\Service\ActeurThese\ActeurTheseServiceAwareTrait;
 use These\Service\Notification\TheseNotificationFactoryAwareTrait;
 use These\Service\These\TheseServiceAwareTrait;
 use UnicaenApp\Exception\LogicException;
@@ -63,6 +65,9 @@ class DepotService extends BaseService implements ListenerAggregateInterface
     use AuthorizeServiceAwareTrait;
     use ActeurTheseServiceAwareTrait;
     use MembreServiceAwareTrait;
+
+    use RemiseExemplairePapierRuleAwareTrait;
+    use SuppressionAttestationsRequiseRuleAwareTrait;
 
     /**
      * Resaisir l'autorisation de diffusion ? Sinon celle saisie au 1er dépôt est reprise/dupliquée.
@@ -249,33 +254,26 @@ class DepotService extends BaseService implements ListenerAggregateInterface
         $this->updateAttestation($these, $attestationCorr);
     }
 
-    /**
-     * @param These       $these
-     * @param Attestation $attestation
-     */
-    public function updateAttestation(These $these, Attestation $attestation)
+    public function updateAttestation(These $these, Attestation $attestation): void
     {
-        if (! $attestation->getId()) {
-            $attestation->setThese($these);
-            $these->addAttestation($attestation);
-
-            $this->entityManager->persist($attestation);
-        }
-
+        $this->entityManager->beginTransaction();
         try {
-            $this->entityManager->flush($attestation);
-        } catch (OptimisticLockException $e) {
-            throw new RuntimeException("Erreur rencontrée lors de l'enregistrement", null, $e);
+            if (!$attestation->getId()) {
+                $attestation->setThese($these);
+                $these->addAttestation($attestation);
+                $this->entityManager->persist($attestation);
+            }
+            $this->entityManager->flush();
+            $this->entityManager->commit();
+        } catch (ORMException $e) {
+            throw new RuntimeException("Erreur rencontrée lors de l'enregistrement en bdd", null, $e);
         }
     }
 
     /**
-     * Supprime définitivement l'éventuelle Attestation concernant une version de fichier.
-     *
-     * @param These          $these Thèse concernée
-     * @param VersionFichier $version
+     * Historise l'éventuelle Attestation concernant une thèse et une version de fichier.
      */
-    public function deleteAttestationForVersion(These $these, VersionFichier $version)
+    public function deleteAttestationForVersion(These $these, VersionFichier $version): void
     {
         $attestation = $these->getAttestationForVersion($version);
         if ($attestation === null) {
@@ -285,11 +283,12 @@ class DepotService extends BaseService implements ListenerAggregateInterface
         $attestation->historiser();
         $these->removeAttestation($attestation);
 
+        $this->entityManager->beginTransaction();
         try {
-            $this->entityManager->flush($attestation);
-            $this->entityManager->flush($attestation);
+            $this->entityManager->flush();
+            $this->entityManager->commit();
         } catch (ORMException $e) {
-            throw new RuntimeException("Erreur rencontrée lors de la suppression", null, $e);
+            throw new RuntimeException("Erreur rencontrée lors de la suppression en bdd", null, $e);
         }
     }
 
@@ -318,50 +317,57 @@ class DepotService extends BaseService implements ListenerAggregateInterface
         $this->updateDiffusion($these, $diffusionCorr, $versionCorr);
     }
 
-    /**
-     * @param These          $these
-     * @param Diffusion      $diffusion
-     * @param VersionFichier $version
-     */
     public function updateDiffusion(These $these, Diffusion $diffusion, VersionFichier $version): void
     {
         $isUpdate = $diffusion->getId() !== null;
 
-        if ($isUpdate) {
-            // on teste si la réponse à l'autorisation de diffusion existante a changé de manière "importante"
-            // (auquel cas, il sera nécessaire de tester s'il faut supprimer ou pas les attestations)
-            $rule = new AutorisationDiffusionRule();
-            $rule->setDiffusion($diffusion)->execute();
-            $suppressionAttestationsAVerifier = $rule->computeChangementDeReponseImportant($this->entityManager);
-        } else {
-            $suppressionAttestationsAVerifier = false;
-        }
+//        if ($isUpdate) {
+//            // on teste si la nouvelle réponse à l'autorisation de diffusion impacte la nécessité de remettre un exemplaire papier
+//            // (auquel cas, il sera nécessaire de tester s'il faut supprimer ou pas les attestations)
+//            $changeset = $diffusion->getEntityChangeSet($this->entityManager);;
+//            if (isset($changeset['autorisMel'])) {
+//                $autorisMelOld = $changeset['autorisMel'][0]; // ancienne réponse à l'autorisation de MEL
+//                $autorisMelNew = $changeset['autorisMel'][1]; // nouvelle réponse
+//                $this->remiseExemplairePapierRule->setDiffusion($diffusion);
+//                $suppressionAttestationsAVerifier =
+//                    $this->remiseExemplairePapierRule->isChangementAutorisMelImpacteRemiseExemplairePapier($autorisMelOld, $autorisMelNew);
+//            }
+//        } else {
+//            $suppressionAttestationsAVerifier = false;
+//        }
 
         if (! $isUpdate) {
             $diffusion->setThese($these);
             $these->addDiffusion($diffusion);
         }
 
+        $this->entityManager->beginTransaction();
         try {
             if (! $isUpdate) {
                 $this->entityManager->persist($diffusion);
             }
-            $this->entityManager->flush($diffusion);
-        } catch (ORMException $e) {
-            throw new RuntimeException("Erreur rencontrée lors de l'enregistrement", null, $e);
-        }
 
-        //
-        // Il peut être nécessaire de supprimer les "attestations" existantes en fonction des réponses
-        // à l'autorisation de diffusion.
-        //
-        if ($suppressionAttestationsAVerifier) {
-            $rule = new SuppressionAttestationsRequiseRule($these, $version);
-            $suppressionRequise = $rule->execute();
+            // Si l'utilisateur valide le formulaire sans avoir modifié quoi que ce soit, la date de
+            // modif (histoModification) n'est pas mise à jour. Or, c'est indispensable qu'elle soit à jour
+            // pour la suite (cf. date d'observation dans RemiseExemplairePapierRule}), donc on la met à jour
+            // manuellement ici.
+            $diffusion->setHistoModification(new DateTime());
 
-            if ($suppressionRequise) {
-                $this->deleteAttestationForVersion($these, $version);
+            // Il peut être nécessaire de supprimer les "attestations" existantes en fonction des réponses
+            // à l'autorisation de diffusion.
+            if ($isUpdate) {
+                $this->suppressionAttestationsRequiseRule->setThese($these)->setVersionFichier($version);
+                $suppressionRequise = $this->suppressionAttestationsRequiseRule->isSuppressionAttestationRequired();
+                if ($suppressionRequise) {
+                    $this->deleteAttestationForVersion($these, $version);
+                }
             }
+
+            $this->entityManager->flush();
+            $this->entityManager->commit();
+        } catch (ORMException $e) {
+            $this->entityManager->rollback();
+            throw new RuntimeException("Erreur rencontrée lors de l'enregistrement en bdd, rollback", null, $e);
         }
     }
 
@@ -382,63 +388,44 @@ class DepotService extends BaseService implements ListenerAggregateInterface
     }
 
     /**
-     * Détermine d'après la réponse à l'autorisation de diffusion de la thèse si le flag de remise de
-     * l'exemplaire papier est pertinent ou non.
-     *
-     * @param These          $these
-     * @param VersionFichier $version
-     * @return boolean
+     * Détermine d'après la réponse à l'autorisation de diffusion si la remise de
+     * l'exemplaire papier est requise ou non.
      */
-    public function isRemiseExemplairePapierRequise(These $these, VersionFichier $version)
+    public function isRemiseExemplairePapierRequired(Diffusion $diffusion, ?DateTime $dateObservation = null): bool
     {
-        $diffusion = $these->getDiffusionForVersion($version);
+        $this->remiseExemplairePapierRule->setDiffusion($diffusion);
 
-        if ($diffusion === null) {
-            throw new LogicException("Appel de méthode prématuré : autorisation de diffusion introuvable pour la $version");
-        }
-
-        return $diffusion->isRemiseExemplairePapierRequise();
+        return $this->remiseExemplairePapierRule->isRemiseExemplairePapierRequired($dateObservation);
     }
 
     /**
-     * Détermine d'après la réponse à l'autorisation de diffusion de la thèse si le flag de remise de
-     * l'exemplaire papier est pertinent ou non.
-     *
-     * @param These $these
-     * @return boolean|null
+     * Détermine d'après la réponse à l'autorisation de diffusion si la remise de
+     * l'exemplaire papier est requise ou non.
      */
-    public function isExemplPapierFourniPertinent(These $these)
+    public function getRemiseExemplairePapierRequired(Diffusion $diffusion, ?DateTime $dateObservation = null): RemiseExemplairePapierRequiredResult
     {
-        // le RDV BU ne concerne que le dépôt de la version initiale
-        $version = $this->fichierTheseService->fetchVersionFichier(VersionFichier::CODE_ORIG);
+        $this->remiseExemplairePapierRule->setDiffusion($diffusion);
 
-        $diffusion = $these->getDiffusionForVersion($version);
-
-        if ($diffusion === null) {
-            return false;
-        }
-
-        return $diffusion->isRemiseExemplairePapierRequise();
+        return $this->remiseExemplairePapierRule->getRemiseExemplairePapierRequired($dateObservation);
     }
 
     /**
      * Détermine si les infos qui doivent être saisies pour le RDV BU l'ont été.
-     *
-     * @param These $these
-     * @return bool
      */
-    public function isInfosBuSaisies(These $these)
+    public function isInfosBuSaisies(These $these): bool
     {
         $rdvBu = $these->getRdvBu();
-
         if ($rdvBu === null) {
             return false;
         }
 
-        $exemplairePapierFourniPertinent = $this->isExemplPapierFourniPertinent($rdvBu->getThese());
+        $version = $this->fichierTheseService->fetchVersionFichier(VersionFichier::CODE_ORIG);
+        $diffusion = $these->getDiffusionForVersion($version);
+
+        $isRemiseExemplairePapierRequise = $this->isRemiseExemplairePapierRequired($diffusion);
 
         return
-            (!$exemplairePapierFourniPertinent || $exemplairePapierFourniPertinent && $rdvBu->getExemplPapierFourni()) &&
+            (!$isRemiseExemplairePapierRequise || $rdvBu->getExemplPapierFourni()) &&
             $rdvBu->getConventionMelSignee() && $rdvBu->getMotsClesRameau() &&
             $rdvBu->isVersionArchivableFournie();
     }

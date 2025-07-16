@@ -28,6 +28,8 @@ use Fichier\Service\Fichier\FichierServiceFactory;
 use Fichier\Service\Fichier\Search\FichierSearchService;
 use Fichier\Service\Fichier\Search\FichierSearchServiceFactory;
 use Fichier\Service\NatureFichier\NatureFichierService;
+use Fichier\Service\Url\UrlService;
+use Fichier\Service\Url\UrlServiceFactory;
 use Fichier\Service\ValiditeFichier\ValiditeFichierService;
 use Fichier\Service\VersionFichier\VersionFichierService;
 use Fichier\View\Helper\Fichier\FichierViewHelper;
@@ -278,6 +280,7 @@ return [
         ],
         'factories' => [
             FichierService::class => FichierServiceFactory::class,
+            UrlService::class => UrlServiceFactory::class,
             PageFichierIntrouvablePdfExporter::class => PageFichierIntrouvablePdfExporterFactory::class,
             'ValidationFichierCinesCommand' => TestArchivabiliteShellCommandFactory::class,
         ],

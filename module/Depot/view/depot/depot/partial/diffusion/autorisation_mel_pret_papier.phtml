@@ -1,0 +1,24 @@
+<?php
+/**
+ * @var \Application\View\Renderer\PhpRenderer $this
+ * @var \Depot\Entity\Db\Diffusion $diffusion
+ */
+?>
+
+<?php if ($diffusion->getAutorisPretPapier() === true): ?>
+
+    <p>
+        L'auteur autorise le prêt du fichier papier de sa thèse dans les établissements d'enseignement supérieur en
+        dehors de la France et également que la BU imprime un exemplaire papier pour permettre le prêt.
+    </p>
+
+<?php elseif ($diffusion->getAutorisPretPapier() === false): ?>
+
+    <p>
+        L'auteur n'autorise pas le prêt du fichier papier de sa thèse dans les établissements d'enseignement supérieur en
+        dehors de la France.
+    </p>
+
+<?php else: ?>
+
+<?php endif ?>

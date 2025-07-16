@@ -2,33 +2,71 @@
 
 namespace These\Renderer;
 
-use Individu\Entity\Db\Individu;
-use These\Entity\Db\These;
 use Application\Renderer\Template\Variable\AbstractTemplateVariable;
+use Doctorant\Renderer\DoctorantTemplateVariable;
+use Individu\Entity\Db\Individu;
+use Structure\Renderer\StructureTemplateVariable;
+use These\Entity\Db\These;
 
+/**
+ * @property \These\Entity\Db\These $target
+ */
 class TheseTemplateVariable extends AbstractTemplateVariable
 {
-    private These $these;
-
     public function setThese(These $these): void
     {
-        $this->these = $these;
+        $this->setTarget($these);
+    }
+
+    public function getDoctorant(): DoctorantTemplateVariable
+    {
+        /** @var DoctorantTemplateVariable $templateVariable */
+        $templateVariable = $this->pluginManager->get(DoctorantTemplateVariable::class);
+        $templateVariable->setDoctorant($this->target->getDoctorant());
+
+        return $templateVariable;
+    }
+//    /**
+//     * Autre possibilité : Retourner le Doctorant, ce qui rend accessibles sans contrainte les données Doctorant !
+//     * À faire en conscience !
+//     */
+//    public function getDoctorant(): Doctorant
+//    {
+//        return $this->target->getDoctorant();
+//    }
+
+    public function getEtablissement(): StructureTemplateVariable
+    {
+        /** @var StructureTemplateVariable $templateVariable */
+        $templateVariable = $this->pluginManager->get(StructureTemplateVariable::class);
+        $templateVariable->setStructureConcrete($this->target->getEtablissement());
+
+        return $templateVariable;
+    }
+
+    public function getEcoleDoctorale(): StructureTemplateVariable
+    {
+        /** @var StructureTemplateVariable $templateVariable */
+        $templateVariable = $this->pluginManager->get(StructureTemplateVariable::class);
+        $templateVariable->setStructureConcrete($this->target->getEcoleDoctorale());
+
+        return $templateVariable;
     }
 
     public function getLibelleDiscipline(): string
     {
-        return (string) $this->these->getDiscipline();
+        return (string) $this->target->getDiscipline();
     }
 
     public function getTitre(): string
     {
-        return $this->these->getTitre();
+        return $this->target->getTitre();
     }
 
     public function toStringEncadrement() : string
     {
         /** @var Individu[] $encadrement */
-        $encadrement = $this->these->getEncadrements(true);
+        $encadrement = $this->target->getEncadrements(true);
         $texte = [];
         foreach ($encadrement as $directeur) { $texte[] = $directeur->getNomComplet();}
         return implode (" et ", $texte);

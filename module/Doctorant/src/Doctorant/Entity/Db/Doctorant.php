@@ -375,6 +375,7 @@ class Doctorant implements
      * Retourne la dénomination du doctorant (civilité+nom Patronymique+prénom)
      *
      * @noinspection PhpUnusedMethod (il s'agit d'une méthode utilisée par les macros)
+     * @deprecated Utiliser {@see \Doctorant\Renderer\DoctorantRendererAdapter}
      */
     public function getDenominationPatronymique(): string
     {

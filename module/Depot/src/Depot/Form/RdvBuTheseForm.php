@@ -5,6 +5,7 @@ namespace Depot\Form;
 use Application\Utils\FormUtils;
 use Depot\Entity\Db\RdvBu;
 use Depot\Filter\MotsClesFilter;
+use Depot\Rule\Result\RemiseExemplairePapierRequiredResult;
 use Laminas\Form\Element\Checkbox;
 use Laminas\Form\Element\Textarea;
 use Laminas\Form\Form;
@@ -15,14 +16,17 @@ class RdvBuTheseForm extends Form
     public const SEPARATEUR_MOTS_CLES_RAMEAU = RdvBu::SEPARATEUR_MOTS_CLES_RAMEAU;
     public const SEPARATEUR_MOTS_CLES_RAMEAU_LIB = RdvBu::SEPARATEUR_MOTS_CLES_RAMEAU_LIB;
 
-    private bool $disableExemplPapierFourni = false;
+    protected ?RemiseExemplairePapierRequiredResult $remiseExemplairePapierRequiredResult = null;
 
-    /**
-     * @param bool $disable
-     */
-    public function disableExemplPapierFourni(bool $disable = true): void
+    public function setRemiseExemplairePapierRequiredResult(RemiseExemplairePapierRequiredResult $enabled): static
     {
-        $this->disableExemplPapierFourni = $disable;
+        $this->remiseExemplairePapierRequiredResult = $enabled;
+        return $this;
+    }
+
+    public function getRemiseExemplairePapierRequiredResult(): ?RemiseExemplairePapierRequiredResult
+    {
+        return $this->remiseExemplairePapierRequiredResult;
     }
 
     /**
@@ -195,8 +199,8 @@ class RdvBuTheseForm extends Form
 
     public function prepare(): self
     {
-        if ($this->disableExemplPapierFourni) {
-            $this->remove('exemplPapierFourni');
+        if (!$this->remiseExemplairePapierRequiredResult->isRequired) {
+            $this->get('exemplPapierFourni')->setAttribute('disabled', 'disabled');
         }
 
         return parent::prepare();

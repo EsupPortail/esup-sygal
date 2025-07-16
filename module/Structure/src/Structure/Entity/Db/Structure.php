@@ -41,6 +41,7 @@ class Structure implements
     private     $id;
     protected   $sigle;
     protected   $libelle;
+    protected   $articleDefini;
     protected   $cheminLogo;
     protected   $estFermee = false;
 
@@ -212,21 +213,39 @@ class Structure implements
     }
 
     /**
-     * @return string
+     * Retourne le libellé de cette structure avec l'article défini devant.
+     * Ex : "l'Université de Caen Normandie" si le libellé est "Université de Caen Normandie".
      */
-    public function getLibelle()
+    public function getLibelleAvecArticleDefini(): string
+    {
+        $articleDefini = trim($this->articleDefini);
+        if (!str_ends_with($articleDefini, "'")) {
+            $articleDefini .= ' ';
+        }
+
+        return $articleDefini . $this->libelle;
+    }
+
+    public function getLibelle(): string
     {
         return $this->libelle;
     }
 
-    /**
-     * @param string $libelle
-     * @return Structure
-     */
-    public function setLibelle($libelle)
+    public function setLibelle($libelle): static
     {
         $this->libelle = $libelle;
 
+        return $this;
+    }
+
+    public function getArticleDefini(): string
+    {
+        return $this->articleDefini;
+    }
+
+    public function setArticleDefini(string $articleDefini): static
+    {
+        $this->articleDefini = $articleDefini;
         return $this;
     }
 

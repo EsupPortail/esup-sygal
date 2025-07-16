@@ -10,6 +10,7 @@
         </id>
         <field name="sigle"      type="string" column="sigle"       length="32"  nullable="true"/>
         <field name="libelle"    type="string" column="libelle"     length="128" nullable="false"/>
+        <field name="articleDefini" type="string" column="article_defini" length="5" nullable="false"/>
         <field name="estFermee"  type="boolean" column="est_ferme"               nullable="false"/>
         <field name="cheminLogo" type="string" column="chemin_logo" length="200" nullable="true"/>
 

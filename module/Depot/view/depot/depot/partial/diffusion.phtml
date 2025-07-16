@@ -10,7 +10,6 @@
 
 use Depot\Entity\Db\Diffusion;
 use These\Entity\Db\These;
-use Application\Service\Message\DiffusionMessages;
 
 ?>
 
@@ -26,7 +25,20 @@ use Application\Service\Message\DiffusionMessages;
 <?php endif ?>
 
 <ul class="autorisation-diffusion">
-    <li><?php echo $this->message()->render('DROITS_AUTEUR_OK_PHRASE', [], $diffusion) ?></li>
+    <li>
+        <?php if ($diffusion->getDroitAuteurOk() === true): ?>
+            <p>
+                L'auteur garantit que tous les documents de la thèse sont libres de droits ou
+                qu'il a acquis les droits afférents pour la reproduction et la représentation sur tous supports.
+            </p>
+        <?php elseif ($diffusion->getDroitAuteurOk() === false): ?>
+            <p>
+                L'auteur ne garantit pas que tous les documents de la thèse sont libres de droits ou
+                qu'il a acquis les droits afférents pour la reproduction et la représentation sur tous supports. <br>
+                À défaut, l'auteur fournit une version numérique spécifique excluant ces oeuvres tierces (version expurgée).
+            </p>
+        <?php endif ?>
+    </li>
 
     <?php if (empty($masquerFichiers) && ! $diffusion->getDroitAuteurOk()): ?>
         <li>Version expurgée pour la diffusion :
@@ -35,14 +47,28 @@ use Application\Service\Message\DiffusionMessages;
         <?php echo $this->partial('depot/fichier-these/lister-fichiers', ['items' => $annexesFichiersExpurgesItems]) ?></li>
     <?php endif ?>
 
-    <li><?php echo $form->get('certifCharteDiff')->getLabel() . "." ?>
+    <li>
+        <?php echo rtrim(rtrim($form->get('certifCharteDiff')->getLabel()), '.') ?>
+        (téléchargeable en cliquant
+        <a target="_blank"
+           href="<?php echo $this->url('fichier/telecharger-permanent', ['idPermanent' => 'CHARTE_DEPOT_DIFFUSION_THESE']) ?>"
+           download>ici</a>).
+    </li>
 
     <li>
-        <?php echo $this->message()->render(DiffusionMessages::AUTORIS_MISE_EN_LIGNE_PHRASE, [], $diffusion) ?>
+        <div>
+            <?php echo $this->partial('depot/depot/partial/diffusion/autorisation_mel', ['diffusion' => $diffusion]) ?>
+        </div>
         <div class="autorisation-laius text-info">
-            <?php echo $this->message()->render(DiffusionMessages::AUTORIS_MISE_EN_LIGNE_LAIUS, [], $diffusion) ?>
+            <?php echo $this->partial('depot/depot/partial/diffusion/autorisation_mel_laius', ['diffusion' => $diffusion]) ?>
         </div>
     </li>
+
+    <?php if ($diffusion->getAutorisPretPapier() !== null): ?>
+        <li>
+            <?php echo $this->partial('depot/depot/partial/diffusion/autorisation_mel_pret_papier', ['diffusion' => $diffusion]) ?>
+        </li>
+    <?php endif ?>
 
     <?php if ($orcid = $diffusion->getOrcid()): ?>
         <li>Identifiant ORCID : <code class="text-muted"><?php echo $orcid ?></code></li>

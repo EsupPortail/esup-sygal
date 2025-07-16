@@ -2,20 +2,23 @@
 
 namespace Depot\Service\These\Factory;
 
+use Acteur\Service\ActeurThese\ActeurTheseService;
+use Application\Rule\PluginManager\RulePluginManager;
 use Application\Service\Notification\ApplicationNotificationFactory;
 use Application\Service\UserContextService;
 use Application\Service\Utilisateur\UtilisateurService;
 use Application\Service\Variable\VariableService;
+use Depot\Rule\RemiseExemplairePapierRule;
+use Depot\Rule\SuppressionAttestationsRequiseRule;
 use Depot\Service\FichierThese\FichierTheseService;
 use Depot\Service\Notification\DepotNotificationFactory;
 use Depot\Service\These\DepotService;
 use Depot\Service\Validation\DepotValidationService;
 use Fichier\Service\Fichier\FichierStorageService;
-use Interop\Container\ContainerInterface;
 use Notification\Service\NotifierService;
+use Psr\Container\ContainerInterface;
 use Soutenance\Service\Membre\MembreService;
 use Structure\Service\Etablissement\EtablissementService;
-use Acteur\Service\ActeurThese\ActeurTheseService;
 use These\Service\Notification\TheseNotificationFactory;
 use These\Service\These\TheseService;
 use UnicaenAuthentification\Service\User as UserService;
@@ -88,6 +91,14 @@ class DepotServiceFactory
         /** @var \Depot\Service\Notification\DepotNotificationFactory $depotNotificationFactory */
         $depotNotificationFactory = $container->get(DepotNotificationFactory::class);
         $service->setDepotNotificationFactory($depotNotificationFactory);
+
+        /** @var RemiseExemplairePapierRule $autorisationDiffusionRule */
+        $autorisationDiffusionRule = $container->get(RulePluginManager::class)->get(RemiseExemplairePapierRule::class);
+        $service->setRemiseExemplairePapierRule($autorisationDiffusionRule);
+
+        /** @var SuppressionAttestationsRequiseRule $suppressionAttestationsRequiseRule */
+        $suppressionAttestationsRequiseRule = $container->get(SuppressionAttestationsRequiseRule::class);
+        $service->setSuppressionAttestationsRequiseRule($suppressionAttestationsRequiseRule);
 
         $this->injectConfig($service, $container);
 

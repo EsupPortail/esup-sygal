@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+    <entity name="Feature\Entity\Db\Feature" table="feature"
+            repository-class="Feature\Entity\Db\Repository\FeatureRepository">
+
+        <id name="code" type="string" column="code"/>
+
+        <field name="libelle" type="string" column="libelle"/>
+        <field name="enabledStartDate" type="datetime" column="enabled_start_date"/>
+        <field name="enabledEndDate" type="datetime" column="enabled_end_date"/>
+        <field name="config" type="string" column="config"/>
+        
+    </entity>
+</doctrine-mapping>

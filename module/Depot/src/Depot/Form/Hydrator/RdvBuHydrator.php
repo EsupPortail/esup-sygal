@@ -37,8 +37,10 @@ class RdvBuHydrator extends DoctrineObject
         $data['versionArchivableFournie'] = $this->existeVersionArchivable($rdvBu);
 
         if ($diffusion = $this->getDiffusion($rdvBu)) {
+            // todo : à déplacer dans Doctorant/Individu :
             $data['idOrcid'] = $diffusion->getOrcid();
             $data['halId'] = $diffusion->getHalId();
+            // todo : à déplacer dans These :
             $data['nnt'] = $diffusion->getNNT();
         }
 
@@ -60,11 +62,15 @@ class RdvBuHydrator extends DoctrineObject
         /** @var RdvBu $object */
         $object = parent::hydrate($data, $rdvBu);
 
+        // todo : enlever ces modif de Diffusion qui obligent à faire une verrue dans DepotController::modifierRdvBuAction()
         if ($diffusion = $this->getDiffusion($rdvBu)) {
+            // todo : à déplacer dans Doctorant/Individu :
             $diffusion->setOrcid($data['idOrcid']);
             $diffusion->setHalId($data['halId']);
+            // todo : à déplacer dans These :
             $diffusion->setNNT($data['nnt'] ?? null);
             try {
+                // todo : ne pas enregistrer ici ! utiliser une transaction
                 $this->objectManager->flush($diffusion);
             } catch (ORMException $e) {
                 throw new RuntimeException("Impossible d'enregistrer la Diffusion", null, $e);

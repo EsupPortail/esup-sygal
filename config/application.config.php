@@ -64,6 +64,7 @@ return [
         'UnicaenParametre',
         'UnicaenSearch',
 
+        'Feature',
         'Horodatage',
         'Structure',
         'Acteur',

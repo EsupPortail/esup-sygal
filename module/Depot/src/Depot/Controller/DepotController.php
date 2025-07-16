@@ -5,6 +5,8 @@ namespace Depot\Controller;
 use Application\Command\Exception\TimedOutCommandException;
 use Application\Controller\AbstractController;
 use Application\Entity\Db\Role;
+use DateTime;
+use Depot\Rule\RemiseExemplairePapierRuleAwareTrait;
 use Validation\Entity\Db\TypeValidation;
 use Application\Entity\Db\Variable;
 use Application\Filter\IdifyFilterAwareTrait;
@@ -53,6 +55,7 @@ use Laminas\InputFilter\InputFilter;
 use Laminas\Stdlib\ParametersInterface;
 use Laminas\View\Model\ViewModel;
 use Laminas\View\Renderer\PhpRenderer;
+use Mpdf\MpdfException;
 use Notification\Service\NotifierServiceAwareTrait;
 use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
 use Structure\Service\UniteRecherche\UniteRechercheServiceAwareTrait;
@@ -86,6 +89,8 @@ class DepotController extends AbstractController
     use VariableServiceAwareTrait;
     use UtilisateurServiceAwareTrait;
     use DomaineHalServiceAwareTrait;
+
+    use RemiseExemplairePapierRuleAwareTrait;
 
     private $timeoutRetraitement;
 
@@ -435,7 +440,7 @@ class DepotController extends AbstractController
         return $view;
     }
 
-    public function detailRdvBuAction()
+    public function detailRdvBuAction(): ViewModel
     {
         $estDoctorant = (bool) $this->userContextService->getSelectedRoleDoctorant();
         $these = $this->requestedThese();
@@ -449,11 +454,13 @@ class DepotController extends AbstractController
         $validationsPdc = $this->validationTheseService->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_PAGE_DE_COUVERTURE, $these);
         $pageCouvValidee = !empty($validationsPdc);
 
-        $isExemplPapierFourniPertinent = $this->depotService->isExemplPapierFourniPertinent($these);
+        $diffusion = $these->getDiffusionForVersion($version);
+
+        $remiseExemplairePapierRequiredResult = $this->depotService->getRemiseExemplairePapierRequired($diffusion);
 
         $view = new ViewModel([
             'these'        => $these,
-            'diffusion'    => $these->getDiffusionForVersion($version),
+            'diffusion'    => $diffusion,
             'estDoctorant' => $estDoctorant,
             'modifierUrl'  => $this->urlDepot()->modifierRdvBuUrl($these),
             'validerUrl'   => $this->urlDepot()->validerRdvBuUrl($these),
@@ -469,8 +476,7 @@ class DepotController extends AbstractController
             'hasVD' => $hasVD,
             'pageCouvValidee' => $pageCouvValidee,
             'asynchronous' => $asynchronous,
-            'isExemplPapierFourniPertinent' => $isExemplPapierFourniPertinent,
-
+            'remiseExemplairePapierRequiredResult' => $remiseExemplairePapierRequiredResult,
         ]);
 
         $view->setTemplate('depot/depot/rdv-bu' . ($estDoctorant ? '-doctorant' : null));
@@ -589,7 +595,9 @@ class DepotController extends AbstractController
     {
         $these = $this->requestedThese();
         $estDoctorant = (bool) $this->userContextService->getSelectedRoleDoctorant();
-        $isExemplPapierFourniPertinent = $this->depotService->isExemplPapierFourniPertinent($these);
+
+        $version = $this->fichierTheseService->fetchVersionFichier(VersionFichier::CODE_ORIG);
+        $diffusion = $these->getDiffusionForVersion($version);
 
         $validationsPdc = $this->validationTheseService->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_PAGE_DE_COUVERTURE, $these);
         $pageCouvValidee = !empty($validationsPdc);
@@ -601,15 +609,23 @@ class DepotController extends AbstractController
         $form = $estDoctorant ? $this->rdvBuTheseDoctorantForm : $this->rdvBuTheseForm;
         $form->bind($rdvBu);
 
-        // Attestations remplies ?
+        // Attestations remplies ?fe
         $isAttestationsSaisies = $this->depotService->isAttestationsVersionInitialeSaisies($these);
         if ($form->has('attestationsRemplies')) {
             $form->get('attestationsRemplies')->setValue($isAttestationsSaisies);
         }
 
-        if ($form instanceof RdvBuTheseForm && ! $this->depotService->isExemplPapierFourniPertinent($these)) {
-            $form->disableExemplPapierFourni();
+        if ($form instanceof RdvBuTheseForm) {
+            $remiseExemplairePapierRuleResult = $this->depotService->getRemiseExemplairePapierRequired($diffusion);
+            $form->setRemiseExemplairePapierRequiredResult($remiseExemplairePapierRuleResult);
         }
+
+        //// ATTENTION ! Le formulaire RDV BU (hydrator) enregistre dans choses dans Diffusion donc ça modifie la date de dernière modif.
+        //// Or RemiseExemplairePapierRule utilise sur cette date comme date d'observation !
+        //// => Donc verrue pour restaurer la date de dernière modif de la Diffusion après enregistrement du Rdv BU.
+        /// todo : à enlever quand l'hydrator de RdvBu ne modifira plus Diffusion.
+        $diffusionHistoModifIni = $diffusion->getHistoModification();
+        ////
 
         if ($this->getRequest()->isPost()) {
             $post = $this->getRequest()->getPost();
@@ -619,7 +635,13 @@ class DepotController extends AbstractController
                 /** @var RdvBu $formRdvBu */
                 $formRdvBu = $form->getData();
                 $inserting = $formRdvBu->getId() === null;
+
                 $this->depotService->updateRdvBu($these, $formRdvBu);
+
+                //// ATTENTION ! Restauration de la date de dernière modif de DIffusion. Cf. ci-dessus.
+                $diffusion->setHistoModification($diffusionHistoModifIni);
+                $this->entityManager->flush($diffusion);
+                ////
 
                 $this->flashMessenger()->addMessage("Informations enregistrées avec succès.", 'success');
                 if ($message = $this->depotService->getMessage('<br>', MessageAwareInterface::SUCCESS)) {
@@ -649,7 +671,6 @@ class DepotController extends AbstractController
             'form'  => $form,
             'title' => "Rendez-vous avec la bibliothèque universitaire",
             'pageCouvValidee' => $pageCouvValidee,
-            'isExemplPapierFourniPertinent' => $isExemplPapierFourniPertinent,
         ]);
 
         $vm->setTemplate('depot/depot/modifier-rdv-bu' . ($estDoctorant ? '-doctorant' : null));
@@ -661,8 +682,10 @@ class DepotController extends AbstractController
     {
         $these = $this->requestedThese();
         $version = $this->fichierTheseService->fetchVersionFichier(VersionFichier::CODE_ORIG_CORR);
+        $diffusion = $these->getDiffusionForVersion($version);
 
-        $isRemiseExemplairePapierRequise = $this->depotService->isRemiseExemplairePapierRequise($these, $version);
+        $dateObservation = $diffusion->getHistoModification() ?: $diffusion->getHistoCreation();
+        $isRemiseExemplairePapierRequise = $this->depotService->isRemiseExemplairePapierRequired($diffusion, $dateObservation);
 
         $hasVAC = $this->fichierTheseService->getRepository()->hasVersion($these, VersionFichier::CODE_ARCHI_CORR);
         $hasVDC = $this->fichierTheseService->getRepository()->hasVersion($these, VersionFichier::CODE_DIFF_CORR);
@@ -859,7 +882,7 @@ class DepotController extends AbstractController
     public function depotPvSoutenanceAction(): ViewModel
     {
         $these = $this->requestedThese();
-        $dateSoutenanceDepassee = $these->getDateSoutenance() && $these->getDateSoutenance() < new \DateTime();
+        $dateSoutenanceDepassee = $these->getDateSoutenance() && $these->getDateSoutenance() < new DateTime();
 
         $view = $this->createViewForFichierAction(NatureFichier::CODE_PV_SOUTENANCE);
         $view->setVariable('readonly', true);
@@ -878,7 +901,7 @@ class DepotController extends AbstractController
     public function depotRapportSoutenanceAction(): ViewModel
     {
         $these = $this->requestedThese();
-        $dateSoutenanceDepassee = $these->getDateSoutenance() && $these->getDateSoutenance() < new \DateTime();
+        $dateSoutenanceDepassee = $these->getDateSoutenance() && $these->getDateSoutenance() < new DateTime();
 
         $view = $this->createViewForFichierAction(NatureFichier::CODE_RAPPORT_SOUTENANCE);
         $view->setVariable('readonly', true);
@@ -897,7 +920,7 @@ class DepotController extends AbstractController
     public function depotRapportTechniqueSoutenanceAction(): ViewModel
     {
         $these = $this->requestedThese();
-        $dateSoutenanceDepassee = $these->getDateSoutenance() && $these->getDateSoutenance() < new \DateTime();
+        $dateSoutenanceDepassee = $these->getDateSoutenance() && $these->getDateSoutenance() < new DateTime();
 
         $view = $this->createViewForFichierAction(NatureFichier::CODE_RAPPORT_TECHNIQUE_SOUTENANCE);
         $view->setVariable('readonly', true);
@@ -916,7 +939,7 @@ class DepotController extends AbstractController
     public function depotPreRapportSoutenanceAction(): ViewModel
     {
         $these = $this->requestedThese();
-        $dateSoutenanceDepassee = $these->getDateSoutenance() && $these->getDateSoutenance() < new \DateTime();
+        $dateSoutenanceDepassee = $these->getDateSoutenance() && $these->getDateSoutenance() < new DateTime();
 
         $view = $this->createViewForFichierAction(NatureFichier::CODE_PRE_RAPPORT_SOUTENANCE);
         $view->setVariable('readonly', true);
@@ -1176,7 +1199,7 @@ class DepotController extends AbstractController
         return $view;
     }
 
-    public function modifierAttestationAction()
+    public function modifierAttestationAction(): Response|ViewModel
     {
         $these = $this->requestedThese();
         $version = $this->fichierTheseService->fetchVersionFichier($this->params()->fromQuery('version'));
@@ -1217,23 +1240,19 @@ class DepotController extends AbstractController
         ]);
     }
 
-    /**
-     * @param VersionFichier $version
-     * @return AttestationTheseForm
-     */
-    private function getAttestationTheseForm(VersionFichier $version)
+    private function getAttestationTheseForm(VersionFichier $version): AttestationTheseForm
     {
         $these = $this->requestedThese();
         $diffusion = $these->getDiffusionForVersion($version);
 
-        /** @var AttestationTheseForm $form */
-        $form = $this->attestationTheseForm;
-
-        if ($diffusion && ! $diffusion->isRemiseExemplairePapierRequise()) {
-            $form->disableExemplaireImprimeConformeAVersionDeposee();
+        if ($diffusion !== null) {
+            $dateObservation = $diffusion->getHistoModification() ?: $diffusion->getHistoCreation();
+            $this->remiseExemplairePapierRule->setDiffusion($diffusion);
+            $depotExemplairePapierEnabled = $this->remiseExemplairePapierRule->isRemiseExemplairePapierRequired($dateObservation);
+            $this->attestationTheseForm->setDepotExemplairePapierTheseEnabled($depotExemplairePapierEnabled);
         }
 
-        return $form;
+        return $this->attestationTheseForm;
     }
 
     private function isEtapeDiffusionVisible(These $these, VersionFichier $version)
@@ -1300,7 +1319,7 @@ class DepotController extends AbstractController
         return $view;
     }
 
-    public function modifierDiffusionAction()
+    public function modifierDiffusionAction(): Response|ViewModel
     {
         $these = $this->requestedThese();
 
@@ -1335,19 +1354,19 @@ class DepotController extends AbstractController
                 $fichierThesesExpurgesDeposes = $this->fichierTheseService->getRepository()->fetchFichierTheses($these, null , $version, false);
                 if (! $besoinVersionExpurgee && !empty($fichierThesesExpurgesDeposes)) {
                     $this->fichierTheseService->deleteFichiers($fichierThesesExpurgesDeposes, $these);
-//                    $this->flashMessenger()->addSuccessMessage("Les fichiers expurgés fournis devenus inutiles ont été supprimés.");
                 }
 
-                if (! $this->getRequest()->isXmlHttpRequest()) {
-                    $url = $this->urlDepot()->depotThese($these, $version->getCode());
-                    return $this->redirect()->toUrl($url);
-                }
+//                if (! $this->getRequest()->isXmlHttpRequest()) {
+//                    $url = $this->urlDepot()->depotThese($these, $version->getCode());
+//                    return $this->redirect()->toUrl($url);
+//                }
             }
         }
 
         $form->setAttribute('action', $this->urlDepot()->modifierDiffusionUrl($these, $version));
 
         return new ViewModel([
+            'comue' => $this->etablissementService->fetchEtablissementComue(),
             'these'      => $these,
             'diffusion'  => $diffusion,
             'form'       => $form,
@@ -1372,55 +1391,13 @@ class DepotController extends AbstractController
         return $form;
     }
 
-    public function exporterConventionMiseEnLigneAction()
+    public function exporterConventionMiseEnLigneAction(): void
     {
         $these = $this->requestedThese();
         $version = $this->fichierTheseService->fetchVersionFichier($this->params()->fromQuery('version'));
-        $diffusion = $these->getDiffusionForVersion($version);
-        $attestation = $these->getAttestationForVersion($version);
 
-        /** @var \Depot\Form\Diffusion\DiffusionTheseForm $form */
-        $form = $this->diffusionTheseForm;
-
-        $dateObs = $these->getDateSoutenance() ?: null;
-        $variableRepo = $this->variableService->getRepository();
-        $ETB_LIB = $variableRepo->findOneByCodeAndEtab(Variable::CODE_ETB_LIB, $these->getEtablissement(), $dateObs);
-        $ETB_ART_ETB_LIB = $variableRepo->findOneByCodeAndEtab(Variable::CODE_ETB_ART_ETB_LIB, $these->getEtablissement(), $dateObs);
-
-        $etab = $ETB_LIB ? $ETB_LIB->getValeur() : "(Variable ETB_LIB introuvable)";
-        $l = $ETB_ART_ETB_LIB ? $ETB_ART_ETB_LIB->getValeur() : "";
-        $letab = lcfirst($l) . $etab;
-        $libEtablissementA = "à " . $letab;
-        $libEtablissementLe = $letab;
-        $libEtablissementDe = "de " . $letab;
-
-        $etablissement = $this->etablissementService->fetchEtablissementComue();
-        if ($etablissement === null) {
-            $etablissement = $these->getEtablissement();
-        }
-        try {
-            $cheminLogo = $this->fichierStorageService->getFileForLogoStructure($etablissement->getStructure());
-        } catch (StorageAdapterException $e) {
-            $cheminLogo = null;
-        }
-
-        $renderer = $this->renderer;
-        $exporter = new ConventionPdfExporter($renderer, 'A4');
-        $exporter->setVars([
-            'etablissement'      => $etablissement,
-            'logo'               => $cheminLogo,
-            'these'              => $these,
-            'diffusion'          => $diffusion,
-            'attestation'        => $attestation,
-            'form'               => $form,
-            'libEtablissement'   => $etab,
-            'libEtablissementA'  => $libEtablissementA,
-            'libEtablissementLe' => $libEtablissementLe,
-            'libEtablissementDe' => $libEtablissementDe,
-            'comue'              => $this->etablissementService->fetchEtablissementComue(),
-        ]);
-        $exporter->export('Convention_MEL.pdf');
-        exit;
+        // todo : vérifier que l'existence de la COMUE est prise en compte
+        $this->fichierTheseService->generateConventionDeMiseEnLigne($these, $version);
     }
 
     public function modifierDescriptionAction()

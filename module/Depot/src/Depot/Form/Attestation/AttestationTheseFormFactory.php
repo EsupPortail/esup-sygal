@@ -2,11 +2,12 @@
 
 namespace Depot\Form\Attestation;
 
-use Interop\Container\ContainerInterface;
+use Laminas\ServiceManager\Factory\FactoryInterface;
+use Psr\Container\ContainerInterface;
 
-class AttestationTheseFormFactory
+class AttestationTheseFormFactory implements FactoryInterface
 {
-    public function __invoke(ContainerInterface $container)
+    public function __invoke(ContainerInterface $container, $requestedName, ?array $options = null): AttestationTheseForm
     {
         /** @var \Depot\Form\Attestation\AttestationHydrator $hydrator */
         $hydrator = $container->get('HydratorManager')->get('AttestationHydrator');

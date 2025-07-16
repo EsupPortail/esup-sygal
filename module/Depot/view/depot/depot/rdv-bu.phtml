@@ -25,8 +25,9 @@ use UnicaenApp\Service\MessageCollector;
  * @var boolean                $asynchronous
  * @var boolean                $hasVD
  * @var boolean                $hasVA
+ * @var \Depot\Rule\Result\RemiseExemplairePapierRequiredResult $remiseExemplairePapierRequiredResult
  *
- * @see TheseController::detailRdvBuAction()
+ * @see \Depot\Controller\DepotController::detailRdvBuAction()
  */
 
 $canEdit = $this->isAllowed($these, DepotPrivileges::THESE_SAISIE_RDV_BU);
@@ -48,7 +49,7 @@ $rdvBu = $these->getRdvBu();
     </div>
     <div class="card-body">
         <p>
-        <?php if ($diffusion->isRemiseExemplairePapierRequise()): ?>
+        <?php if ($remiseExemplairePapierRequiredResult->isRequired): ?>
             Suite à votre choix de mise en ligne, vous devez imprimer un exemplaire papier de votre thèse et le rapporter lors du Rendez-vous à la BU.
             Pour obtenir la version imprimable de votre thèse (avec page de couverture), veuillez cliquer sur le bouton ci-dessous.
         <?php else: ?>
