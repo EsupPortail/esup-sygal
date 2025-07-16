@@ -1,9 +1,9 @@
 Journal des modifications
 =========================
 
-10.3.0 ???
+10.3.0
 ------
-- Nouvelle charte de dépôt et diffusion des thèses.
+- Nouvelle charte de depot et diffusion des theses (depot papier optionnel : selon activation de la 'feature').
 - La convention de MEL possède désormais son template Twig modifiable (via unicaen/renderer).
 
 10.2.1
