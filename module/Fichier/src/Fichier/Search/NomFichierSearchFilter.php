@@ -12,7 +12,10 @@ class NomFichierSearchFilter extends TextSearchFilter
     protected bool $useLikeOperator = true;
     protected bool $useStrReduce = true;
 
-    protected ?array $whereFields = [
-        self::OPERATOR_OR => ['f.nom', 'f.nomOriginal']
-    ];
+    public function __construct(?string $label = null, ?string $name = null, array $attributes = [], mixed $defaultValue = null)
+    {
+        parent::__construct($label, $name, $attributes, $defaultValue);
+
+        $this->setWhereFields(['f.nom', 'f.nomOriginal']);
+    }
 }

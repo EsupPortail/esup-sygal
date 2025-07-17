@@ -8,9 +8,15 @@ class IdPermanentFichierSearchFilter extends CheckboxSearchFilter
 {
     protected string $name = 'idPermanent';
     protected string $label = "Id permanent";
-    protected ?array $whereFields = ['f.idPermanent'];
 
     protected bool $useOnlyIfTrue = false;
+
+    public function __construct(?string $label = null, ?string $name = null, array $attributes = [], mixed $defaultValue = null)
+    {
+        parent::__construct($label, $name, $attributes, $defaultValue);
+
+        $this->setWhereField('f.idPermanent');
+    }
 
     /**
      * Change la signification du cochage de ce filtre.
