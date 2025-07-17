@@ -15,6 +15,7 @@ Journal des modifications
     - Récapitulatif par années : Rapports à déposer/Soutenance
 - Refonte CSS de la page de connexion/page d'accueil
 - [FIX] Modification d'une structure impossible
+- [FIX] Recherche d'individus : suppression de la limite de 100 résultats maximum.
 
 10.2.1
 ------

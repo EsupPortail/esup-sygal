@@ -3,21 +3,18 @@
 namespace Individu\Service\Search;
 
 use Application\Search\EstHistorise\EstHistoriseSearchFilterAwareTrait;
+use Doctrine\ORM\QueryBuilder;
+use Individu\Service\IndividuServiceAwareTrait;
 use UnicaenSearch\Filter\SearchFilter;
 use UnicaenSearch\Filter\TextSearchFilter;
 use UnicaenSearch\SearchService;
 use UnicaenSearch\Sorter\SearchSorter;
-use Doctrine\ORM\QueryBuilder;
-use Individu\Service\IndividuServiceAwareTrait;
 
 class IndividuSearchService extends SearchService
 {
     use IndividuServiceAwareTrait;
     use EstHistoriseSearchFilterAwareTrait;
 
-    /**
-     * @inheritDoc
-     */
     protected function createQueryBuilder(): QueryBuilder
     {
         $qb = $this->individuService->getRepository()->createQueryBuilder('i');
@@ -38,7 +35,7 @@ class IndividuSearchService extends SearchService
         $textFilter = new TextSearchFilter("Recherche textuelle", 'text');
         $textFilter->setAttributes(['title' => "Recherche sur le nom d'usage, le prénom ou l'adresse électronique"]);
         $textFilter->setQueryBuilderApplier(function(SearchFilter $filter, QueryBuilder $qb) {
-            $individus = $this->individuService->getRepository()->findByText($filter->getValue());
+            $individus = $this->individuService->getRepository()->findByText($filter->getValue(), limit: 0);
             if (empty($individus)) {
                 $qb->andWhere('0 = 1');
             } else {
