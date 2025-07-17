@@ -13,6 +13,7 @@ Journal des modifications
     - Informations concernant sa thèse
     - Formations à venir
     - Récapitulatif par années : Rapports à déposer/Soutenance
+- Refonte CSS de la page de connexion/page d'accueil
 - [FIX] Modification d'une structure impossible
 
 10.2.1

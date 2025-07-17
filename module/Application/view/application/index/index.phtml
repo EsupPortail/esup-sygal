@@ -60,6 +60,7 @@ echo $this->messenger()
                     </p>
                     <p>
                         <a class="btn btn-success btn-lg" href="<?php echo $this->url('zfcuser/login') ?>">
+                            <span class="fas fa-sign-in-alt"></span>
                             <?php echo $this->translate('Connectez-vous...') ?>
                         </a>
                     </p>
@@ -96,3 +97,41 @@ echo $this->messenger()
     </div>
 
 </div>
+
+<style>
+    .row{
+        font-size: 0.8rem;
+    }
+
+    #content.jumbotron {
+        border-radius: 1rem;
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+        padding: 2rem;
+        margin: 2rem auto;
+    }
+
+    /* Paragraphe lead */
+    #content .lead {
+        font-size: 1rem;
+        color: #444;
+    }
+
+    /* Texte de connexion/déconnexion */
+    #content .text-danger strong {
+        font-size: 1rem;
+    }
+
+    /* Bouton de connexion */
+    #content .btn-success {
+        padding: 0.75rem 1.5rem;
+        font-size: 1rem;
+        border-radius: 0.5rem;
+        box-shadow: 0 4px 12px rgba(0, 128, 0, 0.2);
+        transition: background-color 0.3s ease, transform 0.2s ease;
+    }
+
+    #content .btn-success:hover {
+        background-color: #218838;
+        transform: translateY(-2px);
+    }
+</style>
