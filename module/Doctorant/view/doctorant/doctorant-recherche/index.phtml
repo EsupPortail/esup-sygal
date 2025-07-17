@@ -95,7 +95,7 @@ $canAjouter = false;//$this->isAllowed(Privileges::getResourceId(DoctorantPrivil
                 <td><?php echo $doctorant->getIndividu()->getEmailPro() ?></td>
                 <td><?php echo $doctorant->getIndividu()->getDateNaissanceToString() ?></td>
                 <td><?php echo $doctorant->getIne() ?></td>
-                <td><?php echo $doctorant->getEtablissement()->getSigle() ?></td>
+                <td><?php echo $this->structure($doctorant->getEtablissement(), false); ?></td>
                 <td class="action">
                     <?php if ($canModifier): ?>
                         <a href="<?php echo $this->url('doctorant/modifier', ['doctorant' => $doctorant->getId()], [], true); ?>"
