@@ -11,7 +11,8 @@ Journal des modifications
     - Informations concernant sa thèse
     - Formations à venir
     - Récapitulatif par années : Rapports à déposer/Soutenance
-    
+- [FIX] Modification d'une structure impossible
+
 10.2.1
 ------
 - Module Soutenance : Amélioration du workflow dans la pré-soutenance

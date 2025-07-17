@@ -157,6 +157,7 @@ abstract class StructureConcreteController extends AbstractController
             // action de modification
             $cheminLogo = $structureConcrete->getStructure()->getCheminLogo();
             $this->structureForm->setData($data);
+            if($structureConcrete->getStructure()->getCheminLogo() != "") $this->structureForm->getInputFilter()->get('cheminLogo')->setRequired(false);
             if ($this->structureForm->isValid()) {
                 // sauvegarde du logo si fourni
                 if ($data['cheminLogo']['tmp_name'] !== '') {
