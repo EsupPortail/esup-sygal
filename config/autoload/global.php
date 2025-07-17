@@ -170,6 +170,9 @@ $config = [
                         'parent_i' => 'parent_id'
                     ],
                     'source_code_column' => 'source_code',
+                    'request_options' => [
+                        'debug' => true,
+                    ],
                 ],
                 'destination' => [
                     'name' => 'application',

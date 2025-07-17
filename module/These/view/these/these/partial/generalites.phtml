@@ -11,19 +11,16 @@
 use Application\Entity\Db\DomaineHal;
 use Doctorant\Provider\Privilege\DoctorantPrivileges;
 use Doctrine\ORM\PersistentCollection;
-use Individu\Provider\Privilege\IndividuPrivileges;
-use Individu\View\Helper\IndividuUsurpationHelper;
 use These\Entity\Db\These;
 use These\Provider\Privilege\ThesePrivileges;
-use UnicaenPrivilege\Provider\Privilege\Privileges;
 
-$canVoirEmailContact = $this->isAllowed($these, DoctorantPrivileges::DOCTORANT_AFFICHER_EMAIL_CONTACT);
-$canEditEmailContact = $this->isAllowed($these, DoctorantPrivileges::DOCTORANT_MODIFIER_EMAIL_CONTACT);
-$canEditEmailContactConsent = $this->isAllowed($these, DoctorantPrivileges::DOCTORANT_MODIFIER_EMAIL_CONTACT);
 $canDomaineHalModifier = $this->isAllowed($these, ThesePrivileges::THESE_MODIFICATION_DOMAINES_HAL_THESE);
 
-$emailContactModifiedEvent = 'email-contact-modified-event';
-$emailContactConsentModifiedEvent = 'email-contact-consent-modified-event';
+$doctorant = $these->getDoctorant();
+$canConsulterDoctorant =
+    $this->isAllowed($doctorant, DoctorantPrivileges::DOCTORANT_CONSULTER_TOUS) ||
+    $this->isAllowed($doctorant, DoctorantPrivileges::DOCTORANT_CONSULTER_SIEN);
+
 $modifierGeneralitesEvent = 'event-modifier-generalites';
 ?>
 
@@ -183,106 +180,22 @@ $modifierGeneralitesEvent = 'event-modifier-generalites';
             <div class="card-header these-card-header text-white">
                 <h2 class="first">
                     <span class="fas fa-graduation-cap"></span>
-                    <?php echo $this->translate("Doctorant"); ?>
+                    <?php echo $this->translate("Doctorant·e"); ?>
                 </h2>
             </div>
             <div class="card-body these-identite-body">
-                <ul class="list-group list-group-flush">
-                    <li class="list-group-item">
-                        <?php
-                        $nomComplet = $these->getDoctorant()->getIndividu()->getNomCompletFormatter()->avecCivilite()->avecAutresPrenoms()->avecNomPatroEtNomUsage()->f();
-                        $dateNaissance = $these->getDoctorant()->getIndividu()->getDateNaissanceToString();
-                        echo !empty($dateNaissance) ? sprintf("%s (%s)", $nomComplet, $dateNaissance) : $nomComplet;
-                        ?>
-                        <?php
-                        $canVisualiserIndividu = $this->isAllowed($these->getDoctorant()->getIndividu(), IndividuPrivileges::INDIVIDU_CONSULTER);
-                        $canVisualiserIndividu = $this->isAllowed(Privileges::getResourceId(IndividuPrivileges::INDIVIDU_CONSULTER));
-                        if ($canVisualiserIndividu) {
-                            echo " <a href='".$this->url('individu/voir', ['individu' => $these->getDoctorant()->getIndividu()->getId()], [], true) ."'>";
-                            echo "<span class='icon icon-voir' title='Accéder à la fiche détaillée de cet individu'></span></a>";
-                        }
-                        ?>
-                        <?php
-                        // bouton d'usurpation d'identité
-                        $individuUsurpationHelper = $this->plugin('individuUsurpation'); /* @var $individuUsurpationHelper IndividuUsurpationHelper */
-                        $individuUsurpationHelper->setIndividu($these->getDoctorant()->getIndividu());
-                        echo $individuUsurpationHelper();
-                        ?>
-                    </li>
-
-                    <li class="list-group-item">
-                        <strong>
-                            <?php echo $this->translate("Nationalité :"); ?>
-                        </strong>
-                        <?php if ($these->getDoctorant()->getIndividu() && $these->getDoctorant()->getIndividu()->getPaysNationalite()): ?>
-                            <?php echo $these->getDoctorant()->getIndividu()->getPaysNationalite()->getLibelleNationalite() ?> <br>
-                        <?php else: ?>
-                            <span class="badge bg-secondary text-white" style="font-size:unset">
-                                <span class="icon icon-info" style="padding-right: unset"></span>
-                                Non renseignée
-                            </span>
-                        <?php endif ?>
-                    </li>
-
-                    <li class="list-group-item">
-                        <strong>
-                            <?php echo $this->translate("N° étudiant :"); ?>
-                        </strong>
-                        <?php if ($these->getDoctorant()->getNumeroEtudiant() !== ""): ?>
-                            <?php echo $these->getDoctorant()->getNumeroEtudiant() ?> <br>
-                        <?php else: ?>
-                            <span class="badge bg-secondary text-white" style="font-size:unset">
-                                <span class="icon icon-info" style="padding-right: unset"></span>
-                                Non renseigné
-                            </span>
-                        <?php endif ?>
-                    </li>
-                    <li class="list-group-item">
-                        <strong>
-                            <?php echo $this->translate("Adresse électronique institutionnelle :"); ?>
-                        </strong>
-                        <?php if ($email = $these->getDoctorant()->getIndividu()->getEmailPro()): ?>
-                            <a href="mailto: <?php echo $email ?>"><?php echo $email ?></a>
-                        <?php else: ?>
-                            <span class="badge bg-secondary text-white" style="font-size:unset">
-                                <span class="icon icon-info" style="padding-right: unset"></span>
-                                Inconnue
-                            </span>
-                        <?php endif ?>
-
-                        <?php if ($canVoirEmailContact) : ?>
-                            <br>
-                            <strong>
-                                <?php echo $this->translate("Adresse de contact :"); ?>
-                            </strong>
-                            <?php if ($mailContact = $these->getDoctorant()->getIndividu()->getEmailContact()): ?>
-                                <a href="mailto: <?php echo $mailContact = $these->getDoctorant()->getIndividu()->getEmailContact() ?>"><?php echo $mailContact ?></a>
-                            <?php else: ?>
-                                <span class="badge bg-secondary text-white" style="font-size:unset">
-                                    <span class="icon icon-info" style="padding-right: unset"></span>
-                                    Non renseignée
-                                </span>
-                            <?php endif; ?>
-                            <?php if ($canEditEmailContact): ?>
-                                <a href="<?php echo $modifierEmailContactUrl ?>"
-                                   title="Modifier l'adresse de contact"
-                                   data-event="<?php echo $emailContactModifiedEvent ?>"
-                                   class="btn btn-secondary btn-sm ajax-modal">
-                                    <?php echo $this->translate(($mailContact ? "Modifier" : "Renseigner") .  " l'adresse de contact"); ?>
-                                </a>
-                            <?php endif ?>
-                            <?php if ($canEditEmailContactConsent): ?>
-                                <a href="<?php echo $modifierEmailContactConsentUrl ?>"
-                                   title="Votre consentement à utiliser l'adresse de contact"
-                                   data-event="<?php echo $emailContactConsentModifiedEvent ?>"
-                                   class="btn btn-secondary btn-sm ajax-modal">
-                                    <?php echo $this->translate("Consentement"); ?>
-                                </a>
-                            <?php endif ?>
-                        <?php endif; ?>
-                    </li>
-                </ul>
+                <?php echo $this->partial('doctorant/doctorant/partial/fiche-doctorant') ?>
             </div>
+            <?php if ($canConsulterDoctorant): ?>
+                <div class="card-footer">
+                    <a href="<?php echo $this->url('doctorant/tableau-de-bord', ['doctorant' => $doctorant->getId()]) ?>"
+                       class="btn btn-primary"
+                       title="Accéder au tableau de bord du doctorant·e">
+                        <span class="icon icon-voir"></span>
+                        Accéder au tableau de bord
+                    </a>
+                </div>
+            <?php endif ?>
         </div>
     </div>
 </dl>

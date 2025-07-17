@@ -1,34 +1,108 @@
 <?php
 /**
- * @var \Doctorant\Entity\Db\Doctorant $doctorant
- * @var bool $verbose
+ * @var \Doctorant\Entity\Db\Doctorant $entity
+ * @var bool $includeGotoDetailsLink
+ * @var bool $horizontal
  */
+
+use Doctorant\Provider\Privilege\DoctorantPrivileges;
+
+$horizontal = $horizontal ?? false;
+
+$dlClass = $horizontal ? 'row' : '';
+$dtClass = $horizontal ? 'col-md-5' : '';
+$ddClass = $horizontal ? 'col-md-7' : '';
 ?>
-<dl class="row">
-    <dt class="col-md-5">INE</dt>
-    <dd class="col-md-5"><?php echo $doctorant->getIne() ?></dd>
 
-    <dt class="col-md-5">Code apprenant</dt>
-    <dd class="col-md-5"><?php echo $doctorant->getCodeApprenantInSource() ?></dd>
+<h3>
+    Informations générales
+</h3>
+<dl class="<?php echo $dlClass ?>">
+    <dt class="<?php echo $dtClass ?>">INE</dt>
+    <dd class="<?php echo $ddClass ?>"><?php echo $entity->getIne() ?></dd>
 
-    <?php if ($verbose): ?>
-        <dt class="col-md-5">Source</dt>
-        <dd class="col-md-5"><?php echo $doctorant->getSource() ?></dd>
-
-        <dt class="col-md-5">Source code</dt>
-        <dd class="col-md-5"><code><?php echo $doctorant->getSourceCode() ?></code></dd>
-    <?php endif ?>
-
-    <dt class="col-md-5">Id</dt>
-    <dd class="col-md-5"><?php echo $doctorant->getId() ?></dd>
-
-    <dt class="col-md-5">Dernière modification</dt>
-    <dd class="col-md-5">
-        <?php echo ($doctorant->getHistoModification() ?: $doctorant->getHistoCreation())->format('d/m/Y H:i:s') ?>
+    <dt class="<?php echo $dtClass ?>">Code apprenant</dt>
+    <dd class="<?php echo $ddClass ?>">
+        <?php if ($entity->getCodeApprenantInSource()) : ?>
+            <?php echo $entity->getCodeApprenantInSource() ?>
+        <?php else : ?>
+            (Non renseigné)
+        <?php endif; ?>
     </dd>
 
-    <?php if ($doctorant->estHistorise()): ?>
-        <dt class="col-md-5 text-danger">Supprimé le</dt>
-        <dd class="col-md-5 text-danger"><?php echo $doctorant->getHistoDestruction()->format('d/m/Y H:i:s') ?></dd>
+    <dt class="<?php echo $dtClass ?>">IdRef Individu</dt>
+    <dd class="<?php echo $ddClass ?>">
+        <?php if ($idref = $entity->getIndividu()->getIdRef()) : ?>
+            <?php echo $idref ?>
+        <?php else : ?>
+            (Non renseigné)
+        <?php endif; ?>
+    </dd>
+</dl>
+
+<h3>
+    Adresses
+</h3>
+<dl class="<?php echo $dlClass ?> mb-4">
+    <dt class="<?php echo $dtClass ?>">Adresse élec. institut. Individu</dt>
+    <dd class="<?php echo $ddClass ?>">
+        <?php if ($adresse = $entity->getIndividu()->getEmailPro()): ?>
+            <a href="mailto:<?php echo trim($adresse) ?>"
+               title="<?php echo $this->translate("Envoyer un mail à cette adresse") ?>"><?php echo $adresse ?></a>
+        <?php else: ?>
+            (Non renseignée)
+        <?php endif ?>
+    </dd>
+
+    <dt class="<?php echo $dtClass ?>">Adresse élec. de contact Individu</dt>
+    <dd class="<?php echo $ddClass ?>">
+        <?php if ($adresseContact = $entity->getIndividu()->getEmailContact()): ?>
+            <a href="mailto:<?php echo trim($adresseContact) ?>"
+               title="<?php echo $this->translate("Envoyer un mail à cette adresse") ?>"><?php echo $adresseContact ?></a>
+        <?php else: ?>
+            (Non renseignée)
+        <?php endif ?>
+
+        <?php if (isset($this->mailPersoEtConsentementModel)) echo $this->mailPersoEtConsentementModel ?>
+    </dd>
+</dl>
+
+<h3>
+    Informations techniques
+</h3>
+<dl class="<?php echo $dlClass ?> mb-4">
+    <dt class="<?php echo $dtClass ?>">Id</dt>
+    <dd class="<?php echo $ddClass ?>"><?php echo $entity->getId() ?></dd>
+
+    <dt class="<?php echo $dtClass ?>">Source</dt>
+    <dd class="<?php echo $ddClass ?>"><?php echo $entity->getSource() ?></dd>
+
+    <dt class="<?php echo $dtClass ?>">Source code</dt>
+    <dd class="<?php echo $ddClass ?>"><code><?php echo $entity->getSourceCode() ?></code></dd>
+
+    <dt class="<?php echo $dtClass ?>">Création</dt>
+    <dd class="<?php echo $ddClass ?>"><?php echo $entity->getHistoCreation()->format('d/m/Y à H:i:s') ?></dd>
+
+    <dt class="<?php echo $dtClass ?>">Modification</dt>
+    <?php if ($entity->getHistoModification() && $entity->getHistoModification() <> $entity->getHistoCreation()): ?>
+        <dd class="<?php echo $ddClass ?>"><?php echo $entity->getHistoModification()->format('d/m/Y à H:i:s') ?></dd>
+    <?php else: ?>
+        <dd class="<?php echo $ddClass ?>">(Aucune)</dd>
     <?php endif ?>
 </dl>
+
+<?php if ($entity->estHistorise()): ?>
+    <h3 class="text-danger">
+        Historisé
+    </h3>
+    <dl class="<?php echo $dlClass ?> text-danger mb-4">
+        <dt>Date :</dt>
+        <dd><?php echo $entity->getHistoDestruction()->format('d/m/Y à H:i:s') ?></dd>
+    </dl>
+<?php endif ?>
+
+<?php if ($includeGotoDetailsLink ?? false): ?>
+    <a href="<?php echo $this->url('doctorant/tableau-de-bord', ['doctorant' => $entity->getId()], [], true); ?>"
+       class="action btn btn-outline-secondary"><span class="icon icon-voir"></span> Voir la fiche détaillée de ce·tte doctorant·e
+    </a>
+<?php endif ?>

@@ -1,0 +1,37 @@
+
+<?php
+/**
+ * @var \Doctorant\Entity\Db\Doctorant $entity
+ *
+ * @var string $adresseContact
+ *
+ * @var string $modifierEmailContactUrl
+ * @var string $emailContactModifiedEvent
+ * @var string $modifierEmailContactConsentUrl
+ * @var string $emailContactConsentModifiedEvent
+ */
+
+use Doctorant\Provider\Privilege\DoctorantPrivileges;
+
+$canVoirEmailContact = $this->isAllowed($entity, DoctorantPrivileges::DOCTORANT_AFFICHER_EMAIL_CONTACT);
+$canEditEmailContact = $this->isAllowed($entity, DoctorantPrivileges::DOCTORANT_MODIFIER_EMAIL_CONTACT);
+$canEditEmailContactConsent = $this->isAllowed($entity, DoctorantPrivileges::DOCTORANT_MODIFIER_EMAIL_CONTACT); // NB : même privilège
+?>
+
+<?php if ($canEditEmailContact): ?>
+    <a href="<?php echo $modifierEmailContactUrl ?>"
+       title="Modifier l'adresse de contact"
+       data-event="<?php echo $emailContactModifiedEvent ?>"
+       class="btn btn-secondary btn-sm ajax-modal">
+        <?php echo $this->translate(($adresseContact ? "Modifier" : "Renseigner") .  " l'adresse de contact"); ?>
+    </a>
+<?php endif ?>
+
+<?php if ($canEditEmailContactConsent): ?>
+    <a href="<?php echo $modifierEmailContactConsentUrl ?>"
+       title="Votre consentement à utiliser l'adresse de contact"
+       data-event="<?php echo $emailContactConsentModifiedEvent ?>"
+       class="btn btn-secondary btn-sm ajax-modal">
+        <?php echo $this->translate("Consentement"); ?>
+    </a>
+<?php endif ?>

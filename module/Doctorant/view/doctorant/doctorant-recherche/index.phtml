@@ -1,0 +1,133 @@
+<?php
+
+use Application\Filter\IdifyFilter;
+use Application\Search\SearchResultPaginator;
+use Application\View\Renderer\PhpRenderer;
+use Doctorant\Entity\Db\Doctorant;
+use Doctorant\Provider\Privilege\DoctorantPrivileges;
+use Laminas\Paginator\Paginator;
+
+/**
+ * @var PhpRenderer $this
+ * @var Paginator   $paginator
+ * @var string      $text
+ * @var bool        $displayEtablissement
+ * @var string      $loadFiltersUrl
+ *
+ * @see \Doctorant\Controller\DoctorantRechercheController::indexAction()
+ */
+
+$queryParams = $this->queryParams();
+
+$canAjouter = false;//$this->isAllowed(Privileges::getResourceId(DoctorantPrivileges::DOCTORANT_AJOUTER));
+?>
+
+<?php $this->headTitle($this->translate("Doctorant·es")) ?>
+
+<h1 class="page-header">
+    <span class="fas fa-user-graduate"></span>
+    <?php echo $this->translate("Doctorant·es"); ?>
+
+    <?php if ($canAjouter): ?>
+        <a class="btn btn-primary float-end"
+           title="Création d'un nouveau doctorant..."
+           href="<?php echo $this->url('doctorant/ajouter') ?>">
+            <span class="icon icon-ajouter"></span>
+            <?php echo $this->translate("Nouveau doctorant...") ?>
+        </a>
+    <?php endif ?>
+</h1>
+
+<?php echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace(); ?>
+
+<!-- Formulaire de filtrage -->
+<div class="float-start">
+    <?php $loadFiltersUrl = $this->url($loadFiltersUrl, [], ['query' => $this->queryParams()], true); ?>
+    <div class="filters" id="doctorant-filters" data-url="<?php echo $loadFiltersUrl ?>">
+        <!-- Contenu chargé en AJAX -->
+    </div>
+</div>
+<div class="clearfix"></div>
+
+<?php if ($paginator->getTotalItemCount()): ?>
+    <p>
+        <?php echo $paginator->getTotalItemCount() . " " . $this->translate("doctorant(s) trouvé(s).") ?>
+    </p>
+    <table class="table table-bordered table-extra-condensed">
+        <tr>
+            <th>Id</th>
+            <th>Nom d'usage</th>
+            <th>Nom patronymique</th>
+            <th>Prénom 1</th>
+            <th>Adresse électronique</th>
+            <th>Date de naissance</th>
+            <th>INE</th>
+            <th>Établissement</th>
+            <th class="action">Action</th>
+        </tr>
+        <?php /** @var Doctorant $doctorant */
+        foreach ($paginator as $doctorant): ?>
+            <?php
+            $canConsulter =
+                $this->isAllowed($doctorant, DoctorantPrivileges::DOCTORANT_CONSULTER_TOUS) ||
+                $this->isAllowed($doctorant, DoctorantPrivileges::DOCTORANT_CONSULTER_SIEN);
+            $canModifier = $this->isAllowed($doctorant, DoctorantPrivileges::DOCTORANT_MODIFIER_SIEN) ||
+                $this->isAllowed($doctorant, DoctorantPrivileges::DOCTORANT_MODIFIER_TOUS);
+            $canSupprimer = false;
+            $individu = $doctorant->getIndividu();
+            ?>
+            <tr>
+                <td>
+                    <span class="<?php echo $doctorant->estHistorise() ? 'historise' : '' ?>">
+                        <?php if ($canConsulter): ?>
+                            <a href="<?php echo $this->url('doctorant/tableau-de-bord', ['doctorant' => IdifyFilter::id($doctorant)]) ?>"
+                               title="Accéder à la fiche détaillée de ce doctorant">
+                                <?php echo $doctorant->getId() ?>
+                            </a>
+                        <?php else: ?>
+                            <?php echo $doctorant->getId() ?>
+                        <?php endif ?>
+                    </span>
+                </td>
+                <td><?php echo $individu->getNomUsuel() ?></td>
+                <td><?php echo $individu->getNomPatronymique() ?></td>
+                <td><?php echo $individu->getPrenom1() ?></td>
+                <td><?php echo $doctorant->getIndividu()->getEmailPro() ?></td>
+                <td><?php echo $doctorant->getIndividu()->getDateNaissanceToString() ?></td>
+                <td><?php echo $doctorant->getIne() ?></td>
+                <td><?php echo $doctorant->getEtablissement()->getSigle() ?></td>
+                <td class="action">
+                    <?php if ($canModifier): ?>
+                        <a href="<?php echo $this->url('doctorant/modifier', ['doctorant' => $doctorant->getId()], [], true); ?>"
+                           title="Modifier cet doctorant"
+                           class="ajax-modal" data-event="modification">
+                            <span class="icon icon-modifier"></span></a>
+                    <?php endif ?>
+                    <?php if ($canSupprimer): ?>
+                        <?php if ($doctorant->estHistorise()): ?>
+                            <a href="<?php echo $this->url('doctorant/restaurer', ['doctorant' => $doctorant->getId()], [], true); ?>"
+                               title="Restaurer cet doctorant"
+                               data-toggle="confirmationx">
+                                <span class="icon icon-restaurer"></span></a>
+                        <?php else: ?>
+                            <a href="<?php echo $this->url('doctorant/supprimer', ['doctorant' => $doctorant->getId()], [], true); ?>"
+                               title="Supprimer cet doctorant"
+                               data-toggle="confirmationx">
+                                <span class="icon icon-supprimer"></span></a>
+                        <?php endif ?>
+                    <?php endif ?>
+                </td>
+            </tr>
+        <?php endforeach; ?>
+    </table>
+    <?php echo $this->paginationControl($paginator, 'sliding', 'application/paginator.phtml', ['route' => 'doctorant']) ?>
+<?php else: ?>
+    <p>Aucun·e doctorant·e trouvé·e.</p>
+<?php endif ?>
+
+
+<script>
+    $(function() {
+        $("#doctorant-filters").addClass("loading").refresh(null, function() { $(this).removeClass("loading"); });
+    });
+</script>

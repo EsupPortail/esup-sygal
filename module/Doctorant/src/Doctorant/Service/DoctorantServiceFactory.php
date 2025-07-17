@@ -3,10 +3,10 @@
 namespace Doctorant\Service;
 
 use Application\Service\Source\SourceService;
-use Individu\Service\IndividuService;
-use Structure\Service\Etablissement\EtablissementService;
 use Application\SourceCodeStringHelper;
+use Doctrine\ORM\EntityManager;
 use Interop\Container\ContainerInterface;
+use Structure\Service\Etablissement\EtablissementService;
 
 class DoctorantServiceFactory
 {
@@ -34,6 +34,12 @@ class DoctorantServiceFactory
         /** @var SourceService $sourceService */
         $sourceService = $container->get(SourceService::class);
         $service->setSourceService($sourceService);
+
+        /**
+         * @var EntityManager $entityManager
+         */
+        $entityManager = $container->get('doctrine.entitymanager.orm_default');
+        $service->setEntityManager($entityManager);
 
         return $service;
     }

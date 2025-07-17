@@ -1,0 +1,60 @@
+<?php
+
+namespace Doctorant;
+
+use Application\View\Renderer\PhpRenderer;
+
+/**
+ * @var PhpRenderer $this
+ * @var \Doctorant\Entity\Db\Doctorant $doctorant
+ * @var \These\Entity\Db\These[] $theses
+ * @var \Formation\Entity\Db\Inscription[] $inscriptions
+ *
+ * @see \Doctorant\Controller\DoctorantController::tableauDeBordAction()
+ */
+?>
+
+<?php $this->headTitle($this->translate("Doctorant"))->append($doctorant->getIndividu()->getNomComplet()) ?>
+
+<h1 class="page-header">
+    <span class="<?php echo $doctorant->estHistorise() ? 'historise' : '' ?>">
+        Doctorant &laquo; <?php echo $doctorant->getIndividu()->getNomComplet() ?> &raquo;
+    </span>
+</h1>
+
+<?php echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace() ?>
+
+<div class="row">
+    <div class="col-11">
+        <div class="box card">
+            <div class="card-header bg-dark text-white">
+                <h2 class="first">Fiche</h2>
+            </div>
+            <div class="card-body">
+                <?php echo $this->partial('doctorant/doctorant/partial/fiche', ['doctorant' => $doctorant, 'horizontal' => true]) ?>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-7">
+        <div class="box card">
+            <div class="card-header bg-dark text-white">
+                <h2 class="first">Thèse</h2>
+            </div>
+            <div class="card-body">
+                <?php echo $this->partial('doctorant/doctorant/partial/theses', ['doctorant' => $doctorant, 'theses' => $theses, 'horizontal' => true]) ?>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="box card">
+    <div class="card-header bg-dark text-white">
+        <h2 class="first">Formations</h2>
+    </div>
+    <div class="card-body">
+        <?php echo $this->partial('doctorant/doctorant/partial/formations', ['doctorant' => $doctorant, 'inscriptions' => $inscriptions, 'horizontal' => true]) ?>
+    </div>
+</div>

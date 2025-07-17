@@ -86,11 +86,6 @@ class Diffusion implements HistoriqueAwareInterface
     /**
      * @var string
      */
-    private $orcid;
-
-    /**
-     * @var string
-     */
     private $halId;
 
     /**
@@ -309,25 +304,6 @@ class Diffusion implements HistoriqueAwareInterface
     public function setAutorisPretPapier(?bool $autorisPretPapier): self
     {
         $this->autorisPretPapier = $autorisPretPapier;
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getOrcid()
-    {
-        return $this->orcid;
-    }
-
-    /**
-     * @param string $orcid
-     * @return self
-     */
-    public function setOrcid($orcid)
-    {
-        $this->orcid = $orcid;
-
         return $this;
     }
 

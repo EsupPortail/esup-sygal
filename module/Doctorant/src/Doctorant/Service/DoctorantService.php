@@ -12,16 +12,17 @@ use Doctorant\Entity\Db\Repository\DoctorantRepository;
 use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\NonUniqueResultException;
 use Individu\Entity\Db\Individu;
-use InscriptionAdministrative\Entity\Db\InscriptionAdministrativeApprenant;
 use Structure\Entity\Db\Etablissement;
 use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
 use UnicaenApp\Exception\RuntimeException;
+use UnicaenApp\Service\EntityManagerAwareTrait;
 
 class DoctorantService extends BaseService
 {
     use EtablissementServiceAwareTrait;
     use SourceCodeStringHelperAwareTrait;
     use SourceServiceAwareTrait;
+    use EntityManagerAwareTrait;
 
     /**
      * @return DoctorantRepository
@@ -50,18 +51,18 @@ class DoctorantService extends BaseService
         }
 
         $id = $user->getSupannId();
-        if (! $id) {
+        if (!$id) {
 //            throw new RuntimeException("Aucun id supann disponible.");
             return null;
         }
 
         $domaineEtab = $user->getDomainFromEppn();
-        if (! $domaineEtab) {
+        if (!$domaineEtab) {
             return null;
         }
 
         $etablissement = $this->getEtablissementService()->getRepository()->findOneByDomaine($domaineEtab);
-        if (! $etablissement) {
+        if (!$etablissement) {
             return null;
         }
 
@@ -74,7 +75,7 @@ class DoctorantService extends BaseService
      * @param string|null $term
      * @return Doctorant[]
      */
-    public function getDoctorantsByTerm(?string $term = null) : array
+    public function getDoctorantsByTerm(?string $term = null): array
     {
         $seach = '%' . strtolower($term) . '%';
         $qb = $this->getRepository()->createQueryBuilder('doctorant')
@@ -85,22 +86,21 @@ class DoctorantService extends BaseService
         return $qb->getQuery()->getResult();
     }
 
-    public function getDoctorantsByUser(?Utilisateur $user) : ?Doctorant
+    public function getDoctorantsByUser(?Utilisateur $user): ?Doctorant
     {
-        if ($user === null OR $user->getIndividu() === null) return null;
+        if ($user === null or $user->getIndividu() === null) return null;
 
         $qb = $this->getEntityManager()->getRepository(Doctorant::class)->createQueryBuilder('doctorant')
-            ->leftJoin('doctorant.individu','individu')
+            ->leftJoin('doctorant.individu', 'individu')
             ->andWhere('individu.id = :id')->setParameter('id', $user->getIndividu()->getId())
             ->andWhere('individu.histoDestruction IS NULL')
-            ->andWhere('doctorant.histoDestruction IS NULL')
-        ;
+            ->andWhere('doctorant.histoDestruction IS NULL');
 
         /** @var Doctorant $result */
         try {
             $result = $qb->getQuery()->getOneOrNullResult();
         } catch (NonUniqueResultException $e) {
-            throw new RuntimeException("Plusieurs doctorants sont liés au mếme individu [".$user->getIndividu()->getId()."]");
+            throw new RuntimeException("Plusieurs doctorants sont liés au mếme individu [" . $user->getIndividu()->getId() . "]");
         }
         return $result;
 
@@ -109,6 +109,8 @@ class DoctorantService extends BaseService
 
     /**
      * Enregistre le Doctorant en base de données.
+     *
+     * NB : l'IdRef/ORCID de l'individu lié peut avoir été modifié donc le flush() sans argument est nécessaire.
      */
     public function saveDoctorant(Doctorant $doctorant): void
     {
@@ -139,36 +141,5 @@ class DoctorantService extends BaseService
         $doctorant->setCodeApprenantInSource(uniqid());
 
         return $doctorant;
-    }
-
-    /**
-     * Met à jour les attributs de l'instance de Doctorant spécifiée, à partir des données apprenant fournies.
-     */
-    public function updateDoctorantFromApprenant(Doctorant $doctorant, InscriptionAdministrativeApprenant $iaa): void
-    {
-        $doctorant->setCodeApprenantInSource($iaa->getCode());
-        $doctorant->setIne($iaa->getINE());
-    }
-
-
-    /**
-     * Détermine si le doctorant spécifié possède des attributs dont la valeur pourrait être mise à jour
-     * à partir de ceux de l'apprenant spécifié.
-     */
-    public function diffDoctorantFromApprenant(
-        Doctorant $doctorant,
-        InscriptionAdministrativeApprenant $apprenant,
-        ?array $fieldNames = null): array
-    {
-        $doctorantFromApprenant = new Doctorant();
-        $this->updateDoctorantFromApprenant($doctorantFromApprenant, $apprenant);
-
-        if ($fieldNames === null) {
-            $fieldNames = [
-                'ine',
-            ];
-        }
-
-        return $this->computeEntityDiff($doctorant, $doctorantFromApprenant, $fieldNames);
     }
 }

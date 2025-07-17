@@ -2,6 +2,7 @@
 
 namespace Doctorant\Assertion;
 
+use Acteur\Service\ActeurThese\ActeurTheseServiceAwareTrait;
 use Application\Assertion\AbstractAssertion;
 use Application\Assertion\Exception\FailedAssertionException;
 use Application\Assertion\ThrowsFailedAssertionExceptionTrait;
@@ -22,11 +23,13 @@ class DoctorantAssertion extends AbstractAssertion
     use ThrowsFailedAssertionExceptionTrait;
     use TheseServiceAwareTrait;
     use DoctorantServiceAwareTrait;
+    use ActeurTheseServiceAwareTrait;
 
     public function __invoke(array $page): bool
     {
         return $this->assertPage($page);
     }
+
 
     private function assertPage(array $page): bool
     {
@@ -39,21 +42,23 @@ class DoctorantAssertion extends AbstractAssertion
             return false;
         }
 
-        $doctorant = $this->getRequestedDoctorant();
+        $entity = $this->getRequestedDoctorant();
+        $role = $this->userContextService->getSelectedIdentityRole();
 
         try {
             switch ($action) {
-                case 'lister':
-                case 'rechercher':
-                    return true;
-
-                case 'voir':
-                case 'consulter':
-                    if (!$this->assertEntity($doctorant, DoctorantPrivileges::DOCTORANT_CONSULTER_SIEN)) {
+                case 'modifier-email-contact':
+                case 'modifier-email-contact-consent':
+                    if (! $this->isUtilisateurEgaleCeDoctorant($entity)) {
                         return false;
                     }
-
                     return true;
+
+                default:
+                    $theses = $this->theseService->getRepository()->findThesesByDoctorant($entity, These::ETATS_TOUS);
+                    return !empty(
+                        array_filter($theses, fn(These $t) => $this->userContextService->isStructureDuRoleRespecteeForThese($t))
+                    );
             }
         } catch (FailedAssertionException $e) {
             if ($e->getMessage()) {
@@ -61,8 +66,6 @@ class DoctorantAssertion extends AbstractAssertion
             }
             return false;
         }
-
-        return true;
     }
 
     /**
@@ -78,32 +81,19 @@ class DoctorantAssertion extends AbstractAssertion
         try {
             switch ($privilege) {
                 case DoctorantPrivileges::DOCTORANT_CONSULTER_SIEN:
-                    $role = $this->userContextService->getSelectedIdentityRole();
+                case DoctorantPrivileges::DOCTORANT_MODIFIER_SIEN:
+                case DoctorantPrivileges::DOCTORANT_CONSULTER_TOUS:
+                    $theses = $this->theseService->getRepository()->findThesesByDoctorant($entity, These::ETATS_TOUS);
 
-                    if ($role->isDoctorant()) {
-                        return $this->userContextService->getIdentityDoctorant() === $entity;
+                    return !empty(
+                        array_filter($theses, fn(These $t) => $this->userContextService->isStructureDuRoleRespecteeForThese($t))
+                    );
+
+                case DoctorantPrivileges::DOCTORANT_AFFICHER_EMAIL_CONTACT:
+                case DoctorantPrivileges::DOCTORANT_MODIFIER_EMAIL_CONTACT: // NB : privilègie uitlisé aussi pour la modif du consentement
+                    if (! $this->isUtilisateurEgaleCeDoctorant($entity)) {
+                        return false;
                     }
-
-                    $theses = $this->theseService->getRepository()->findThesesByDoctorant($entity);
-
-                    // todo : cas des acteurs de thèse
-
-                    if ($role->isEtablissementDependant()) {
-                        return !empty(
-                            array_filter($theses, fn(These $t) => $t->getEtablissement() === $role->getStructure()->getEtablissement())
-                        );
-                    }
-                    if ($role->isEcoleDoctoraleDependant()) {
-                        return !empty(
-                            array_filter($theses, fn(These $t) => $t->getEcoleDoctorale() === $role->getStructure()->getEcoleDoctorale())
-                        );
-                    }
-                    if ($role->isUniteRechercheDependant()) {
-                        return !empty(
-                            array_filter($theses, fn(These $t) => $t->getUniteRecherche() === $role->getStructure()->getUniteRecherche())
-                        );
-                    }
-
                     return true;
 
                 default:
@@ -116,6 +106,15 @@ class DoctorantAssertion extends AbstractAssertion
             }
             return false;
         }
+    }
+
+    protected function isUtilisateurEgaleCeDoctorant(Doctorant $doctorant): bool
+    {
+        if (($identity = $this->getIdentityDoctorant()) === null) {
+            return false;
+        }
+
+        return $doctorant->getId() === $identity->getId();
     }
 
     private function getRequestedDoctorant(): ?Doctorant

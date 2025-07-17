@@ -325,11 +325,11 @@ class UserContextService extends BaseUserContextService
             }
             elseif ($role->isEcoleDoctoraleDependant()) {
                 // On ne voit que les thèses concernant son ED.
-                return $these->getEcoleDoctorale()->getStructure() === $role->getStructure();
+                return $these->getEcoleDoctorale()?->getStructure() === $role->getStructure();
             }
             elseif ($role->isUniteRechercheDependant()) {
                 // On ne voit que les thèses concernant son UR.
-                return $these->getUniteRecherche()->getStructure() === $role->getStructure();
+                return $these->getUniteRecherche()?->getStructure() === $role->getStructure();
             }
         }
 

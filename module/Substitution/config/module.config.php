@@ -485,7 +485,7 @@ return [
                                                 'params' => ['type' => Constants::TYPE_individu],
                                             ],
                                             'doctorant' => [
-                                                'label' => 'Doctorants',
+                                                'label' => 'Doctorant·es',
                                                 'route' => 'substitution/substitution/lister',
                                                 'params' => ['type' => Constants::TYPE_doctorant],
                                             ],
@@ -521,7 +521,7 @@ return [
                                                 'params' => ['type' => Constants::TYPE_individu],
                                             ],
                                             'doctorant' => [
-                                                'label' => 'Doctorants',
+                                                'label' => 'Doctorant·es',
                                                 'route' => 'substitution/doublon/lister',
                                                 'params' => ['type' => Constants::TYPE_doctorant],
                                             ],
@@ -557,7 +557,7 @@ return [
                                                 'params' => ['type' => Constants::TYPE_individu],
                                             ],
                                             'doctorant' => [
-                                                'label' => 'Doctorants',
+                                                'label' => 'Doctorant·es',
                                                 'route' => 'substitution/foreign-key/lister',
                                                 'params' => ['type' => Constants::TYPE_doctorant],
                                             ],
@@ -593,7 +593,7 @@ return [
                                                 'params' => ['type' => Constants::TYPE_individu],
                                             ],
                                             'doctorant' => [
-                                                'label' => 'Doctorants',
+                                                'label' => 'Doctorant·es',
                                                 'route' => 'substitution/trigger/lister',
                                                 'params' => ['type' => Constants::TYPE_doctorant],
                                             ],
@@ -609,7 +609,7 @@ return [
                                                 'params' => ['type' => Constants::TYPE_individu],
                                             ],
                                             'doctorant' => [
-                                                'label' => 'Doctorants',
+                                                'label' => 'Doctorant·es',
                                                 'route' => 'substitution/log/lister',
                                                 'params' => ['type' => Constants::TYPE_doctorant],
                                             ],

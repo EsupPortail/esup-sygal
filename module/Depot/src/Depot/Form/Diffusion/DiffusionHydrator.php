@@ -4,6 +4,9 @@ namespace Depot\Form\Diffusion;
 
 use Depot\Entity\Db\Diffusion;
 use Doctrine\Laminas\Hydrator\DoctrineObject;
+use Doctrine\ORM\ORMException;
+use Individu\Entity\Db\Individu;
+use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Service\EntityManagerAwareInterface;
 use UnicaenApp\Service\EntityManagerAwareTrait;
 
@@ -20,6 +23,7 @@ class DiffusionHydrator extends DoctrineObject implements EntityManagerAwareInte
 
         $data['confidentielle'] = $object->getThese()->getDateFinConfidentialite() !== null ? Diffusion::CONFIDENTIELLE_OUI : Diffusion::CONFIDENTIELLE_NON;
         $data['dateFinConfidentialite'] = $object->getThese()->getDateFinConfidentialite();
+        $data['orcid'] = $object->getThese()->getDoctorant()->getIndividu()->getOrcid();
 
         return $data;
     }
@@ -39,9 +43,20 @@ class DiffusionHydrator extends DoctrineObject implements EntityManagerAwareInte
             $data['dateFinConfidentialite'] = $object->getThese()->getDateFinConfidentialite();
         }
 
-        if (!isset($data['orcid'])) {
+        if (isset($data['orcid'])) {
+            $individu = $this->getIndividuThese($object);
+            $individu?->setOrcid($data['orcid']);
+
+            try {
+                $this->objectManager->flush($individu);
+            } catch (ORMException $e) {
+                throw new RuntimeException("Impossible d'enregistrer les modifications sur l'individu", null, $e);
+            }
+        }else{
             $data['orcid'] = null;
         }
+
+
         if (!isset($data['halId'])) {
             $data['halId'] = null;
         }
@@ -68,4 +83,16 @@ class DiffusionHydrator extends DoctrineObject implements EntityManagerAwareInte
 
         return $diff;
     }
+    /**
+     * @param Diffusion $diffusion
+     * @return Diffusion|null
+     */
+    private function getIndividuThese(Diffusion $diffusion): ?Individu
+    {
+        $these = $diffusion->getThese();
+        $doctorant = $these?->getDoctorant();
+
+        return $doctorant?->getIndividu();
+    }
+
 }

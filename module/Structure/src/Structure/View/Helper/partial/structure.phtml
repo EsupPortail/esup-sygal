@@ -6,11 +6,13 @@
  * @var string $structureCode
  * @var bool $afficherLibelle
  * @var bool $sansOmbre
+ * @var array $options
  **/
 
+$css = $options["css"] ?? null;
 ?>
 
-<span class="text-structure <?= $typeStructureClass ?>" style="padding: 4px 4px 5px 0; background-color:white; <?php echo $sansOmbre ? "box-shadow:unset;" : ""; ?>"
+<span class="text-structure <?= $typeStructureClass ?>" style="<?= $css ?> padding: 4px 4px 5px 0; background-color:white; <?php echo $sansOmbre ? "box-shadow:unset;" : ""; ?>"
       data-bs-toggle="tooltip" data-bs-original-title="<?php echo $afficherLibelle ? "" : $structureLibelle ?>">
     <?php echo $afficherLibelle ? $structureLibelle : $structureCode ?>
 </span>

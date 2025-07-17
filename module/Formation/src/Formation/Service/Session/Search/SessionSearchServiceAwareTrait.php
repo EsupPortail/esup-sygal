@@ -23,5 +23,4 @@ trait SessionSearchServiceAwareTrait
         $this->sessionSearchService = $sessionSearchService;
         return $this->sessionSearchService;
     }
-
 }

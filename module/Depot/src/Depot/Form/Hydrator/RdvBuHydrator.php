@@ -9,6 +9,7 @@ use Doctrine\Laminas\Hydrator\DoctrineObject;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\ORMException;
 use Fichier\Entity\Db\VersionFichier;
+use Individu\Entity\Db\Individu;
 use UnicaenApp\Exception\RuntimeException;
 
 /**
@@ -38,7 +39,8 @@ class RdvBuHydrator extends DoctrineObject
 
         if ($diffusion = $this->getDiffusion($rdvBu)) {
             // todo : à déplacer dans Doctorant/Individu :
-            $data['idOrcid'] = $diffusion->getOrcid();
+            $individu = $this->getIndividuThese($diffusion);
+            $data['idOrcid'] = $individu?->getOrcid();
             $data['halId'] = $diffusion->getHalId();
             // todo : à déplacer dans These :
             $data['nnt'] = $diffusion->getNNT();
@@ -65,7 +67,14 @@ class RdvBuHydrator extends DoctrineObject
         // todo : enlever ces modif de Diffusion qui obligent à faire une verrue dans DepotController::modifierRdvBuAction()
         if ($diffusion = $this->getDiffusion($rdvBu)) {
             // todo : à déplacer dans Doctorant/Individu :
-            $diffusion->setOrcid($data['idOrcid']);
+            $individu = $this->getIndividuThese($diffusion);
+            $individu?->setOrcid($data['idOrcid']);
+            try {
+                $this->objectManager->flush($individu);
+            } catch (ORMException $e) {
+                throw new RuntimeException("Impossible d'enregistrer les modifications sur l'individu", null, $e);
+            }
+
             $diffusion->setHalId($data['halId']);
             // todo : à déplacer dans These :
             $diffusion->setNNT($data['nnt'] ?? null);
@@ -90,5 +99,17 @@ class RdvBuHydrator extends DoctrineObject
         $version = $this->fichierTheseService->fetchVersionFichier(VersionFichier::CODE_ORIG);
 
         return $rdvBu->getThese()->getDiffusionForVersion($version);
+    }
+
+    /**
+     * @param Diffusion $diffusion
+     * @return Diffusion|null
+     */
+    private function getIndividuThese(Diffusion $diffusion): ?Individu
+    {
+        $these = $diffusion->getThese();
+        $doctorant = $these?->getDoctorant();
+
+        return $doctorant->getIndividu();
     }
 }

@@ -28,6 +28,8 @@ switch ($etat->getCode()){
     default:
         $iconEtat = "";
 }
+
+$css = $options["css"] ?? "";
 ?>
 
 <?php if ($etat === null) : ?>
@@ -35,7 +37,7 @@ switch ($etat->getCode()){
         Pas d'état
 
 <?php else : ?>
-        <div class="row informations-compl-div">
+        <div class="row informations-compl-div" style="<?= $css ?>">
             <div class="col-md-6 informations-compl-card information-etat-card <?=$etat->getCode()?>-etat-card"
                  data-bs-toggle="tooltip" data-bs-original-title="État de la proposition">
                 <span class="icon icon-<?=$iconEtat?>"></span>

@@ -4,14 +4,8 @@ namespace Structure\Search\Etablissement;
 
 trait EtablissementInscSearchFilterAwareTrait
 {
-    /**
-     * @var EtablissementSearchFilter
-     */
-    protected $etablissementInscSearchFilter;
+    protected ?EtablissementSearchFilter $etablissementInscSearchFilter = null;
 
-    /**
-     * @return EtablissementSearchFilter
-     */
     public function getEtablissementInscSearchFilter(): EtablissementSearchFilter
     {
         if ($this->etablissementInscSearchFilter === null) {
@@ -20,10 +14,7 @@ trait EtablissementInscSearchFilterAwareTrait
         return $this->etablissementInscSearchFilter;
     }
 
-    /**
-     * @param EtablissementSearchFilter $etablissementInscSearchFilter
-     */
-    public function setEtablissementInscSearchFilter(EtablissementSearchFilter $etablissementInscSearchFilter)
+    public function setEtablissementInscSearchFilter(EtablissementSearchFilter $etablissementInscSearchFilter): void
     {
         $this->etablissementInscSearchFilter = $etablissementInscSearchFilter;
     }

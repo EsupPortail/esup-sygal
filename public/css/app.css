@@ -65,16 +65,18 @@ h2.modal-title {
 .modal-footer .btn {
   padding: 4px 8px; }
 
-.card .card-header {
-  font-weight: 400; }
-.card .card-header.bg-info {
-  color: white; }
-.card .card-header.bg-success {
-  color: white; }
-.card .card-header.bg-danger {
-  color: white; }
-.card .card-header.bg-warning {
-  color: white; }
+.card {
+  border-radius: 12px; }
+  .card .card-header {
+    font-weight: 400; }
+  .card .card-header.bg-info {
+    color: white; }
+  .card .card-header.bg-success {
+    color: white; }
+  .card .card-header.bg-danger {
+    color: white; }
+  .card .card-header.bg-warning {
+    color: white; }
 
 .card.box {
   margin-bottom: 10px;

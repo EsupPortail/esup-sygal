@@ -1,0 +1,140 @@
+<?php
+
+/**
+ * @see \Doctorant\Controller\DoctorantController::tableauDeBordAction()
+ * @var Inscription[] $inscriptions
+ */
+
+
+use Formation\Entity\Db\Etat;
+use Formation\Entity\Db\Inscription;
+use Formation\Provider\Privilege\ModulePrivileges;
+
+$canCatalogueAfficher = $this->isAllowed(ModulePrivileges::getResourceId(ModulePrivileges::MODULE_CATALOGUE));
+?>
+
+<?php if ($canCatalogueAfficher) : ?>
+    <div class="row">
+        <div class="col-md-12">
+            <?php /** @see \Formation\Controller\ModuleController::catalogueAction() */?>
+            <a href="<?php echo $this->url('formation/catalogue',[],[], true); ?>" class="btn btn-primary float-end" target="_blank">
+                <span class="icon icon-voir"></span> Accéder au catalogue des formations
+            </a>
+        </div>
+
+    </div>
+<?php endif; ?>
+
+<?php if (is_array($inscriptions) && count($inscriptions) > 0): ?>
+    <div class="table-formations-container">
+        <table class="table table-sm">
+            <thead>
+            <tr>
+                <th> Formation</th>
+                <th> Établissement</th>
+                <th> Dates et lieux</th>
+                <th> Modalité</th>
+                <th> État</th>
+                <th> Inscription</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <?php foreach ($inscriptions as $inscription) : ?>
+                <?php
+                $session = $inscription->getSession();
+                $formation = $session->getFormation();
+                $module = $formation->getModule(); ?>
+                <tr>
+                    <td><span class="formation-typage">Formation</span>
+                        <?php echo $formation->getLibelle(); ?>
+                        <br/>
+                        <span class="formation-typage">Session</span> <?php echo $session->getIndex(); ?>
+                        <?php if ($module) : ?>
+                            <br/>
+                            <span class="formation-typage">Module</span> <?php echo $module->getLibelle(); ?>
+                        <?php endif; ?>
+                    </td>
+                    <td> <?php echo $this->site($session); ?> </td>
+                    <td> <?php echo $this->seances($session); ?> </td>
+                    <td> <?php echo $this->modalite($session); ?></td>
+                    <td> <?php echo $this->etat($session); ?></td>
+                    <td>
+                        <?php if ($inscription->isListePrincipale()) echo "Liste principale"; ?>
+                        <?php if ($inscription->isListeComplementaire()) echo "Liste complementaire <br/>Position " . $inscription->getPositionListeComplementaire(); ?>
+                        <?php if ($inscription->getListe() === null) : ?>
+                            <?php if ($session->getEtat()->getCode() === Etat::CODE_OUVERTE) echo "En attente"; ?>
+                            <?php if ($session->getEtat()->getCode() === Etat::CODE_FERME) echo "Non classée"; ?>
+                        <?php endif; ?>
+                    </td>
+                    <td>
+                        <?php /** @see \Formation\Controller\SessionController::afficherFicheAction() */ ?>
+                        <a href="<?php echo $this->url("formation/session/afficher-fiche", ["session" => $session->getId()], [], true); ?>"
+                           class="action ajax-modal">
+                            <span class="icon icon-voir"></span>
+                        </a>
+                    </td>
+                </tr>
+            <?php endforeach; ?>
+            </tbody>
+        </table>
+    </div>
+    <div class="table-fade"></div>
+    <div class="d-flex justify-content-center mt-2">
+        <button class="btn btn-primary d-none show-more-btn">Afficher plus</button>
+    </div>
+<?php else: ?>
+    <p>Aucune formation à venir</p>
+<?php endif; ?>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const container = document.querySelector('.table-formations-container');
+        const btn = document.querySelector('.show-more-btn');
+
+        if (container.scrollHeight > container.clientHeight) {
+            btn.classList.remove('d-none');
+        }
+
+        btn.addEventListener('click', () => {
+            container.classList.toggle('expanded');
+            btn.textContent = container.classList.contains('expanded') ? 'Réduire' : 'Afficher plus';
+        });
+    });
+</script>
+
+<style>
+    .table-formations-container {
+        max-height: 400px;
+        overflow: hidden;
+        position: relative;
+        transition: max-height 0.3s ease;
+    }
+
+    .table-fade {
+        position: absolute;
+        bottom: 50px;
+        left: 0;
+        right: 0;
+        height: 40px;
+        background: linear-gradient(to bottom, rgba(255, 255, 255, 0), rgb(223 214 214));
+        pointer-events: none;
+        transition: opacity 0.3s ease;
+        z-index: 1;
+        margin-bottom:09px;
+    }
+
+    .table-formations-container.expanded + .table-fade {
+        opacity: 0;
+        visibility: hidden;
+    }
+
+    .table-formations-container.expanded {
+        max-height: none;
+    }
+
+    .show-more-btn {
+        position: relative;
+        z-index: 2;
+    }
+</style>

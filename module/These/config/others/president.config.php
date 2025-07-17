@@ -104,7 +104,7 @@ return [
                     'admin' => [
                         'pages' => [
                             'president-jury' => [
-                                'label'    => 'Présidents du jury',
+                                'label'    => 'Président·e·s du jury',
                                 'route'    => 'president-jury',
                                 'resource' => PrivilegeController::getResourceId(CoEncadrantController::class, 'index'),
                                 'icon' => 'fas fa-user-tie',

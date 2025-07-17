@@ -11,52 +11,44 @@ use UnicaenSearch\Controller\SearchControllerTrait;
 use UnicaenSearch\SearchServiceAwareTrait;
 use Application\Service\MailConfirmationService;
 use Doctorant\Entity\Db\Doctorant;
+use Doctorant\Facade\TableauDeBordDoctorantAwareTrait;
+use Doctorant\Form\Doctorant\DoctorantFormAwareTrait;
 use Doctorant\Form\MailConsentementForm;
 use Doctorant\Service\DoctorantServiceAwareTrait;
+use InvalidArgumentException;
 use Laminas\Http\Response;
 use Laminas\Paginator\Paginator as LaminasPaginator;
 use Laminas\View\Model\JsonModel;
 use Laminas\View\Model\ViewModel;
-use UnicaenAuthentification\Authentication\Adapter\Ldap as LdapAuthAdapter;
 
 /**
  * @property \Doctorant\Service\Search\DoctorantSearchService $searchService
  */
 class DoctorantController extends AbstractController implements SearchControllerInterface
 {
+    use DoctorantServiceAwareTrait;
     use SearchServiceAwareTrait;
     use SearchControllerTrait;
+    use TableauDeBordDoctorantAwareTrait;
 
-    use DoctorantServiceAwareTrait;
+    use DoctorantFormAwareTrait;
 
-    /** @var MailConfirmationService $mailConfirmationService */
-    private $mailConfirmationService;
+    private MailConfirmationService $mailConfirmationService;
 
     private MailConfirmationForm $mailConfirmationForm;
     private MailConsentementForm $mailConsentementForm;
 
-    /**
-     * @var LdapAuthAdapter
-     */
-    private $ldapAuthAdapter;
-
-    /**
-     * @param MailConfirmationService $mailConfirmationService
-     */
-    public function setMailConfirmationService(MailConfirmationService $mailConfirmationService)
+    public function setMailConfirmationService(MailConfirmationService $mailConfirmationService): void
     {
         $this->mailConfirmationService = $mailConfirmationService;
     }
 
-    /**
-     * @param MailConfirmationForm $mailConfirmationForm
-     */
-    public function setMailConfirmationForm(MailConfirmationForm $mailConfirmationForm)
+    public function setMailConfirmationForm(MailConfirmationForm $mailConfirmationForm): void
     {
         $this->mailConfirmationForm = $mailConfirmationForm;
     }
 
-    public function setMailConsentementForm(MailConsentementForm $mailConsentementForm)
+    public function setMailConsentementForm(MailConsentementForm $mailConsentementForm): void
     {
         $this->mailConsentementForm = $mailConsentementForm;
     }
@@ -76,16 +68,23 @@ class DoctorantController extends AbstractController implements SearchController
         ]);
     }
 
-    public function voirAction(): ViewModel
+    public function tableauDeBordAction(): ViewModel
     {
-        $doctorant = $this->doctorantService->getRepository()->find($this->params('doctorant'));
-        if ($doctorant === null) {
-            throw new \InvalidArgumentException("Individu introuvable.");
-        }
+        /** @var Doctorant $doctorant */
+        $doctorant = $this->params('doctorant') instanceof Doctorant ? $this->params('doctorant') : $this->doctorantService->getRepository()->find($this->params('doctorant'));
 
-        return new ViewModel([
-            'doctorant' => $doctorant,
+        $title = $this->params('title') ?: "Tableau de bord de {$doctorant->getIndividu()}";
+        $vm = new ViewModel([
+            'title' => $title,
+            'role' =>  $this->userContextService->getSelectedIdentityRole(),
+            'modifierEmailContactUrl' => $this->urlDoctorant()->modifierEmailContactUrl($doctorant, true),
+            'modifierEmailContactConsentUrl' => $this->urlDoctorant()->modifierEmailContactConsentUrl(
+                $doctorant,
+                $this->url()->fromRoute(null, [], [], true)),
         ]);
+        $vm->setVariables($this->tableauDeBordDoctorantFacade->getVariablesForTableauDeBord($doctorant));
+
+        return $vm;
     }
 
     public function consulterAction(): ViewModel
@@ -98,10 +97,41 @@ class DoctorantController extends AbstractController implements SearchController
         ]);
     }
 
-    /**
-     * @return \Laminas\Http\Response|\Laminas\View\Model\ViewModel
-     */
-    public function modifierEmailContactAction()
+    public function modifierAction(): Response|ViewModel
+    {
+        $doctorant = $this->doctorantService->getRepository()->find($this->params('doctorant'));
+        if ($doctorant === null) {
+            throw new InvalidArgumentException("Doctorant introuvable.");
+        }
+
+        $this->doctorantForm->bind($doctorant);
+
+        $request = $this->getRequest();
+        $inModal = $this->params()->fromQuery('inModal', false);
+        $this->doctorantForm->setAttribute('action', $this->url()->fromRoute('doctorant/modifier', ['doctorant' => $doctorant->getId()], ["query" => ["inModal" => $inModal]]));
+
+        if ($request->isPost()) {
+            $data = $request->getPost();
+            $this->doctorantForm->setData($data);
+            if ($this->doctorantForm->isValid()) {
+                $doctorant = $this->doctorantForm->getData();
+                $this->doctorantService->saveDoctorant($doctorant);
+
+                $this->flashMessenger()->addSuccessMessage("Le·a doctorant·e &laquo; $doctorant &raquo; a été modifié·e avec succès.");
+
+                if (!$inModal) {
+                    return $this->redirect()->toRoute('doctorant/tableau-de-bord', ['doctorant' => $doctorant->getId()]);
+                }
+            }
+        }
+
+        return new ViewModel([
+            'form' => $this->doctorantForm,
+            'title' => "Modification des informations du doctorant·e &laquo; $doctorant &raquo;",
+        ]);
+    }
+
+    public function modifierEmailContactAction(): Response|ViewModel
     {
         $doctorant = $this->requestDoctorant();
         $force = (bool) $this->params()->fromQuery('force', false);
@@ -158,10 +188,7 @@ class DoctorantController extends AbstractController implements SearchController
         ]);
     }
 
-    /**
-     * @return \Laminas\Http\Response|\Laminas\View\Model\ViewModel
-     */
-    public function modifierEmailContactConsentAction()
+    public function modifierEmailContactConsentAction(): Response|ViewModel
     {
         $doctorant = $this->requestDoctorant();
         $redirect = $this->params()->fromQuery('redirect', '/');

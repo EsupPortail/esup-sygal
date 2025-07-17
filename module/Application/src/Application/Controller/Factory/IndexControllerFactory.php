@@ -3,15 +3,19 @@
 namespace Application\Controller\Factory;
 
 use Application\Controller\IndexController;
-use Psr\Container\ContainerExceptionInterface;
-use Psr\Container\NotFoundExceptionInterface;
-use Structure\Service\EcoleDoctorale\EcoleDoctoraleService;
-use Structure\Service\Etablissement\EtablissementService;
-use These\Service\These\TheseService;
+use Application\Service\Rapport\RapportService;
 use Application\Service\Variable\VariableService;
+use Doctrine\ORM\EntityManager;
 use Information\Service\InformationService;
 use Interop\Container\ContainerInterface;
 use Laminas\Authentication\AuthenticationServiceInterface;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
+use RapportActivite\Rule\Creation\RapportActiviteCreationRule;
+use RapportActivite\Service\RapportActiviteService;
+use Structure\Service\EcoleDoctorale\EcoleDoctoraleService;
+use Structure\Service\Etablissement\EtablissementService;
+use These\Service\These\TheseService;
 
 class IndexControllerFactory
 {
@@ -50,6 +54,28 @@ class IndexControllerFactory
          */
         $informationService = $container->get(InformationService::class);
         $controller->setInformationService($informationService);
+
+        /**
+         * @var EntityManager $entityManager
+         */
+        $entityManager = $container->get('doctrine.entitymanager.orm_default');
+        $controller->setEntityManager($entityManager);
+
+        /**
+         * @var RapportService $rapportService
+         */
+        $rapportService = $container->get(RapportService::class);
+        $controller->setRapportService($rapportService);
+
+        /**
+         * @var RapportActiviteService $informationService
+         */
+        $rapportActiviteService = $container->get(RapportActiviteService::class);
+        $controller->setRapportActiviteService($rapportActiviteService);
+
+        /** @var \RapportActivite\Rule\Creation\RapportActiviteCreationRule $rapportActiviteCreationRule */
+        $rapportActiviteCreationRule = $container->get(RapportActiviteCreationRule::class);
+        $controller->setRapportActiviteCreationRule($rapportActiviteCreationRule);
 
         /**
          * @var VariableService $variableService

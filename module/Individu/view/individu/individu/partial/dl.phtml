@@ -15,19 +15,19 @@ if (!isset($verbose)) $verbose = false;
 ?>
 
 <h3>
-    Informations générales
+    Identité
 </h3>
-<dl class="<?php echo $dlClass ?>">
+<dl class="<?php echo $dlClass ?> mb-4">
     <?php if ($entity->getCivilite()): ?>
         <dt class="<?php echo $dtClass ?>">Civilité</dt>
         <dd class="<?php echo $ddClass ?>"><?php echo $entity->getCivilite() ?></dd>
     <?php endif ?>
 
-    <dt class="<?php echo $dtClass ?>">Nom d'usage</dt>
-    <dd class="<?php echo $ddClass ?>"><strong><?php echo $entity->getNomUsuel() ?></strong></dd>
-
     <dt class="<?php echo $dtClass ?>">Nom patronymique</dt>
-    <dd class="<?php echo $ddClass ?>"><?php echo $entity->getNomPatronymique() ?></dd>
+    <dd class="<?php echo $ddClass ?>"><strong><?php echo $entity->getNomPatronymique() ?></strong></dd>
+
+    <dt class="<?php echo $dtClass ?>">Nom d'usage</dt>
+    <dd class="<?php echo $ddClass ?>"><?php echo $entity->getNomUsuel() ?></dd>
 
     <dt class="<?php echo $dtClass ?>">Prénom</dt>
     <dd class="<?php echo $ddClass ?>"><?php echo $entity->getPrenom1() ?></dd>
@@ -42,12 +42,6 @@ if (!isset($verbose)) $verbose = false;
     <dt class="<?php echo $dtClass ?>">Date de naissance</dt>
     <dd class="<?php echo $ddClass ?>"><?php echo $entity->getDateNaissanceToString() ?: "(Non renseignée)" ?></dd>
 
-    <dt class="<?php echo $dtClass ?>">Adresse électronique</dt>
-    <dd class="<?php echo $ddClass ?>"><?php echo $entity->getEmailPro() ?: "(Non renseignée)" ?></dd>
-
-    <dt class="<?php echo $dtClass ?>">Adresse électronique de contact</dt>
-    <dd class="<?php echo $ddClass ?>"><?php echo $entity->getEmailContact() ?: "(Non renseignée)" ?></dd>
-
     <dt class="<?php echo $dtClass ?>">Nationalité</dt>
     <dd class="<?php echo $ddClass ?>">
         <?php if ($entity->isApatride()): ?>
@@ -56,13 +50,41 @@ if (!isset($verbose)) $verbose = false;
             <?php echo ($pays = $entity->getPaysNationalite()) ? $pays->getLibelleNationalite() : "(Non renseignée)" ?>
         <?php endif ?>
     </dd>
+
+    <dt class="<?php echo $dtClass ?>">IdRef</dt>
+    <dd class="<?php echo $ddClass ?>"><?php echo $entity->getIdRef() ? $this->idrefLink($entity->getIdRef()) : "(Non renseigné)" ?></dd>
+</dl>
+
+<h3>
+    Adresses
+</h3>
+<dl class="<?php echo $dlClass ?> mb-4">
+    <dt class="<?php echo $dtClass ?>">Adresse élec. institut.</dt>
+    <dd class="<?php echo $ddClass ?>">
+        <?php if ($adresse = $entity->getEmailPro()): ?>
+            <a href="mailto:<?php echo trim($adresse) ?>"
+               title="<?php echo $this->translate("Envoyer un mail à cette adresse") ?>"><?php echo $adresse ?></a>
+        <?php else: ?>
+            (Non renseignée)
+        <?php endif ?>
+    </dd>
+
+    <dt class="<?php echo $dtClass ?>">Adresse élec. de contact</dt>
+    <dd class="<?php echo $ddClass ?>">
+        <?php if ($adresse = $entity->getEmailContact()): ?>
+            <a href="mailto:<?php echo trim($adresse) ?>"
+               title="<?php echo $this->translate("Envoyer un mail à cette adresse") ?>"><?php echo $adresse ?></a>
+        <?php else: ?>
+            (Non renseignée)
+        <?php endif ?>
+    </dd>
 </dl>
 
 <?php if ($verbose): ?>
     <h3>
         Informations techniques
     </h3>
-    <dl class="<?php echo $dlClass ?>">
+    <dl class="<?php echo $dlClass ?> mb-4">
         <dt class="<?php echo $dtClass ?>">Id</dt>
         <dd class="<?php echo $ddClass ?>"><?php echo $entity->getId() ?></dd>
 
@@ -84,9 +106,6 @@ if (!isset($verbose)) $verbose = false;
 
         <dt class="<?php echo $dtClass ?>">Supann Id</dt>
         <dd class="<?php echo $ddClass ?>"><?php echo $entity->getSupannId() ?: "(Non renseigné)" ?></dd>
-
-        <dt class="<?php echo $dtClass ?>">IdRef</dt>
-        <dd class="<?php echo $ddClass ?>"><?php echo $entity->getIdRef() ? $this->idrefLink($entity->getIdRef()) : "(Non renseigné)" ?></dd>
     </dl>
 <?php endif ?>
 
@@ -94,7 +113,7 @@ if (!isset($verbose)) $verbose = false;
     <h3 class="text-danger">
         Historisé
     </h3>
-    <dl class="<?php echo $dlClass ?> text-danger">
+    <dl class="<?php echo $dlClass ?> text-danger mb-4">
         <dt class="<?php echo $dtClass ?> text-danger">Date :</dt>
         <dd class="<?php echo $ddClass ?> text-danger"><?php echo $entity->getHistoDestruction()->format('d/m/Y à H:i:s') ?></dd>
     </dl>

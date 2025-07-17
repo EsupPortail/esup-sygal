@@ -7,6 +7,10 @@ use Fichier\Entity\Db\Fichier;
 use Fichier\View\Helper\Fichier\FichierViewHelper;
 use Laminas\Form\ElementInterface;
 use Structure\Entity\Db\EcoleDoctorale;
+use Structure\Entity\Db\Etablissement;
+use Structure\Entity\Db\Structure;
+use Structure\Entity\Db\UniteRecherche;
+use Structure\View\Helper\StructureViewHelper;
 use These\Entity\Db\These;
 use UnicaenApp\Form\Element\Select2;
 use Validation\Entity\Db\ValidationThese;
@@ -159,6 +163,7 @@ use UnicaenIdref\View\Helper\IdrefLinkViewHelper;
  * @method FinancementFormatterHelper financementFormatter()
  *
  * @method ActualiteViewHelper actualite()
+ * @method StructureViewHelper structure(Structure|Etablissement|EcoleDoctorale|UniteRecherche $structure, bool $afficherLibelle = true, bool $sansOmbre = false, $options = [])
  * @method FichierViewHelper fichier(Fichier $object, string $urlTelechargementFichier, string $urlSuppressionFichier, bool $canGererFichier, string $libelleOptionnel = "", bool $voirHistoInfo = true, bool $canVoirSuppression = true, bool $isTargetBlank = false, array $options = [])
  *
  * @method IdrefLinkViewHelper idrefLink(string $ppn)

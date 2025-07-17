@@ -2,9 +2,9 @@
 
 namespace Soutenance\View\Helper;
 
+use Application\View\Renderer\PhpRenderer;
 use Soutenance\Entity\Etat;
-use Laminas\Form\View\Helper\AbstractHelper;
-use Laminas\View\Renderer\PhpRenderer;
+use Laminas\View\Helper\AbstractHelper;
 use Laminas\View\Resolver\TemplatePathStack;
 
 class EtatViewHelper extends AbstractHelper
@@ -15,10 +15,9 @@ class EtatViewHelper extends AbstractHelper
      * @return string
      */
     public function render($etat, $options = []) {
-
         /** @var PhpRenderer $view */
-        $view = $this->view;
+        $view = $this->getView();
         $view->resolver()->attach(new TemplatePathStack(['script_paths' => [__DIR__ . "/partial"]]));
-        return $view->partial('etat', ['etat' => $etat, 'options' => $options]);
+        return $view->partial('etatSoutenance', ['etat' => $etat, 'options' => $options]);
     }
 }

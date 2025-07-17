@@ -1,0 +1,189 @@
+<?php
+/**
+ * @var string $title
+ * @var These[] $theses
+ * @var PhpRenderer $this
+ * @var Doctorant $doctorant
+ * @var Inscription[] $inscriptions
+ * @var Inscription[] $enCours
+ * @var array $rapportsActiviteParAnnee
+ * @var array $rapportsCSIParAnnee
+ * @var bool $canCreateRapportFinContrat
+ * @var AnneeUniv $anneeUnivProposition
+ * @var PropositionThese $proposition
+ * @var Role $role
+ * @var string $modifierEmailContactUrl
+ * @var string $modifierEmailContactConsentUrl
+ *
+ * @see DoctorantController::tableauDeBordAction()
+ */
+
+use Application\Entity\AnneeUniv;
+use Application\Entity\Db\Role;
+use Application\View\Renderer\PhpRenderer;
+use Doctorant\Entity\Db\Doctorant;
+use Doctorant\Provider\Privilege\DoctorantPrivileges;
+use Formation\Controller\IndexController;
+use Formation\Entity\Db\Inscription;
+use Formation\Provider\Privilege\IndexPrivileges;
+use Soutenance\Entity\PropositionThese;
+use These\Entity\Db\These;
+use UnicaenPrivilege\Guard\PrivilegeController;
+use UnicaenPrivilege\Provider\Privilege\Privileges;
+
+$appName = $this->appInfos()->nom;
+/** @var These $these */
+$these = current($doctorant->getTheses());
+
+$canAccederIndexFormations = $this->isAllowed(Privileges::getResourceId(IndexPrivileges::INDEX_AFFICHER)) ||
+    $this->isAllowed(Privileges::getResourceId(IndexPrivileges::INDEX_DOCTORANT)) ||
+    $this->isAllowed(Privileges::getResourceId(IndexPrivileges::INDEX_GESTION));
+$canModifierDoctorant =
+    $this->isAllowed($doctorant, DoctorantPrivileges::DOCTORANT_MODIFIER_TOUS) ||
+    $this->isAllowed($doctorant, DoctorantPrivileges::DOCTORANT_MODIFIER_SIEN);
+
+$emailContactModifiedEvent = 'email-contact-modified-event';
+$emailContactConsentModifiedEvent = 'email-contact-consent-modified-event';
+$modifierGeneralitesEvent = 'event-modifier-generalites';
+?>
+
+<h1 class="page-header">
+    <?= $title ?>
+</h1>
+
+<div class="tableau-de-bord-doctorant">
+    <div class="row align-items-stretch">
+        <div class="col-md-8">
+            <div class="box card h-100">
+                <div class="card-header these-card-header text-white">
+                    <h2 class="first">
+                        <span class="fas fa-book"></span>
+                        <?php echo $this->translate("Thèse"); ?>
+                    </h2>
+                </div>
+                <?php $class = $these->estConfidentielle() ? 'text-danger' : ''; ?>
+                <?php echo $this->partial('doctorant/doctorant/partial/fiche-these', ['these' => $these]) ?>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="box card h-100">
+                <div class="card-header these-card-header text-white">
+                    <h2 class="first">
+                        <span class="fas fa-graduation-cap"></span>
+                        <?php echo $this->translate("Doctorant·e"); ?>
+                    </h2>
+                </div>
+                <div class="card-body">
+                    <?php echo $this->partial('doctorant/doctorant/partial/fiche-doctorant',
+                        [
+                            'these' => $these,
+                            'modifierEmailContactUrl' => $modifierEmailContactUrl,
+                            'modifierEmailContactConsentUrl' => $modifierEmailContactConsentUrl,
+                        ])
+                    ?>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <?php if($canAccederIndexFormations): ?>
+        <br>
+        <div class="separator"></div>
+        <br>
+
+        <div class="row">
+            <div class="col-md-6">
+                <h2 class="page-header">
+                <span class="<?php echo $doctorant->estHistorise() ? 'historise' : '' ?>">
+                    Formations
+                </span>
+                </h2>
+            </div>
+        </div>
+        <div class="formations">
+            <!-- Formations à venir -->
+            <div class="box card">
+                <div class="card-header these-card-header text-white">
+                    <h2 class="first">Formations à venir</h2>
+                </div>
+                <div class="card-body">
+                    <?php echo $this->partial('doctorant/doctorant/partial/formations-en-cours', ['inscriptions' => $enCours]) ?>
+                </div>
+                <?php
+                if($role->isDoctorant()):
+                    $url = $this->url('formation/index-doctorant', ['doctorant' => $doctorant->getId()], ['fragment' => 'a_venir'], true);
+                elseif(PrivilegeController::getResourceId(IndexController::class, 'index-gestion')):
+                    $url = $this->url('formation/index-gestion', ['these' => $these->getId()], ['fragment' => 'inscription'], true);
+                endif;
+
+                if(isset($url)):?>
+                    <div class="card-footer">
+                        <a href="<?php echo $url; ?>" class="btn btn-primary">
+                            <span class="icon icon-voir"></span>
+                            Accéder au tableau de bord
+                        </a>
+                    </div>
+                <?php endif; ?>
+            </div>
+        </div>
+    <?php endif; ?>
+
+    <br>
+    <div class="separator"></div>
+    <br>
+
+    <div class="row">
+        <div class="col-md-6">
+            <h2 class="page-header">
+            <span class="<?php echo $doctorant->estHistorise() ? 'historise' : '' ?>">
+                Récapitulatif annuel
+            </span>
+            </h2>
+        </div>
+    </div>
+
+    <div class="recapitulatif-annuel">
+        <?php echo $this->partial('doctorant/doctorant/partial/recapitulatif-annuel',
+            [
+                'these' => $these,
+                'doctorant' => $doctorant,
+                'rapportsActiviteParAnnee' => $rapportsActiviteParAnnee,
+                'rapportsCSIParAnnee' => $rapportsCSIParAnnee,
+                'canCreateRapportFinContrat' => $canCreateRapportFinContrat,
+                'anneeUnivProposition' => $anneeUnivProposition,
+                'proposition' => $proposition
+            ])
+        ?>
+    </div>
+</div>
+
+<style>
+    .formations, .recapitulatif-annuel {
+        padding: 1rem;
+    }
+
+    .tableau-de-bord-doctorant p, .tableau-de-bord-doctorant ul, .tableau-de-bord-doctorant li {
+        font-size: inherit !important;
+    }
+</style>
+
+<script>
+    $(function () {
+        var body = $("body");
+
+        body.on("modification-doctorant", function (event) {
+            event.div.modal('hide'); // ferme la fenêtre modale
+            window.location.reload();
+        });
+
+        body.on("<?php echo $emailContactModifiedEvent ?>", function (event) {
+            // L'email de contact vient d'être modifié.
+            event.div.modal('hide'); // ferme la fenêtre modale
+            window.location.reload();
+        });
+        body.on("<?php echo $emailContactConsentModifiedEvent ?>", function (event) {
+            // Le consentement vient d'être modifié.
+            event.div.modal('hide'); // ferme la fenêtre modale
+        });
+    })
+</script>

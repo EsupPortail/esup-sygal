@@ -16,7 +16,7 @@ $theseActeurs = $these->getActeurs();
 <table class="table table-sm these-fiche">
     <tbody>
     <tr>
-        <th>Doctorant</th>
+        <th>Doctorant·e</th>
         <td>
             <?php echo $these->getDoctorant()->getIndividu()->getNomCompletFormatter()->avecCivilite()->avecAutresPrenoms()->avecNomPatroEtNomUsage()->f() ?>
             (<?php echo $these->getDoctorant()->getIndividu()->getDateNaissanceToString() ?>) <br>

@@ -415,6 +415,11 @@ switch ($these->getEtatThese()){
     $(function () {
         var body = $("body");
 
+        body.on("modification-doctorant", function (event) {
+            event.div.modal('hide'); // ferme la fenêtre modale
+            window.location.reload();
+        });
+
         body.on("<?php echo $modifierStructuresEvent ?>", function (event) {
             event.div.modal('hide'); // ferme la fenêtre modale
             window.location.reload();
