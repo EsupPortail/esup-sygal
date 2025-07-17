@@ -5,7 +5,13 @@ Journal des modifications
 ------
 - Nouvelle charte de depot et diffusion des theses (depot papier optionnel : selon activation de la 'feature').
 - La convention de MEL possède désormais son template Twig modifiable (via unicaen/renderer).
-
+- Module Doctorant :
+  - Recherche des doctorants, avec possibilité de filtrage par ED/UR/Étab (en fonction de l'utilisateur connecté)
+  - Tableau de bord visible par le doctorant (dès la page d'accueil), ainsi que par la Maison du doctorat/Gestionnaire d'ED/UR/Responsable d'ED/UR
+    - Informations concernant sa thèse
+    - Formations à venir
+    - Récapitulatif par années : Rapports à déposer/Soutenance
+    
 10.2.1
 ------
 - Module Soutenance : Amélioration du workflow dans la pré-soutenance
