@@ -798,6 +798,13 @@ div.filters {
   }
 }
 
+.tagify.taggable.form-control {
+  height: auto !important;
+}
+.tagify__tag {
+  margin-block-end: 0 !important;
+}
+
 div#these-filters {
   min-width: 30px;
   min-height: 170px;
