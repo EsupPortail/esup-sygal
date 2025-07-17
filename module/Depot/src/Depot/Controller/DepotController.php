@@ -1356,10 +1356,10 @@ class DepotController extends AbstractController
                     $this->fichierTheseService->deleteFichiers($fichierThesesExpurgesDeposes, $these);
                 }
 
-//                if (! $this->getRequest()->isXmlHttpRequest()) {
-//                    $url = $this->urlDepot()->depotThese($these, $version->getCode());
-//                    return $this->redirect()->toUrl($url);
-//                }
+                if (! $this->getRequest()->isXmlHttpRequest()) {
+                    $url = $this->urlDepot()->depotThese($these, $version->getCode());
+                    return $this->redirect()->toUrl($url);
+                }
             }
         }
 
