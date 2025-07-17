@@ -145,6 +145,11 @@ th {
   height: $fontSize * 2 + 2;
 }
 
+.form-text {
+  margin-top: 0;
+  margin-bottom: 0.25rem;
+}
+
 textarea.form-control {
   height: auto;
 }

@@ -110,6 +110,10 @@ th {
   padding: 0 8px;
   height: 26px; }
 
+.form-text {
+  margin-top: 0;
+  margin-bottom: 0.25rem; }
+
 textarea.form-control {
   height: auto; }
 
