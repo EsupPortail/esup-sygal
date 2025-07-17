@@ -20,12 +20,14 @@ $form->setAttribute('class', 'row')->prepare();
 
 <?php $this->headTitle($title = $this->translate($isCreation ?
     "Création d’un·e doctorant·e" :
-    "Modification du doctorant·e &laquo; $doctorant &raquo;"
+    ""
 )) ?>
 
-<h1 class="page-header">
-    <?php echo $title ?>
-</h1>
+<?php if($title): ?>
+    <h1 class="page-header">
+        <?php echo $title ?>
+    </h1>
+<?php endif; ?>
 
 <?php if ($isCreation): ?>
     <p class="lead text-warning">

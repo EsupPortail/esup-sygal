@@ -70,9 +70,10 @@ class DoctorantController extends AbstractController implements SearchController
 
     public function tableauDeBordAction(): ViewModel
     {
+        /** @var Doctorant $doctorant */
         $doctorant = $this->params('doctorant') instanceof Doctorant ? $this->params('doctorant') : $this->doctorantService->getRepository()->find($this->params('doctorant'));
 
-        $title = $this->params('title') ?: "Tableau de bord de $doctorant";
+        $title = $this->params('title') ?: "Tableau de bord de {$doctorant->getIndividu()}";
         $vm = new ViewModel([
             'title' => $title,
             'role' =>  $this->userContextService->getSelectedIdentityRole(),
@@ -116,7 +117,7 @@ class DoctorantController extends AbstractController implements SearchController
                 $doctorant = $this->doctorantForm->getData();
                 $this->doctorantService->saveDoctorant($doctorant);
 
-                $this->flashMessenger()->addSuccessMessage("Le doctorant &laquo; $doctorant &raquo; a été modifié avec succès.");
+                $this->flashMessenger()->addSuccessMessage("Le·a doctorant·e &laquo; $doctorant &raquo; a été modifié·e avec succès.");
 
                 if (!$inModal) {
                     return $this->redirect()->toRoute('doctorant/tableau-de-bord', ['doctorant' => $doctorant->getId()]);
@@ -126,7 +127,7 @@ class DoctorantController extends AbstractController implements SearchController
 
         return new ViewModel([
             'form' => $this->doctorantForm,
-            'title' => "Modification des informations du doctorant &laquo; $doctorant &raquo;",
+            'title' => "Modification des informations du doctorant·e &laquo; $doctorant &raquo;",
         ]);
     }
 
