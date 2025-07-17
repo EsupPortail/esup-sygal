@@ -1,0 +1,72 @@
+<?php
+
+use UnicaenAuthentification\Authentication\Adapter;
+use UnicaenAuthentification\Form\LoginForm;
+use UnicaenAuthentification\View\Helper\AbstractConnectViewHelper;
+
+/**
+ * Génération des différents types de formulaire de connexion activés.
+ *
+ * @var array[] $types Types d'authentification activés, ex: ['db' => ['enabled'=>true, 'type'=>'local'], 'shib' => ['enabled'=>true]]
+ * @var string $type Type d'authentification dont il faut afficher le formulaire : ex: 'local', {@see Adapter\Shib::TYPE}
+ * @var LoginForm $form Formulaire de connexion du type spécifié dans la requête
+ * @var LoginForm[] $forms Formulaires de connexion possibles
+ * @var string $redirect URL demandée nécessitant authentification
+ *
+ * @method AbstractConnectViewHelper connect()
+ */
+
+$form->prepare();
+$form->setAttributes([
+    //'class' => 'form-horizontal', // .form-horizontal n'existe plus dans boostrap 4
+    'class' => 'no-intranavigation',
+    'role' => 'form',
+]);
+
+/** @var AbstractConnectViewHelper[] $helpers */
+$helpers = [];
+foreach ($types as $t => $config) {
+    $helpers[$t] = $this->connect($t, $form); /** @see \UnicaenAuthentification\View\Helper\ConnectViewHelper */
+}
+
+$activeHelper = null;
+?>
+
+<ul class="nav nav-pills mb-4 justify-content-center" id="loginTabs" role="tablist">
+    <?php foreach ($helpers as $key => $helper): ?>
+        <?php
+        $query = $redirect ? ['redirect' => $redirect] : [];
+        if ($key === $type) {
+            $activeClass = 'active';
+            $ariaSelected = 'true';
+            $activeHelper = $helper;
+        } else {
+            if (isset($forms[$key]) && $forms[$key]->isHidden()) {
+                continue;
+            }
+            $activeClass = '';
+            $ariaSelected = 'false';
+        }
+        ?>
+        <li class="nav-item" role="presentation">
+            <a class="nav-link <?= $activeClass ?>" href="<?= $this->url('zfcuser/login', ['type' => $key], ['query' => $query]) ?>" type="button" role="tab" aria-selected="<?= $ariaSelected ?>">
+                <i class="fas fa-shield-alt"></i>
+                <?= $helper->getTitle() ?>
+            </a>
+        </li>
+    <?php endforeach ?>
+</ul>
+<div class="tab-content" id="loginTabsContent">
+    <!-- Onglet Fédération -->
+    <div class="tab-pane fade show active" role="tabpanel">
+        <div class="card shadow-sm border-0">
+            <div class="card-body">
+                <?php if (isset($activeHelper)) {
+                    $activeHelper->setTitle(""); // pour éviter que le title soit répété
+                    echo $activeHelper;
+                }
+                ?>
+            </div>
+        </div>
+    </div>
+</div>
