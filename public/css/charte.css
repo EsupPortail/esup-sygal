@@ -204,11 +204,60 @@ h1.app-name {
   #navbar .dropdown-item {
     padding: 0.2rem 1rem; }
   #navbar .dropdown-item.active {
-    background-color: #004980; }
+    background-color: #004980;
+    color: #f0f2f5; }
   #navbar .dropdown-divider {
     margin: .25rem 0; }
   #navbar .navbar-text {
     line-height: 1; }
+  #navbar .nav-item .nav-link {
+    padding: 0.55rem 1rem;
+    color: #f0f2f5;
+    transition: background 0.2s, color 0.2s;
+    border-radius: 0.5rem; }
+  #navbar .nav-item.active .nav-link {
+    color: var(--secondary-color); }
+  #navbar .nav-item .nav-link:hover,
+  #navbar .nav-item .nav-link:focus {
+    background-color: #f0f2f5;
+    color: var(--secondary-color);
+    border-radius: 0.5rem;
+    outline: none; }
+  #navbar .dropdown-menu {
+    border: none;
+    border-radius: 0.75rem;
+    padding: 0.5rem 0;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    background: #ffffff;
+    min-width: 200px; }
+  #navbar .dropdown-menu {
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    display: block;
+    visibility: hidden;
+    pointer-events: none; }
+  #navbar .nav-item .dropdown-menu.show {
+    opacity: 1;
+    transform: translateY(0);
+    visibility: visible;
+    pointer-events: auto; }
+  #navbar .dropdown-item {
+    padding: 0.75rem 1rem;
+    color: #333;
+    transition: background 0.2s, color 0.2s;
+    border-radius: 0.5rem; }
+  #navbar .dropdown-item:hover,
+  #navbar .dropdown-item:focus,
+  #navbar .nav-item.active {
+    background-color: #f0f2f5;
+    color: var(--secondary-color);
+    border-radius: 0.5rem; }
+  #navbar .dropdown-item:focus {
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+    outline: none; }
+  #navbar .dropdown-toggle::after {
+    margin-left: 0.5rem; }
 
 #breadcrumb ol.breadcrumb {
   padding-top: 0.3rem;
