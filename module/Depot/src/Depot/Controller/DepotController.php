@@ -264,10 +264,7 @@ class DepotController extends AbstractController
         return $view;
     }
 
-    /**
-     * @return ViewModel
-     */
-    public function validationPageDeCouvertureAction()
+    public function validationPageDeCouvertureAction(): ViewModel
     {
         $these = $this->requestedThese();
 

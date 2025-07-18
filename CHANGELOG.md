@@ -18,6 +18,7 @@ Journal des modifications
 - [FIX] Recherche d'individus : suppression de la limite de 100 résultats maximum.
 - [FIX] Dépôt de thèse : plantage de l'annulation de la validation des corrections de la thèse.
 - [FIX] Bouton de dé·validation de la thèse corrigée par le doctorant : mécanisme de confirmation plus léger (js).
+- [FIX] Bouton de dé·validation de la page de couverture : mécanisme de confirmation plus léger (js).
 - [FIX] Plantage dans la génération de doc à cause d'une signature de méthode dans AdmissionFinancementTemplateVariable.
 
 10.2.1

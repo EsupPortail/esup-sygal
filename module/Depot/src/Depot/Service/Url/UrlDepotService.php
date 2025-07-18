@@ -10,11 +10,7 @@ use UnicaenApp\Exception\LogicException;
 
 class UrlDepotService extends UrlService
 {
-    /**
-     * @param These $these
-     * @return string
-     */
-    public function validationPageDeCouvertureUrl(These $these)
+    public function validationPageDeCouvertureUrl(These $these): string
     {
         return $this->fromRoute('these/validation-page-de-couverture',
             ['these' => $this->idify($these)],
@@ -300,8 +296,9 @@ class UrlDepotService extends UrlService
         );
     }
 
-    public function validerPageDeCouvertureUrl(These $these)
+    public function validerPageDeCouvertureUrl(These $these): string
     {
+        /** @see \Depot\Controller\ValidationController::pageDeCouvertureAction() */
         return $this->fromRoute('validation/page-de-couverture',
             ['these' => $this->idify($these)],
             ['query' => ['action' => 'valider']]

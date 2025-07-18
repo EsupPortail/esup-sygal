@@ -22,7 +22,7 @@ use UnicaenApp\Service\MessageCollector;
  * @var MessageCollector    $msgCollector
  * @var PdcData          $informations
  *
- * @see TheseController::validationPageDeCouvertureAction()
+ * @see \Depot\Controller\DepotController::validationPageDeCouvertureAction()
  */
 
 $canRefreshThese = $this->isAllowed($these, ThesePrivileges::THESE_REFRESH);
@@ -121,7 +121,8 @@ $canUnvalidate = $this->isAllowed($these, ValidationPrivileges::VALIDATION_PAGE_
             <?php echo $this->validation($validation, "success") ?>
             <?php if ($canUnvalidate): ?>
                 <a href="<?php echo $devaliderUrl ?>"
-                   class="btn btn-danger ajax-modal"
+                   class="btn btn-danger"
+                   data-toggle="confirmationx"
                    data-event="event-page-de-couverture-validated-or-not"
                    data-bs-toggle="tooltip"
                    data-bs-html="true"
@@ -138,7 +139,8 @@ $canUnvalidate = $this->isAllowed($these, ValidationPrivileges::VALIDATION_PAGE_
                 </p>
                 <p>
                     <a href="<?php echo $validerUrl ?>"
-                       class="btn btn-success ajax-modal"
+                       class="btn btn-success"
+                       data-toggle="confirmationx"
                        data-event="event-page-de-couverture-validated-or-not"><span
                                 class="fas fa-thumbs-up"></span> Valider la page de couverture</a>
                 </p>

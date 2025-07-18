@@ -33,53 +33,40 @@ class ValidationController extends AbstractController
     use ValidationServiceAwareTrait;
     use DepotValidationProcessAwareTrait;
 
-    public function pageDeCouvertureAction(): ViewModel
+    public function pageDeCouvertureAction(): Response
     {
         // todo : utiliser un process pour remonter les erreurs proprement, cf. modifierValidationCorrectionTheseAction()
 
         $these = $this->requestedThese();
-        $result = $this->confirm()->execute();
         $action = $this->params()->fromQuery('action');
 
-        // si un tableau est retourné par le plugin, l'opération a été confirmée
-        if (is_array($result)) {
-            if ($action === 'valider') {
-                $this->depotValidationService->validatePageDeCouverture($these);
-                $successMessage = "Validation de la page de couverture enregistrée avec succès.";
+        if ($action === 'valider') {
+            $this->depotValidationService->validatePageDeCouverture($these);
+            $successMessage = "Validation de la page de couverture enregistrée avec succès.";
 
-                try {
-                    // notification
-                    $notification = $this->depotNotificationFactory->createNotificationValidationPageDeCouverture($these, $action);
-                    $this->notifierService->trigger($notification);
-                    $this->flashMessenger()->addSuccessMessage("La notification a bien été envoyée au doctorant");
-                } catch (Throwable $e) {
-                    $this->flashMessenger()->addErrorMessage("Une erreur s'est produite lors de l'envoi de la notification. <br><br> <b>Message d'erreur</b> : ".$e->getMessage());
-                }
+            try {
+                // notification
+                $notification = $this->depotNotificationFactory->createNotificationValidationPageDeCouverture($these, $action);
+                $this->notifierService->trigger($notification);
+                $this->flashMessenger()->addSuccessMessage("La notification a bien été envoyée au doctorant");
+            } catch (Throwable $e) {
+                $this->flashMessenger()->addErrorMessage("Une erreur s'est produite lors de l'envoi de la notification. <br><br> <b>Message d'erreur</b> : ".$e->getMessage());
             }
-            elseif ($action === 'devalider') {
-                $this->depotValidationService->unvalidatePageDeCouverture($these);
-                $successMessage ="Validation de la page de couverture annulée avec succès.";
-            }
-            else {
-                throw new RuntimeException("Action inattendue!");
-            }
-
-            $this->flashMessenger()->addMessage($successMessage, 'PageDeCouverture/success');
+        }
+        elseif ($action === 'devalider') {
+            $this->depotValidationService->unvalidatePageDeCouverture($these);
+            $successMessage ="Validation de la page de couverture annulée avec succès.";
+        }
+        else {
+            throw new RuntimeException("Action inattendue!");
         }
 
-        // récupération du modèle de vue auprès du plugin et passage de variables classique
-        $viewModel = $this->confirm()->getViewModel();
+        $this->flashMessenger()->addMessage($successMessage, 'PageDeCouverture/success');
 
-        $viewModel->setVariables([
-            'title'  => "Validation de la page de couverture",
-            'these'  => $these,
-            'action' => $action,
-        ]);
-
-        return $viewModel;
+        return $this->redirect()->toUrl($this->urlDepot()->validationPageDeCouvertureUrl($these));
     }
 
-    public function validationPageDeCouvertureAction()
+    public function validationPageDeCouvertureAction(): ViewModel
     {
         $these = $this->requestedThese();
 
