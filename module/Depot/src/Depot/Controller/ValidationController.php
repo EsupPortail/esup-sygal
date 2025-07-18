@@ -184,58 +184,43 @@ class ValidationController extends AbstractController
         return $view;
     }
 
-    public function modifierValidationDepotTheseCorrigeeAction(): ViewModel
+    public function modifierValidationDepotTheseCorrigeeAction(): Response
     {
         // todo : utiliser un process pour remonter les erreurs proprement, cf. modifierValidationCorrectionTheseAction()
 
         $these = $this->requestedThese();
-        $result = $this->confirm()->execute();
         $action = $this->params()->fromQuery('action');
 
-        // si un tableau est retourné par le plugin, l'opération a été confirmée
-        if (is_array($result)) {
-            if ($action === 'valider') {
-                $validation = $this->depotValidationService->validateDepotTheseCorrigee($these);
-                $successMessage = "Validation enregistrée avec succès.";
+        if ($action === 'valider') {
+            $validation = $this->depotValidationService->validateDepotTheseCorrigee($these);
+            $successMessage = "Validation enregistrée avec succès.";
 
-                // notification des directeurs de thèse
-                $resultArray = $this->depotService->notifierCorrectionsApportees($these);
-            }
-            elseif ($action === 'devalider') {
-                $validation = $this->depotValidationService->unvalidateDepotTheseCorrigee($these);
-                $successMessage ="Validation annulée avec succès.";
+            // notification des directeurs de thèse
+            $resultArray = $this->depotService->notifierCorrectionsApportees($these);
+        }
+        elseif ($action === 'devalider') {
+            $validation = $this->depotValidationService->unvalidateDepotTheseCorrigee($these);
+            $successMessage ="Validation annulée avec succès.";
 
-                // pas de notification par mail
-                $resultArray = null;
-            }
-            else {
-                throw new RuntimeException("Action inattendue!");
-            }
+            // pas de notification par mail
+            $resultArray = null;
+        }
+        else {
+            throw new RuntimeException("Action inattendue!");
+        }
 
-            $tvCode = $validation->getValidation()->getTypeValidation()->getCode();
-            $this->flashMessenger()->addMessage($successMessage, "$tvCode/success");
-            if ($resultArray) {
-                if ($resultArray[0] === 'success') {
-                    $this->flashMessenger()->addMessage($resultArray[1], "$tvCode/info");
-                }
-                if ($resultArray[0] === 'error') {
-                    $this->flashMessenger()->addMessage($resultArray[1], "$tvCode/danger");
-                }
+        $tvCode = $validation->getValidation()->getTypeValidation()->getCode();
+        $this->flashMessenger()->addMessage($successMessage, "$tvCode/success");
+        if ($resultArray) {
+            if ($resultArray[0] === 'success') {
+                $this->flashMessenger()->addMessage($resultArray[1], "$tvCode/info");
+            }
+            if ($resultArray[0] === 'error') {
+                $this->flashMessenger()->addMessage($resultArray[1], "$tvCode/danger");
             }
         }
 
-        // récupération du modèle de vue auprès du plugin et passage de variables classique
-        $viewModel = $this->confirm()->getViewModel();
-
-        $viewModel->setVariables([
-            'title'  => "Validation du dépôt de la thèse corrigée",
-            'these'  => $these,
-            'action' => $action,
-        ]);
-
-        $viewModel->setTemplate('depot/validation/these-corrigee/modifier-validation-depot');
-
-        return $viewModel;
+        return $this->redirect()->toUrl($this->urlDepot()->validationTheseCorrigeeUrl($these));
     }
 
     public function modifierValidationCorrectionTheseAction(): Response

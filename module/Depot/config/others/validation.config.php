@@ -139,6 +139,7 @@ return [
                                 'these' => '\d+',
                             ],
                             'defaults'    => [
+                                /** @see ValidationController::modifierValidationDepotTheseCorrigeeAction() */
                                 'action' => 'modifier-validation-depot-these-corrigee',
                             ],
                         ],

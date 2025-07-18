@@ -36,8 +36,9 @@ $canUnvalidate = $this->isAllowed($these, ValidationPrivileges::VALIDATION_DEPOT
             </ul>
             <?php if ($canUnvalidate): ?>
                 <a href="<?php echo $devaliderUrl ?>"
-                   class="btn btn-danger ajax-modal"
+                   class="btn btn-danger"
                    data-bs-toggle="tooltip"
+                   data-toggle="confirmationx"
                    data-bs-html="true"
                    title="Une confirmation avant l'annulation vous sera demandée"
                    data-event="event-validation-depot-these-corrigee"><span class="icon icon-delete"></span> Annuler la validation</a>
@@ -50,7 +51,8 @@ $canUnvalidate = $this->isAllowed($these, ValidationPrivileges::VALIDATION_DEPOT
             </ul>
             <?php if ($canValidate): ?>
                 <a href="<?php echo $validerUrl ?>"
-                   class="btn btn-success ajax-modal"
+                   class="btn btn-success"
+                   data-toggle="confirmationx"
                    data-event="event-validation-depot-these-corrigee"><span class="fas fa-thumbs-up"></span> Valider</a>
             <?php endif ?>
         <?php endif ?>
