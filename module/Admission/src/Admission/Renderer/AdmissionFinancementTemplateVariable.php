@@ -73,7 +73,7 @@ class AdmissionFinancementTemplateVariable extends AbstractTemplateVariable
     /**
      * @noinspection PhpUnused (il s'agit d'une méthode utilisée par les macros)
      */
-    public function getDetailContratDoctoral(): string
+    public function getDetailContratDoctoral(): ?string
     {
         return $this->financement->getDetailContratDoctoral();
     }
