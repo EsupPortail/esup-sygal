@@ -243,6 +243,8 @@ class ValidationController extends AbstractController
         $these = $this->requestedThese();
         $action = $this->params()->fromQuery('action');
 
+        $this->depotValidationProcess->init();
+
         try {
             if ($action === 'valider') {
                 $this->assertIsAllowed($these, ValidationPrivileges::VALIDATION_CORRECTION_THESE);

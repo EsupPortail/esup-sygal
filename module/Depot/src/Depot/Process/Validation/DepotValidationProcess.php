@@ -2,6 +2,7 @@
 
 namespace Depot\Process\Validation;
 
+use Application\Process\AbstractProcess;
 use Application\Service\UserContextServiceAwareTrait;
 use Depot\Service\Notification\DepotNotificationFactoryAwareTrait;
 use Depot\Service\Validation\DepotValidationServiceAwareTrait;
@@ -12,7 +13,7 @@ use These\Entity\Db\These;
 use These\Service\These\TheseServiceAwareTrait;
 use Validation\Entity\Db\ValidationThese;
 
-class DepotValidationProcess
+class DepotValidationProcess extends AbstractProcess
 {
     use DepotValidationServiceAwareTrait;
     use TheseServiceAwareTrait;
@@ -23,10 +24,14 @@ class DepotValidationProcess
 
     private array $notificationLogs;
 
+    public function init(): void
+    {
+        $this->notificationLogs = [];
+    }
+
     public function validateCorrectionThese(These $these): ValidationThese
     {
-        $em = $this->depotValidationService->getEntityManager();
-        $em->beginTransaction();
+        $this->beginTransaction();
 
         $validation = $this->depotValidationService->validateCorrectionThese($these);
 
@@ -43,7 +48,6 @@ class DepotValidationProcess
         }
 
         $notificationFailed = false;
-        $this->notificationLogs = [];
 
         // notification de la MDD
         try {
@@ -80,9 +84,9 @@ class DepotValidationProcess
         }
 
         try {
-            $em->commit();
+            $this->commit();
         } catch (Exception $e) {
-            $em->rollback();
+            $this->rollback();
             throw new RuntimeException("Erreur rencontrée lors de l'enregistrement en bdd, rollback", null, $e);
         }
 
@@ -91,17 +95,16 @@ class DepotValidationProcess
 
     public function unvalidateCorrectionThese(These $these): ValidationThese
     {
-        $em = $this->depotValidationService->getEntityManager();
-        $em->beginTransaction();
+        $this->beginTransaction();
 
         $validation = $this->depotValidationService->unvalidateCorrectionThese($these);
 
         // pas de notification par mail
 
         try {
-            $em->commit();
+            $this->commit();
         } catch (Exception $e) {
-            $em->rollback();
+            $this->rollback();
             throw new RuntimeException("Erreur rencontrée lors de l'enregistrement en bdd, rollback", null, $e);
         }
 

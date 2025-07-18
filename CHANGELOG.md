@@ -16,6 +16,7 @@ Journal des modifications
 - Refonte CSS de la page de connexion/page d'accueil
 - [FIX] Modification d'une structure impossible
 - [FIX] Recherche d'individus : suppression de la limite de 100 résultats maximum.
+- [FIX] Dépôt de thèse : plantage de l'annulation de la validation des corrections de la thèse.
 
 10.2.1
 ------

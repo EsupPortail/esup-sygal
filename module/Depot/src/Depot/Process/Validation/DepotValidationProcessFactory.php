@@ -16,6 +16,10 @@ class DepotValidationProcessFactory implements FactoryInterface
     {
         $service = new DepotValidationProcess();
 
+        /** @var \Doctrine\ORM\EntityManager $entityManager */
+        $entityManager = $container->get('doctrine.entitymanager.orm_default');
+        $service->setEntityManager($entityManager);
+
         /** @var UserContextService $userContextService */
         $userContextService = $container->get(UserContextService::class);
         $service->setUserContextService($userContextService);
@@ -36,7 +40,6 @@ class DepotValidationProcessFactory implements FactoryInterface
         /** @var \Depot\Service\Notification\DepotNotificationFactory $depotNotificationFactory */
         $depotNotificationFactory = $container->get(DepotNotificationFactory::class);
         $service->setDepotNotificationFactory($depotNotificationFactory);
-
 
         return $service;
     }

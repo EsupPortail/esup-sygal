@@ -163,6 +163,7 @@ return [
                                 'these' => '\d+',
                             ],
                             'defaults'    => [
+                                /** @see ValidationController::modifierValidationCorrectionTheseAction() */
                                 'action' => 'modifier-validation-correction-these',
                             ],
                         ],

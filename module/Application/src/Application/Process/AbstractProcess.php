@@ -36,7 +36,7 @@ abstract class AbstractProcess
     protected function rollback(?Exception $reason = null): void
     {
         try {
-            $this->entityManager->getConnection()->rollback();
+            $this->entityManager->getConnection()->rollBack();
         } catch (\Doctrine\DBAL\Exception $e) {
             throw new RuntimeException(
                 "Echec du rollback en bdd" . ($reason ? sprintf(" (raison du rollback : %s)", $reason->getMessage()) : ""),
