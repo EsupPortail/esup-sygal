@@ -25,7 +25,7 @@ use UnicaenApp\Service\MessageCollector;
  * @see \Depot\Controller\DepotController::validationPageDeCouvertureAction()
  */
 
-$canRefreshThese = $this->isAllowed($these, ThesePrivileges::THESE_REFRESH);
+$canRefreshThese = false;//$this->isAllowed($these, ThesePrivileges::THESE_REFRESH); // le refresh d'une thèse ne fonctionne plus
 $canValidate = $this->isAllowed($these, ValidationPrivileges::VALIDATION_PAGE_DE_COUVERTURE);
 $canUnvalidate = $this->isAllowed($these, ValidationPrivileges::VALIDATION_PAGE_DE_COUVERTURE_SUPPR);
 ?>
