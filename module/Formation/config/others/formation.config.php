@@ -47,7 +47,7 @@ return [
                     FormationStatsXlsxExport::FORMATION_DATA_TAB => [
                         'source_type' => 'db',
                         'source' => 'v_extract_formation',
-                        'columns' => 'module_libelle formation_id	formation_titre	session_id	session_intervenants	session_modalite	session_type	session_structures_valides	session_etab_orga	session_responsable	session_nb_nonclasses	session_nb_liste_princ	session_nb_liste_princ_etab    session_nb_liste_compl	seance_id	seance_annee_debut	seance_debut	seance_fin	seance_debut_annee_univ seance_nb_h	seance_nb_presents	seance_nb_absents	seance_nb_presents_etab',
+                        'columns' => 'module_libelle formation_id	formation_titre	session_id	session_intervenants	session_modalite	session_type	session_structures_valides	session_etab_orga	session_responsable	session_nb_nonclasses	session_nb_liste_princ	session_nb_liste_princ_etab    session_nb_liste_compl	seance_id	seance_annee_debut	seance_debut	seance_fin	seance_debut_annee_univ	seance_nb_h	seance_nb_presents	seance_nb_absents	seance_nb_presents_etab',
                         'data_processors' => [
                             [
                                 'name' => EtablissementExplodeDataProcessor::class,
@@ -77,7 +77,7 @@ return [
                     FormationStatsXlsxExport::DOCTORANT_DATA_TAB => [
                         'source_type' => 'db',
                         'source' => 'v_extract_formation_presence',
-                        'columns' => 'formation_id,formation_libelle,session_id,session_intervenant,session_modalite,session_type,session_etab_orga,doctorant_id,doctorant_nom_usuel,doctorant_nom_patronymique,doctorant_prenoms,doctorant_etablissement,these_ed,these_ur,these_annee_doctorat,these_annees_inscription,session_date_inscription,seance_id,seance_debut,seance_debut_annee_univ,seance_statut_presence    session_nb_heures_suivies_par_doctorant',
+                        'columns' => 'formation_id,formation_libelle,session_id,session_intervenant,session_modalite,session_type,session_etab_orga,doctorant_id,doctorant_nom_usuel,doctorant_nom_patronymique,doctorant_prenoms,doctorant_etablissement,these_ed,these_ur,these_annee_doctorat,these_annees_inscription,session_date_inscription,session_statut_inscription,seance_id,seance_debut,seance_debut_annee_univ,seance_statut_presence,session_nb_heures,session_nb_heures_suivies_par_doctorant',
                         // Filtres à appliquer pour transformer des valeurs de colonnes/attributs issues de la source
                         // en nouvelles valeurs de colonnes destination.
                         // Tableau ordonné de services ou de classes implémentant obligatoirement l'interface

@@ -24,6 +24,8 @@ Journal des modifications
 - [FIX] Plantage dans la génération de doc à cause d'une signature de méthode dans AdmissionFinancementTemplateVariable.
 - [FIX] Modue Dépôt de thèse : impossibilité de déposer des fichiers hors PDF expurgés pour une version corrigée (aka second dépôt).
 - [FIX] Modue Dépôt de thèse : impossibilité de supprimer le fichier de thèse PDF expurgé pour une version corrigée (aka second dépôt).
+- [FIX] Modue Dépôt de thèse : impossibilité de supprimer le fichier de thèse PDF expurgé pour une version corrigée (aka second dépôt).
+- [FIX] Export Excel des formations/sessions/séances : correction de la config pour inclure les colonnes session_statut_inscription et session_nb_heures.
 
 10.2.1
 ------
