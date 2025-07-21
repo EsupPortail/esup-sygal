@@ -3,11 +3,12 @@
 namespace Application\Controller\Plugin;
 
 use Application\RouteMatch;
-use UnicaenApp\Service\EntityManagerAwareInterface;
-use UnicaenApp\Service\EntityManagerAwareTrait;
 use Laminas\Mvc\Controller\Plugin\Forward as ForwardPlugin;
 use Laminas\Mvc\Exception\DomainException;
 use Laminas\Mvc\InjectApplicationEventInterface;
+use Laminas\Stdlib\Parameters;
+use UnicaenApp\Service\EntityManagerAwareInterface;
+use UnicaenApp\Service\EntityManagerAwareTrait;
 
 /**
  * Created by PhpStorm.
@@ -33,12 +34,12 @@ class Forward extends ForwardPlugin implements EntityManagerAwareInterface
 
         // Allow passing parameters to seed the RouteMatch with & copy matched route name
         if ($params !== null) {
-            // début modif
-//            $routeMatch = new RouteMatch($params);
-//            $routeMatch->setMatchedRouteName($event->getRouteMatch()->getMatchedRouteName());
-            $routeMatch = $this->createRouteMatch($params, $event->getRouteMatch()->getMatchedRouteName());
+            $routeMatch = new RouteMatch($params);
+            $routeMatch->setMatchedRouteName($event->getRouteMatch()->getMatchedRouteName());
+            ///////////// debut ajout /////////////
+            $routeMatch->setEntityManager($this->getEntityManager());
+            ///////////// fin ajout /////////////
             $event->setRouteMatch($routeMatch);
-            // fin modif
         }
 
         if ($this->numNestedForwards > $this->maxNestedForwards) {
@@ -50,7 +51,15 @@ class Forward extends ForwardPlugin implements EntityManagerAwareInterface
         $sharedEvents = $event->getApplication()->getEventManager()->getSharedManager();
         $listeners = $this->detachProblemListeners($sharedEvents);
 
-        $return = $controller->dispatch($event->getRequest(), $event->getResponse());
+        ///////////// debut modif /////////////
+//        $return = $controller->dispatch($request, $event->getResponse());
+        // Incroyable mais vrai : les query params passent à l'as !!
+        /** @var \Laminas\Http\Request $request */
+        $request = $event->getRequest();
+        $request->setQuery(new Parameters($params['query'] ?? []));
+
+        $return = $controller->dispatch($request, $event->getResponse());
+        ///////////// fin modif /////////////
 
         // If we detached any listeners, reattach them now:
         $this->reattachProblemListeners($sharedEvents, $listeners);
@@ -58,14 +67,5 @@ class Forward extends ForwardPlugin implements EntityManagerAwareInterface
         $this->numNestedForwards--;
 
         return $return;
-    }
-
-    private function createRouteMatch($params, $matchedRouteName)
-    {
-        $routeMatch = new RouteMatch($params);
-        $routeMatch->setMatchedRouteName($matchedRouteName);
-        $routeMatch->setEntityManager($this->getEntityManager());
-
-        return $routeMatch;
     }
 }

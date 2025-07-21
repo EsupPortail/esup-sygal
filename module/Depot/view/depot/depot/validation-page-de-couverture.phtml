@@ -161,8 +161,8 @@ $canUnvalidate = $this->isAllowed($these, ValidationPrivileges::VALIDATION_PAGE_
 
 
 <!-------------------------------------- Next step --------------------------------------->
-<div id="nextStepDiv" data-url="<?php echo $nextStepUrl ?>" style="display: none">
-    <!-- màj via ajax -->
+<div id="nextStepDiv" data-url="<?php echo $nextStepUrl ?>">
+    <?php echo $this->renderChildModel('nextStepBoxViewModel') ?>
 </div>
 
 
@@ -173,19 +173,19 @@ $canUnvalidate = $this->isAllowed($these, ValidationPrivileges::VALIDATION_PAGE_
             $("body").addClass("wait");
         });
 
-        var refreshingNextStep = function (done, effect) {
-            return function () {
-                $("#nextStepDiv").addClass("loading").refresh(null, function () {
-                    $(this).removeClass("loading").show();
-                    if (done) done();
-                });
-            };
-        };
-
-        // au chargement de la page, on actualise toutes les div en cascade.
-        runInCascade([
-            refreshingNextStep
-        ], self);
+        // var refreshingNextStep = function (done, effect) {
+        //     return function () {
+        //         $("#nextStepDiv").addClass("loading").refresh(null, function () {
+        //             $(this).removeClass("loading").show();
+        //             if (done) done();
+        //         });
+        //     };
+        // };
+        //
+        // // au chargement de la page, on actualise toutes les div en cascade.
+        // runInCascade([
+        //     refreshingNextStep
+        // ], self);
 
         $("body").one("event-page-de-couverture-validated-or-not", function (event, data) {
             // La validation vient d'être saisie.

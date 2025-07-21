@@ -55,7 +55,7 @@ use UnicaenIdref\View\Helper\IdrefLinkViewHelper;
  * @method string                                                    partialloop($name = null, $values = null)
  * @method \Laminas\View\Helper\Partial|string                          partial($name = null, $values = null)
  * @method \Laminas\View\Helper\Placeholder                             placeholder($name = null)
- * @method string                                                    renderchildmodel($child)
+ * @method string                                                    renderChildModel($child)
  * @method \Laminas\View\Helper\RenderToPlaceholder                     rendertoplaceholder($script, $placeholder)
  * @method string                                                    serverurl($requestUri = null)
  * @method \Laminas\View\Helper\ViewModel                               viewmodel()

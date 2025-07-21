@@ -64,15 +64,15 @@ class UploaderHelper extends AbstractHelper
     }
 
     /**
-     * Génrère le code HTML du_ formulaire de dépôt.
+     * Génrère le code HTML du_ formulaire de dépôt par défaut ou de celui spécifié.
      * NB: le formulaire s'affiche ssi une URL de dépôt a été spécifiée.
      *
      * @return string Code HTML
      */
-    public function renderForm(): string
+    public function renderForm(?UploadForm $uploadForm = null): string
     {
         return $this->getView()->render("upload-form.phtml", [
-            'form' => $this->form,
+            'form' => $uploadForm ?: $this->form,
             'url' => $this->url,
         ]);
     }

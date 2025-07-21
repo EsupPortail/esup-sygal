@@ -5,9 +5,6 @@ namespace Depot\Controller;
 use Application\Command\Exception\TimedOutCommandException;
 use Application\Controller\AbstractController;
 use Application\Entity\Db\Role;
-use DateTime;
-use Depot\Rule\RemiseExemplairePapierRuleAwareTrait;
-use Validation\Entity\Db\TypeValidation;
 use Application\Entity\Db\Variable;
 use Application\Filter\IdifyFilterAwareTrait;
 use Application\Service\DomaineHal\DomaineHalServiceAwareTrait;
@@ -15,9 +12,11 @@ use Application\Service\MailConfirmationServiceAwareTrait;
 use Application\Service\Role\ApplicationRoleServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
 use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;
-use Validation\Service\ValidationThese\ValidationTheseServiceAwareTrait;
 use Application\Service\Variable\VariableServiceAwareTrait;
 use Application\Utils\FormUtils;
+use DateTime;
+use Depot\Dispatch\Depot\DispatchServiceAwareTrait as DepotDispatchServiceAwareTrait;
+use Depot\Dispatch\Workflow\DispatchServiceAwareTrait as WorkflowDispatchServiceAwareTrait;
 use Depot\Entity\Db\Attestation;
 use Depot\Entity\Db\Diffusion;
 use Depot\Entity\Db\FichierThese;
@@ -33,10 +32,10 @@ use Depot\Form\Metadonnees\MetadonneeTheseFieldset;
 use Depot\Form\PointsDeVigilanceForm;
 use Depot\Form\RdvBuTheseDoctorantForm;
 use Depot\Form\RdvBuTheseForm;
+use Depot\Rule\RemiseExemplairePapierRuleAwareTrait;
 use Depot\Service\FichierThese\Exception\ValidationImpossibleException;
 use Depot\Service\FichierThese\FichierTheseServiceAwareTrait;
 use Depot\Service\Notification\DepotNotificationFactoryAwareTrait;
-use Depot\Service\These\Convention\ConventionPdfExporter;
 use Depot\Service\These\DepotServiceAwareTrait;
 use Depot\Service\Validation\DepotValidationServiceAwareTrait;
 use Depot\Service\Workflow\WorkflowServiceAwareTrait;
@@ -44,7 +43,6 @@ use Doctrine\ORM\OptimisticLockException;
 use Fichier\Entity\Db\NatureFichier;
 use Fichier\Entity\Db\VersionFichier;
 use Fichier\Service\Fichier\FichierStorageServiceAwareTrait;
-use Fichier\Service\Storage\Adapter\Exception\StorageAdapterException;
 use Fichier\Service\VersionFichier\VersionFichierServiceAwareTrait;
 use Laminas\EventManager\Event;
 use Laminas\Form\Element\Hidden;
@@ -55,7 +53,6 @@ use Laminas\InputFilter\InputFilter;
 use Laminas\Stdlib\ParametersInterface;
 use Laminas\View\Model\ViewModel;
 use Laminas\View\Renderer\PhpRenderer;
-use Mpdf\MpdfException;
 use Notification\Service\NotifierServiceAwareTrait;
 use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
 use Structure\Service\UniteRecherche\UniteRechercheServiceAwareTrait;
@@ -65,6 +62,8 @@ use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Service\EntityManagerAwareTrait;
 use UnicaenApp\Service\MessageCollectorAwareTrait;
 use UnicaenApp\Traits\MessageAwareInterface;
+use Validation\Entity\Db\TypeValidation;
+use Validation\Service\ValidationThese\ValidationTheseServiceAwareTrait;
 
 class DepotController extends AbstractController
 {
@@ -89,6 +88,9 @@ class DepotController extends AbstractController
     use VariableServiceAwareTrait;
     use UtilisateurServiceAwareTrait;
     use DomaineHalServiceAwareTrait;
+
+    use DepotDispatchServiceAwareTrait;
+    use WorkflowDispatchServiceAwareTrait;
 
     use RemiseExemplairePapierRuleAwareTrait;
 
@@ -247,7 +249,7 @@ class DepotController extends AbstractController
         return $view;
     }
 
-    public function detailDescriptionAction()
+    public function detailDescriptionAction(): ViewModel
     {
         $these = $this->requestedThese();
 
@@ -259,6 +261,14 @@ class DepotController extends AbstractController
                 WfEtape::PSEUDO_ETAPE_FINALE,
             ]),
         ]);
+
+        /** @see \Depot\Controller\WorkflowController::nextStepBoxAction() */
+        $nextStepBoxViewModel = $this->workflowDispatchService->dispatchNextStepBox($this, $these, null, [
+            WfEtape::CODE_SIGNALEMENT_THESE,
+            WfEtape::PSEUDO_ETAPE_FINALE,
+        ]);
+        $view->addChild($nextStepBoxViewModel, 'nextStepBoxViewModel');
+
         $view->setTemplate('depot/depot/description');
 
         return $view;
@@ -275,7 +285,7 @@ class DepotController extends AbstractController
 
         $informations = $this->theseService->fetchInformationsPageDeCouverture($these);
 
-        return new ViewModel([
+        $view = new ViewModel([
             'these'            => $these,
             'validation'       => $validation ?: null,
             'apercevoirPdcUrl' => $this->urlFichierThese()->apercevoirPageDeCouverture($these),
@@ -286,9 +296,15 @@ class DepotController extends AbstractController
             'informations'     => $informations,
             'msgCollector'     => $this->getServiceMessageCollector(),
         ]);
+
+        /** @see \Depot\Controller\WorkflowController::nextStepBoxAction() */
+        $nextStepBoxViewModel = $this->workflowDispatchService->dispatchNextStepBox($this, $these, null, [WfEtape::CODE_VALIDATION_PAGE_DE_COUVERTURE]);
+        $view->addChild($nextStepBoxViewModel, 'nextStepBoxViewModel');
+
+        return $view;
     }
 
-    public function detailDepotAction()
+    public function detailDepotAction(): ViewModel
     {
         return $this->detailDepotActionViewModel();
     }
@@ -298,11 +314,7 @@ class DepotController extends AbstractController
         return $this->detailDepotActionViewModel(true);
     }
 
-    /**
-     * @param bool $versionCorrigee
-     * @return ViewModel
-     */
-    private function detailDepotActionViewModel($versionCorrigee = false)
+    private function detailDepotActionViewModel(bool $versionCorrigee = false): ViewModel
     {
         $these = $this->requestedThese();
 
@@ -311,8 +323,9 @@ class DepotController extends AbstractController
             VersionFichier::CODE_ORIG;
 
         $view = new ViewModel([
-            'these'            => $these,
-            'versionCorrigee'  => $versionCorrigee,
+            'these' => $these,
+            'versionCorrigee' => $versionCorrigee,
+
             'theseUrl'         => $this->urlDepot()->depotFichiers($these, NatureFichier::CODE_THESE_PDF, $codeVersion),
             'annexesUrl'       => $this->urlDepot()->depotFichiers($these, NatureFichier::CODE_FICHIER_NON_PDF, $codeVersion),
             'attestationUrl'   => $this->urlDepot()->attestationThese($these, $codeVersion),
@@ -324,6 +337,35 @@ class DepotController extends AbstractController
                 WfEtape::PSEUDO_ETAPE_FINALE,
             ]),
         ]);
+
+        /** @see \Depot\Controller\DepotController::theseAction() */
+        $theseViewModel = $this->depotDispatchService->depotFichiersDispatch($this, $these, NatureFichier::CODE_THESE_PDF, $codeVersion);
+        $view->addChild($theseViewModel, 'theseViewModel');
+
+        /** @see \Depot\Controller\DepotController::annexesAction() */
+        $annexesViewModel = $this->depotDispatchService->depotFichiersDispatch($this, $these, NatureFichier::CODE_FICHIER_NON_PDF, $codeVersion);
+        $view->addChild($annexesViewModel, 'annexesViewModel');
+
+        /** @see \Depot\Controller\DepotController::diffusionAction() */
+        $diffusionViewModel = $this->depotDispatchService->diffusionTheseDispatch($this, $these, $codeVersion);
+        if ($diffusionViewModel instanceof ViewModel) {
+            $view->addChild($diffusionViewModel, 'diffusionViewModel');
+        }
+
+        /** @see \Depot\Controller\DepotController::attestationAction() */
+        $attestationViewModel = $this->depotDispatchService->attestationTheseDispatch($this, $these, $codeVersion);
+        if ($attestationViewModel instanceof ViewModel) {
+            $view->addChild($attestationViewModel, 'attestationViewModel');
+        }
+
+        /** @see \Depot\Controller\WorkflowController::nextStepBoxAction() */
+        $nextStepBoxViewModel = $this->workflowDispatchService->dispatchNextStepBox($this, $these, null, [
+            $versionCorrigee ? WfEtape::CODE_DEPOT_VERSION_ORIGINALE_CORRIGEE : WfEtape::CODE_DEPOT_VERSION_ORIGINALE,
+            $versionCorrigee ? WfEtape::CODE_ATTESTATIONS_VERSION_CORRIGEE : WfEtape::CODE_ATTESTATIONS,
+            $versionCorrigee ? WfEtape::CODE_AUTORISATION_DIFFUSION_THESE_VERSION_CORRIGEE : WfEtape::CODE_AUTORISATION_DIFFUSION_THESE,
+            WfEtape::PSEUDO_ETAPE_FINALE,
+        ]);
+        $view->addChild($nextStepBoxViewModel, 'nextStepBoxViewModel');
 
         $view->setTemplate('depot/depot/depot');
 
@@ -371,7 +413,7 @@ class DepotController extends AbstractController
      * @param bool $versionCorrigee
      * @return Response|ViewModel
      */
-    private function detailArchivageActionViewModel($versionCorrigee = false)
+    private function detailArchivageActionViewModel(bool $versionCorrigee = false): Response|ViewModel
     {
         $these = $this->requestedThese();
 
@@ -432,7 +474,38 @@ class DepotController extends AbstractController
                 WfEtape::PSEUDO_ETAPE_FINALE,
             ]),
         ]);
+
         $view->setTemplate('depot/depot/archivage');
+
+        /** @see \Depot\Controller\DepotController::testArchivabiliteAction() */
+        $testArchivabiliteViewModel = $this->depotDispatchService->testArchivabiliteDispatch($this, $these, $version);
+        $view->addChild($testArchivabiliteViewModel, 'testArchivabiliteViewModel');
+
+        /** @see \Depot\Controller\DepotController::theseRetraiteeAction() */
+        $theseRetraiteeViewModel = $this->depotDispatchService->depotFichiersDispatch($this, $these, NatureFichier::CODE_THESE_PDF, $version, true);
+        $view->addChild($theseRetraiteeViewModel, 'theseRetraiteeViewModel');
+
+        /** @see \Depot\Controller\DepotController::archivabiliteTheseAction() */
+        $archivabiliteTheseViewModel = $this->depotDispatchService->archivabiliteTheseDispatch($this, $these, $version, true);
+        $view->addChild($archivabiliteTheseViewModel, 'archivabiliteTheseViewModel');
+
+        /** @see \Depot\Controller\DepotController::conformiteTheseRetraiteeAction() */
+        $conformiteTheseRetraiteeViewModel = $this->depotDispatchService->conformiteTheseRetraiteeDispatch($this, $these, $version, true);
+        $view->addChild($conformiteTheseRetraiteeViewModel, 'conformiteTheseRetraiteeViewModel');
+
+        /** @see \Depot\Controller\WorkflowController::nextStepBoxAction() */
+        $nextStepBoxViewModel = $this->workflowDispatchService->dispatchNextStepBox($this, $these, null, [
+            WfEtape::CODE_ARCHIVABILITE_VERSION_ORIGINALE,
+            WfEtape::CODE_ARCHIVABILITE_VERSION_ORIGINALE_CORRIGEE,
+            WfEtape::CODE_ARCHIVABILITE_VERSION_ARCHIVAGE,
+            WfEtape::CODE_ARCHIVABILITE_VERSION_ARCHIVAGE_CORRIGEE,
+            WfEtape::CODE_DEPOT_VERSION_ARCHIVAGE,
+            WfEtape::CODE_DEPOT_VERSION_ARCHIVAGE_CORRIGEE,
+            WfEtape::CODE_VERIFICATION_VERSION_ARCHIVAGE,
+            WfEtape::CODE_VERIFICATION_VERSION_ARCHIVAGE_CORRIGEE,
+            WfEtape::PSEUDO_ETAPE_FINALE,
+        ]);
+        $view->addChild($nextStepBoxViewModel, 'nextStepBoxViewModel');
 
         return $view;
     }
@@ -475,6 +548,13 @@ class DepotController extends AbstractController
             'asynchronous' => $asynchronous,
             'remiseExemplairePapierRequiredResult' => $remiseExemplairePapierRequiredResult,
         ]);
+
+        /** @see \Depot\Controller\WorkflowController::nextStepBoxAction() */
+        $nextStepBoxViewModel = $this->workflowDispatchService->dispatchNextStepBox($this, $these, null, [
+            WfEtape::CODE_RDV_BU_SAISIE_DOCTORANT,
+            WfEtape::CODE_RDV_BU_VALIDATION_BU,
+        ]);
+        $view->addChild($nextStepBoxViewModel, 'nextStepBoxViewModel');
 
         $view->setTemplate('depot/depot/rdv-bu' . ($estDoctorant ? '-doctorant' : null));
 
@@ -735,13 +815,13 @@ class DepotController extends AbstractController
             sprintf("Thèse %s au format PDF", $estCorrige ? "corrigée" : "");
 
         $form = $this->uploader()->getForm();
-        $form->setAttribute('id', uniqid('form-'));
-//        $form->addElement((new Hidden('annexe'))->setValue(0));
-        $form->addElement((new Hidden('nature'))->setValue($this->idify($nature)));
-        $form->addElement((new Hidden('version'))->setValue($this->idify($version)));
-        if ($validerAuto) {
-            $form->addElement((new Hidden('validerAuto'))->setValue(1));
-        }
+//        $form->setAttribute('id', uniqid('form-'));
+////        $form->addElement((new Hidden('annexe'))->setValue(0));
+//        $form->addElement((new Hidden('nature'))->setValue($this->idify($nature)));
+//        $form->addElement((new Hidden('version'))->setValue($this->idify($version)));
+//        if ($validerAuto) {
+//            $form->addElement((new Hidden('validerAuto'))->setValue(1));
+//        }
 
         $view = new ViewModel([
             'titre'          => $titre,
@@ -751,7 +831,9 @@ class DepotController extends AbstractController
             'theseListUrl'   => $this->urlFichierThese()->listerFichiers($these, $nature, $version, false, ['inclureValidite' => $inclureValidite]),
             'nature'         => $nature,
             'versionFichier' => $version,
+            'validerAuto' => $validerAuto,
         ]);
+
         $view->setTemplate('depot/depot/depot/these');
 
         return $view;
@@ -852,11 +934,11 @@ class DepotController extends AbstractController
             sprintf("Fichiers %s expurgés hors PDF", $estCorrige ? "corrigés" : "") :
             sprintf("Fichiers %s hors PDF", $estCorrige ? "corrigés" : "");
 
-        $form = $this->uploader()->getForm();
-        $form->setAttribute('id', uniqid('form-'));
-        $form->addElement((new Hidden('annexe'))->setValue(1));
-        $form->addElement((new Hidden('nature'))->setValue($this->idify($nature)));
-        $form->addElement((new Hidden('version'))->setValue($this->idify($version)));
+//        $form = $this->uploader()->getForm();
+//        $form->setAttribute('id', uniqid('form-'));
+//        $form->addElement((new Hidden('annexe'))->setValue(1));
+//        $form->addElement((new Hidden('nature'))->setValue($this->idify($nature)));
+//        $form->addElement((new Hidden('version'))->setValue($this->idify($version)));
 
         $view = new ViewModel([
             'titre'          => $titre,
@@ -1252,16 +1334,21 @@ class DepotController extends AbstractController
         return $this->attestationTheseForm;
     }
 
-    private function isEtapeDiffusionVisible(These $these, VersionFichier $version)
+    private function isEtapeDiffusionVisible(These $these, VersionFichier $version): bool
     {
-        $versionInitialeAtteignable = $this->workflowService->findOneByEtape($these, WfEtape::CODE_AUTORISATION_DIFFUSION_THESE)->getAtteignable();
-        $versionCorrigeeAtteignable = $this->workflowService->findOneByEtape($these, WfEtape::CODE_AUTORISATION_DIFFUSION_THESE_VERSION_CORRIGEE)->getAtteignable();
-        return
-            $version->estVersionCorrigee() && $versionCorrigeeAtteignable ||
-            !$version->estVersionCorrigee() && $versionInitialeAtteignable /*&& !$versionCorrigeeAtteignable*/;
+//        $versionInitialeAtteignable = $this->workflowService->findOneByEtape($these, WfEtape::CODE_AUTORISATION_DIFFUSION_THESE)->getAtteignable();
+//        $versionCorrigeeAtteignable = $this->workflowService->findOneByEtape($these, WfEtape::CODE_AUTORISATION_DIFFUSION_THESE_VERSION_CORRIGEE)->getAtteignable();
+//        return
+//            $version->estVersionCorrigee() && $versionCorrigeeAtteignable ||
+//            !$version->estVersionCorrigee() && $versionInitialeAtteignable /*&& !$versionCorrigeeAtteignable*/;
+        if ($version->estVersionCorrigee()) {
+            return $this->workflowService->findOneByEtape($these, WfEtape::CODE_AUTORISATION_DIFFUSION_THESE_VERSION_CORRIGEE)->getAtteignable();
+        } else {
+            return $this->workflowService->findOneByEtape($these, WfEtape::CODE_AUTORISATION_DIFFUSION_THESE)->getAtteignable();
+        }
     }
 
-    public function diffusionAction()
+    public function diffusionAction(): false|ViewModel
     {
         $these = $this->requestedThese();
         $version = $this->fichierTheseService->fetchVersionFichier($this->params()->fromQuery('version'));

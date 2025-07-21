@@ -2,6 +2,7 @@
 
 use Application\View\Renderer\PhpRenderer;
 use Depot\Entity\Db\FichierThese;
+use Laminas\Form\Element\Hidden;
 
 /**
  * @var PhpRenderer $this
@@ -10,6 +11,10 @@ use Depot\Entity\Db\FichierThese;
  * @var string      $uploadUrl
  * @var string      $uploadedFilesListUrl
  * @var int         $maxUploadableFilesCount
+ *
+ * @var \Fichier\Entity\Db\NatureFichier $nature
+ * @var \Fichier\Entity\Db\VersionFichier $versionFichier
+ * @var bool $validerAuto
  */
 
 //$canUpload = $this->isAllowed($these, $p = ThesePrivileges::privilegeDeposerFor($nature, $versionFichier));
@@ -27,9 +32,15 @@ $uploaderDivId = uniqid('uploader-div-');
         <!-- formulaire de dépôt -->
         <?php if ($canUpload): ?>
             <?php
-            $form = $uploader->getForm();
+            $form = clone $uploader->getForm(); // NB: nouvelle instance car il peut y avoir 2 uploaders dans la vue mère
+            $form->setAttribute('id', uniqid('form-'));
+            $form->addElement((new Hidden('nature'))->setValue($nature->getCode()));
+            $form->addElement((new Hidden('version'))->setValue($versionFichier->getCode()));
+            if ($validerAuto) {
+                $form->addElement((new Hidden('validerAuto'))->setValue(1));
+            }
             $form->get('files')->setLabel("")->setAttribute('multiple', false)->setAttribute('accept', '.pdf');
-            echo $uploader->renderForm();
+            echo $uploader->renderForm($form);
             ?>
             <div class="clearfix"></div>
             <div class="text-sm text-info" style="margin-top: 8px; max-width: 250px">

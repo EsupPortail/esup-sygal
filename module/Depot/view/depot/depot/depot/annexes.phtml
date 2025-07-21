@@ -47,10 +47,14 @@ $maxFileCountAutres = 50;
             <!-- formulaire de dépôt -->
             <?php if ($canEdit): ?>
                 <?php
-                $form = $uploader->getForm(); // NB: même instance de formulaire qu'au-dessus
+                $form = clone $uploader->getForm(); // NB: nouvelle instance car il peut y avoir 2 uploaders dans la vue mère
+                $form->setAttribute('id', uniqid('form-'));
+                $form->addElement((new Hidden('annexe'))->setValue(1));
+                $form->addElement((new Hidden('nature'))->setValue($nature->getCode()));
+                $form->addElement((new Hidden('version'))->setValue($versionFichier->getCode()));
                 $form->get('files')->setLabel("")->setAttribute('multiple', true)->setAttribute('accept', null);
                 $form->addElement((new Hidden('annexe'))->setValue(1));
-                echo $uploader->renderForm();
+                echo $uploader->renderForm($form);
                 ?>
                 <div class="clearfix"></div>
                 <div class="text-sm text-info" style="margin-top: 8px; max-width: 250px">

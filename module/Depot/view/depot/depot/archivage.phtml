@@ -59,29 +59,29 @@ $pageDepotThese = $this->navigation('navigation')->getContainer()->findOneBy('id
 
     <!-------------------------------------- Test Archivabilité thèse --------------------------------------->
     <div id="testArchivabiliteTheseOriginaleDiv" class="_box" data-url="<?php echo $testArchivabiliteTheseOriginaleUrl ?>">
-        <!-- màj via ajax -->
+        <?php echo $this->renderChildModel('testArchivabiliteViewModel') ?>
     </div>
 
     <!-------------------------------------- Thèse retraitée --------------------------------------->
-    <div id="theseRetraiteeDiv" data-url="<?php echo $theseRetraiteeUrl ?>" style="display: none">
-        <!-- màj via ajax -->
+    <div id="theseRetraiteeDiv" data-url="<?php echo $theseRetraiteeUrl ?>">
+        <?php echo $this->renderChildModel('theseRetraiteeViewModel') ?>
     </div>
 
     <!-------------------------------------- Archivabilité thèse retraitée --------------------------------------->
-    <div id="validiteTheseRetraiteeDiv" class="_box" data-url="<?php echo $archivabiliteTheseRetraiteeUrl ?>" style="display: none">
-        <!-- màj via ajax -->
+    <div id="validiteTheseRetraiteeDiv" class="_box" data-url="<?php echo $archivabiliteTheseRetraiteeUrl ?>">
+        <?php echo $this->renderChildModel('archivabiliteTheseViewModel') ?>
     </div>
 
     <!-------------------------------------- Conformité thèse retraitée --------------------------------------->
-    <div id="conformiteTheseRetraiteeDiv" class="_box" data-url="<?php echo $conformiteTheseRetraiteeUrl ?>" style="display: none">
-        <!-- màj via ajax -->
+    <div id="conformiteTheseRetraiteeDiv" class="_box" data-url="<?php echo $conformiteTheseRetraiteeUrl ?>">
+        <?php echo $this->renderChildModel('conformiteTheseRetraiteeViewModel') ?>
     </div>
 
 <?php endif ?>
 
 <!-------------------------------------- Next step --------------------------------------->
 <div id="nextStepDiv" data-url="<?php echo $nextStepUrl ?>">
-    <!-- màj via ajax -->
+    <?php echo $this->renderChildModel('nextStepBoxViewModel') ?>
 </div>
 
 
@@ -139,14 +139,14 @@ $pageDepotThese = $this->navigation('navigation')->getContainer()->findOneBy('id
             };
         };
 
-        // au chargement de la page, on actualise toutes les div en cascade.
-        runInCascade([
-            refreshingTestArchivabiliteTheseOriginale,
-            refreshingTheseRetraitee,
-            refreshingArchivabiliteTheseRetraitee,
-            refreshingConformiteTheseRetraitee,
-            refreshingNextStep
-        ], self);
+        // // au chargement de la page, on actualise toutes les div en cascade.
+        // runInCascade([
+        //     refreshingTestArchivabiliteTheseOriginale,
+        //     refreshingTheseRetraitee,
+        //     refreshingArchivabiliteTheseRetraitee,
+        //     refreshingConformiteTheseRetraitee,
+        //     refreshingNextStep
+        // ], self);
 
         // Un fichier de thèse retraitée vient d'être déposé ou supprimé.
         // (cf. vue "detail/depot/these-retraitee")

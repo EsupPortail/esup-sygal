@@ -16,6 +16,7 @@ use These\Entity\Db\These;
  * @var string         $theseListUrl
  * @var NatureFichier  $nature
  * @var VersionFichier $versionFichier
+ * @var bool $validerAuto
  */
 
 $maintenant = new DateTime();
@@ -44,6 +45,10 @@ $maxFileCountThese = 1;
     'uploadUrl'               => $uploadUrl,
     'uploadedFilesListUrl'    => $theseListUrl,
     'maxUploadableFilesCount' => $maxFileCountThese,
+
+    'nature' => $nature,
+    'versionFichier' => $versionFichier,
+    'validerAuto' => $validerAuto,
 ]);
 ?>
 

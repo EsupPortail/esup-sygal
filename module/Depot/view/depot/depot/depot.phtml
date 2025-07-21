@@ -7,13 +7,17 @@ use Application\View\Renderer\PhpRenderer;
  * Dépot des originaux.
  *
  * @var PhpRenderer $this
+ *
  * @var These       $these
  * @var bool        $versionCorrigee
+ *
  * @var string      $theseUrl
  * @var string      $annexesUrl
  * @var string      $attestationUrl
  * @var string      $diffusionUrl
  * @var string      $nextStepUrl
+ *
+ * @see \Depot\Controller\DepotController::detailDepotAction()
  */
 
 $maxFileCountThese = 1;
@@ -43,14 +47,14 @@ $h1 = $versionCorrigee ? "Téléversement version corrigée" : "Téléversement 
             <div class="row" id="<?php echo $divId ?>">
                 <div class="col-md-6">
                     <!-------------------------------------- Thèse PDF --------------------------------------->
-                    <div id="theseDiv" class="" data-url="<?php echo $theseUrl ?>" style="display: none">
-                        <!-- màj via ajax -->
+                    <div id="theseDiv" class="" data-url="<?php echo $theseUrl ?>">
+                        <?php echo $this->renderChildModel('theseViewModel') ?>
                     </div>
                 </div>
                 <div class="col-md-6">
                     <!-------------------------------------- Autres formats --------------------------------------->
-                    <div id="annexesDiv" class="" data-url="<?php echo $annexesUrl ?>" style="display: none">
-                        <!-- màj via ajax -->
+                    <div id="annexesDiv" class="" data-url="<?php echo $annexesUrl ?>">
+                        <?php echo $this->renderChildModel('annexesViewModel') ?>
                     </div>
                 </div>
             </div>
@@ -59,17 +63,17 @@ $h1 = $versionCorrigee ? "Téléversement version corrigée" : "Téléversement 
 
     <!-------------------------------------- Diffusion --------------------------------------->
     <div id="diffusionDiv" data-url="<?php echo $diffusionUrl ?>">
-        <!-- màj via ajax -->
+        <?php echo $this->renderChildModel('diffusionViewModel') ?>
     </div>
 
     <!-------------------------------------- Attestations --------------------------------------->
     <div id="attestationDiv" data-url="<?php echo $attestationUrl ?>">
-        <!-- màj via ajax -->
+        <?php echo $this->renderChildModel('attestationViewModel') ?>
     </div>
 
     <!-------------------------------------- Next step --------------------------------------->
-    <div id="nextStepDiv" data-url="<?php echo $nextStepUrl ?>" style="display: none">
-        <!-- màj via ajax -->
+    <div id="nextStepDiv" data-url="<?php echo $nextStepUrl ?>">
+        <?php echo $this->renderChildModel('nextStepBoxViewModel') ?>
     </div>
 
 </div>
@@ -155,13 +159,13 @@ $h1 = $versionCorrigee ? "Téléversement version corrigée" : "Téléversement 
             };
         };
 
-        // Au chargement de la page, on actualise les div
-        runInCascade([
-            fichiersLoader,
-            { func: diffusionLoader, effect: true },
-            { func: attestationsLoader, effect: true },
-            refreshingNextStep
-        ], self);
+        // // Au chargement de la page, on actualise les div
+        // runInCascade([
+        //     fichiersLoader,
+        //     { func: diffusionLoader, effect: true },
+        //     { func: attestationsLoader, effect: true },
+        //     refreshingNextStep
+        // ], self);
 
         // Un upload de fichier vient de commencer.
         body.on(uploadEventFilesAdded, ".these.widget-uploader", function(event, data) {

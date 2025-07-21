@@ -19,6 +19,10 @@ use Depot\Controller\Factory\DepotControllerFactory;
 use Depot\Controller\Factory\ObserverControllerFactory;
 use Depot\Controller\ObserverController;
 use Depot\Controller\Plugin\Url\UrlDepotPluginFactory;
+use Depot\Dispatch\Depot\DispatchService as DepotDispatchService;
+use Depot\Dispatch\Depot\DispatchServiceFactory as DepotDispatchServiceFactory;
+use Depot\Dispatch\Workflow\DispatchService as WorkflowDispatchService;
+use Depot\Dispatch\Workflow\DispatchServiceFactory as WorkflowDispatchServiceFactory;
 use Depot\Entity\Db\WfEtape;
 use Depot\Feature\Features;
 use Depot\Feature\FournirExemplairePapierTheseFeature;
@@ -1087,6 +1091,9 @@ return [
             // rules
             RemiseExemplairePapierRule::class => RemiseExemplairePapierRuleFactory::class,
             SuppressionAttestationsRequiseRule::class => SuppressionAttestationsRequiseRuleFactory::class,
+            // dispatch
+            DepotDispatchService::class => DepotDispatchServiceFactory::class,
+            WorkflowDispatchService::class => WorkflowDispatchServiceFactory::class,
         ],
         //PageDeCouverturePdfExporter ne doit pas être un singleton afin d'éviter des erreurs de chemins de templates
         'shared' => [

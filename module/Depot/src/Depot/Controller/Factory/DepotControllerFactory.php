@@ -2,17 +2,19 @@
 
 namespace Depot\Controller\Factory;
 
+use Acteur\Service\ActeurThese\ActeurTheseService;
 use Application\Rule\PluginManager\RulePluginManager;
 use Application\Service\DomaineHal\DomaineHalService;
 use Application\Service\MailConfirmationService;
 use Application\Service\Role\RoleService;
 use Application\Service\Utilisateur\UtilisateurService;
-use Depot\Rule\RemiseExemplairePapierRule;
-use Validation\Service\ValidationThese\ValidationTheseService;
 use Application\Service\Variable\VariableService;
 use Depot\Controller\DepotController;
+use Depot\Dispatch\Depot\DispatchService as DepotDispatchService;
+use Depot\Dispatch\Workflow\DispatchService as WorkflowDispatchService;
 use Depot\Form\Description\DescriptionTheseForm;
 use Depot\Form\Metadonnees\MetadonneeTheseFieldset;
+use Depot\Rule\RemiseExemplairePapierRule;
 use Depot\Service\FichierThese\FichierTheseService;
 use Depot\Service\Notification\DepotNotificationFactory;
 use Depot\Service\These\DepotService;
@@ -27,8 +29,8 @@ use Laminas\View\Renderer\PhpRenderer;
 use Notification\Service\NotifierService;
 use Structure\Service\Etablissement\EtablissementService;
 use Structure\Service\UniteRecherche\UniteRechercheService;
-use Acteur\Service\ActeurThese\ActeurTheseService;
 use These\Service\These\TheseService;
+use Validation\Service\ValidationThese\ValidationTheseService;
 
 class DepotControllerFactory
 {
@@ -144,6 +146,12 @@ class DepotControllerFactory
         /** @var RemiseExemplairePapierRule $autorisationDiffusionRule */
         $autorisationDiffusionRule = $container->get(RulePluginManager::class)->get(RemiseExemplairePapierRule::class);
         $controller->setRemiseExemplairePapierRule($autorisationDiffusionRule);
+
+        $depotDispatchService = $container->get(DepotDispatchService::class);
+        $controller->setDepotDispatchService($depotDispatchService);
+
+        $workflowDispatchService = $container->get(WorkflowDispatchService::class);
+        $controller->setWorkflowDispatchService($workflowDispatchService);
 
         return $controller;
     }

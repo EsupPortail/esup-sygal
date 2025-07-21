@@ -47,8 +47,8 @@ $canEdit = $this->isAllowed($these, $privilege);
 </div>
 
 <!-------------------------------------- Next step --------------------------------------->
-<div id="nextStepDiv" data-url="<?php echo $nextStepUrl ?>" style="display: none">
-    <!-- màj via ajax -->
+<div id="nextStepDiv" data-url="<?php echo $nextStepUrl ?>">
+    <?php echo $this->renderChildModel('nextStepBoxViewModel') ?>
 </div>
 
 
@@ -57,22 +57,23 @@ $canEdit = $this->isAllowed($these, $privilege);
     $(function () {
         var self = this;
 
-        var refreshingNextStep = function(done, effect) {
-            return function() {
-                $("#nextStepDiv").addClass("loading").refresh(null, function () {
-                    $(this).removeClass("loading").show();
-                    if (done) done();
-                });
-            };
-        };
-
-        // Au chargement de la page, on actualise les div
-        runInCascade([
-            refreshingNextStep
-        ], self);
+        // var refreshingNextStep = function(done, effect) {
+        //     return function() {
+        //         $("#nextStepDiv").addClass("loading").refresh(null, function () {
+        //             $(this).removeClass("loading").show();
+        //             if (done) done();
+        //         });
+        //     };
+        // };
+        //
+        // // Au chargement de la page, on actualise les div
+        // runInCascade([
+        //     refreshingNextStep
+        // ], self);
 
         $("body").one("event-description-modified", function (event, data) {
             // Les métadonnées viennent d'être modifiées.
+            $("body").addClass("loading");
             event.div.modal('hide'); // ferme la fenêtre modale
             window.location.reload();
         });

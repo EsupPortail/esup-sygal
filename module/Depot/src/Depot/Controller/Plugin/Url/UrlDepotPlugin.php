@@ -63,6 +63,11 @@ class UrlDepotPlugin extends AbstractPlugin
         return $this;
     }
 
+    public function getUrlDepotService(): UrlDepotService
+    {
+        return $this->urlDepotService;
+    }
+
     /**
      * @param array $options
      * @return self

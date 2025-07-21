@@ -160,30 +160,28 @@ alert("Le traitement peut prendre plusieurs minutes. \n\n" +
 </div>
 
 <!-------------------------------------- Next step --------------------------------------->
-<div id="nextStepDiv" data-url="<?php echo $nextStepUrl ?>" style="display: none">
-    <!-- màj via ajax -->
+<div id="nextStepDiv" data-url="<?php echo $nextStepUrl ?>">
+    <?php echo $this->renderChildModel('nextStepBoxViewModel') ?>
 </div>
-
-<?php //echo $this->partial('next-step-box', ['these' => $these, 'etape' => WfEtape::CODE_RDV_BU_VALIDATION_BU]) ?>
 
 
 <script>
     $(".removal").hide();
 
     $(function () {
-        var refreshingNextStep = function(done, effect) {
-            return function() {
-                $("#nextStepDiv").addClass("loading").refresh(null, function () {
-                    $(this).removeClass("loading").show();
-                    if (done) done();
-                });
-            };
-        };
-
-        // au chargement de la page, on actualise toutes les div en cascade.
-        runInCascade([
-            refreshingNextStep
-        ], self);
+        // var refreshingNextStep = function(done, effect) {
+        //     return function() {
+        //         $("#nextStepDiv").addClass("loading").refresh(null, function () {
+        //             $(this).removeClass("loading").show();
+        //             if (done) done();
+        //         });
+        //     };
+        // };
+        //
+        // // au chargement de la page, on actualise toutes les div en cascade.
+        // runInCascade([
+        //     refreshingNextStep
+        // ], self);
 
         $("input#removal").on("change", function(event, data) {
             var test = $(this).is(':checked');
