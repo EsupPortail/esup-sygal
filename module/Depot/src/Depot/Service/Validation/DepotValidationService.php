@@ -108,11 +108,7 @@ class DepotValidationService
         return $validationThese;
     }
 
-    /**
-     * @param These $these
-     * @return ValidationThese
-     */
-    public function unvalidateDepotTheseCorrigee(These $these): ValidationThese
+    public function unvalidateDepotTheseCorrigee(These $these): ?ValidationThese
     {
         $qb = $this->validationTheseService->getRepository()->createQueryBuilder('v')
             ->andWhereTheseIs($these)

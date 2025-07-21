@@ -23,6 +23,7 @@ Journal des modifications
 - [FIX] Bouton de dé·validation de la page de couverture : mécanisme de confirmation plus léger (js).
 - [FIX] Plantage dans la génération de doc à cause d'une signature de méthode dans AdmissionFinancementTemplateVariable.
 - [FIX] Modue Dépôt de thèse : impossibilité de déposer des fichiers hors PDF expurgés pour une version corrigée (aka second dépôt).
+- [FIX] Modue Dépôt de thèse : impossibilité de supprimer le fichier de thèse PDF expurgé pour une version corrigée (aka second dépôt).
 
 10.2.1
 ------
