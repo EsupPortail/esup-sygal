@@ -30,6 +30,8 @@ $protoDiffusion = new Diffusion();
     <small><?php echo $this->partial('these/these/partial/titre') ?></small>
 </h1>
 
+<div id="diffusion-div">
+
 <?php echo $this->form()->openTag($form->setAttribute('class', 'diffusion')) ?>
 
 <!-------------------------------- Confidentialité -------------------------------->
@@ -175,3 +177,58 @@ Cliquez sur <a href="<?php echo $this->url('fichier/telecharger-permanent', ['id
 
 <?php echo $this->form()->closeTag() ?>
 
+</div>
+
+
+<script>
+    // Evénements déclenchés par le widget Uploader (cf. app.js)
+    var uploadEventFileDeleted    = "upload-event-file-deleted";
+    var uploadEventFileUploaded   = "upload-event-file-uploaded";
+    var uploadEventFilesAdded     = "upload-event-files-added";
+
+    $(function () {
+        var body = $("body");
+        var self = this;
+
+        var depotDivId = "diffusion-div";
+        var theseDiv = $("#theseDiv");
+        var annexesDiv = $("#annexesDiv");
+
+        var theseLoader = function(done, effect) {
+            return function() {
+                theseDiv.addClass("loading").refresh({}, function () {
+                    $(this).removeClass("loading").show();
+                    if (done) done();
+                });
+            };
+        };
+        var annexesLoader = function(done, effect) {
+            return function() {
+                annexesDiv.addClass("loading").refresh({}, function () {
+                    $(this).removeClass("loading").show();
+                    if (done) done();
+                });
+            };
+        };
+
+        // Un upload de fichier vient de commencer.
+        body.on(uploadEventFilesAdded, ".these.widget-uploader", function(event, data) {
+            var uploadContainer = $(data[0]);
+            // masque le formulaire pour éviter un dépôt de thèse pendant qu'un upload est déjà en cours
+            uploadContainer.find(".upload-form").hide();
+        });
+
+        // Un fichier de thèse vient d'être déposé.
+        body.on(uploadEventFileUploaded, "#" + depotDivId + " .these.widget-uploader", function() {
+            runInCascade([
+                annexesLoader,
+            ], self);
+        });
+        // Un fichier de thèse vient d'être supprimé : on économise les 'refresh' en masquant les div puisqu'il n'y a plus aucune thèse déposée
+        body.on(uploadEventFileDeleted, "#" + depotDivId + " .these.widget-uploader", function() {
+            runInCascade([
+                annexesLoader
+            ], self);
+        });
+    });
+</script>
