@@ -144,7 +144,6 @@ class AdmissionAssertion extends AdmissionAbstractAssertion implements UserConte
             return false;
         }
         $this->admission = $entity;
-
         try {
             switch ($privilege) {
                 case AdmissionPrivileges::ADMISSION_MODIFIER_TOUS_DOSSIERS_ADMISSION:
@@ -172,6 +171,7 @@ class AdmissionAssertion extends AdmissionAbstractAssertion implements UserConte
                 case AdmissionPrivileges::ADMISSION_AFFICHER_SON_DOSSIER_ADMISSION_DANS_LISTE:
                 case AdmissionPrivileges::ADMISSION_SUPPRIMER_SON_DOSSIER_ADMISSION:
                 case AdmissionPrivileges::ADMISSION_MODIFIER_SON_DOSSIER_ADMISSION:
+                case AdmissionPrivileges::ADMISSION_MODIFIER_DOSSIER_ADMISSION_GESTION:
                 case AdmissionPrivileges::ADMISSION_TELEVERSER_SON_DOCUMENT:
                 case AdmissionPrivileges::ADMISSION_SUPPRIMER_SON_DOCUMENT:
                 case AdmissionPrivileges::ADMISSION_TELECHARGER_SON_DOCUMENT:

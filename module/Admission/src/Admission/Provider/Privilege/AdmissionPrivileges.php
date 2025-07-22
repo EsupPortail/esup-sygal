@@ -14,6 +14,7 @@ class AdmissionPrivileges extends Privileges {
     public const ADMISSION_AFFICHER_SON_DOSSIER_ADMISSION_DANS_LISTE = 'admission-admission-afficher-son-dossier-admission-dans-liste';
     public const ADMISSION_MODIFIER_TOUS_DOSSIERS_ADMISSION  = 'admission-admission-modifier-tous-dossiers-admission';
     public const ADMISSION_MODIFIER_SON_DOSSIER_ADMISSION     = 'admission-admission-modifier-son-dossier-admission';
+    public const ADMISSION_MODIFIER_DOSSIER_ADMISSION_GESTION     = 'admission-admission-modifier-dossier-admission-gestion';
     public const ADMISSION_SUPPRIMER_TOUS_DOSSIERS_ADMISSION  = 'admission-admission-supprimer-tous-dossiers-admission';
     public const ADMISSION_SUPPRIMER_SON_DOSSIER_ADMISSION     = 'admission-admission-supprimer-son-dossier-admission';
     public const ADMISSION_GENERER_EXPORT_ADMISSIONS  = 'admission-admission-generer-export-admissions';

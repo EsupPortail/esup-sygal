@@ -108,7 +108,7 @@ class AdmissionController extends AdmissionAbstractController {
             $etudiant = $this->admissionForm->get('etudiant');
             $data = $this->multipageForm($this->admissionForm)->getFormSessionData();
             $this->admissionForm->bind($admission);
-            $canModifierAdmission  = $this->isAllowed($admission,AdmissionPrivileges::ADMISSION_MODIFIER_TOUS_DOSSIERS_ADMISSION) || $this->isAllowed($admission, AdmissionPrivileges::ADMISSION_MODIFIER_SON_DOSSIER_ADMISSION);
+            $canModifierAdmission  = $this->peutModifierAdmission($admission);
 
             if(!$canModifierAdmission) $etudiant->disableModificationFieldset();
             //Enregistrement des informations de l'inscription
@@ -148,7 +148,7 @@ class AdmissionController extends AdmissionAbstractController {
         /** @var Admission $admission */
         $admission = $this->getAdmission();
         if(!empty($admission)){
-            $canModifierAdmission  = $this->isAllowed($admission,AdmissionPrivileges::ADMISSION_MODIFIER_TOUS_DOSSIERS_ADMISSION) || $this->isAllowed($admission, AdmissionPrivileges::ADMISSION_MODIFIER_SON_DOSSIER_ADMISSION);
+            $canModifierAdmission  = $this->peutModifierAdmission($admission);
             if(!$canModifierAdmission){
                 /** @var InscriptionFieldset $inscription */
                 $inscription = $this->admissionForm->get('inscription');
@@ -206,7 +206,7 @@ class AdmissionController extends AdmissionAbstractController {
         if (!empty($admission)) {
             $data = $this->multipageForm($this->admissionForm)->getFormSessionData();
             $this->admissionForm->bind($admission);
-            $canModifierAdmission = $this->isAllowed($admission, AdmissionPrivileges::ADMISSION_MODIFIER_TOUS_DOSSIERS_ADMISSION) || $this->isAllowed($admission, AdmissionPrivileges::ADMISSION_MODIFIER_SON_DOSSIER_ADMISSION);
+            $canModifierAdmission = $this->peutModifierAdmission($admission);
             if (!$canModifierAdmission) {
                 /** @var FinancementFieldset $financement */
                 $financement = $this->admissionForm->get('financement');
@@ -251,7 +251,7 @@ class AdmissionController extends AdmissionAbstractController {
             $this->admissionForm->bind($admission);
             $this->admissionForm->setNavigationFieldsetPrototype($this->createNavigationForDocument($admission));
 
-            $canModifierAdmission  = $this->isAllowed($admission,AdmissionPrivileges::ADMISSION_MODIFIER_TOUS_DOSSIERS_ADMISSION) || $this->isAllowed($admission, AdmissionPrivileges::ADMISSION_MODIFIER_SON_DOSSIER_ADMISSION);
+            $canModifierAdmission = $this->peutModifierAdmission($admission);
             if(!$canModifierAdmission){
                 /** @var DocumentFieldset $document */
                 $document = $this->admissionForm->get('document');
@@ -441,8 +441,7 @@ class AdmissionController extends AdmissionAbstractController {
             //si le dossier d'admission existe, on met à jour l'entité Etudiant
             try {
                 $this->admissionForm->bind($admission);
-                if ($this->isAllowed($admission, AdmissionPrivileges::ADMISSION_MODIFIER_SON_DOSSIER_ADMISSION) ||
-                    $this->isAllowed($admission, AdmissionPrivileges::ADMISSION_MODIFIER_TOUS_DOSSIERS_ADMISSION)) {
+                if ($this->peutModifierAdmission($admission)) {
                     $individu = $this->individuService->getRepository()->findRequestedIndividu($this);
                     if($individu && isset($data["etudiant"]["dateNaissance"])){
                         $individu->setDateNaissance(new DateTime($data["etudiant"]["dateNaissance"]));
@@ -489,8 +488,7 @@ class AdmissionController extends AdmissionAbstractController {
         $etablissementInscriptionBeforeUpdate = $inscription?->getEtablissementInscription();
 
         //Lier les valeurs des données en session avec le formulaire
-        if ($this->isAllowed($admission,AdmissionPrivileges::ADMISSION_MODIFIER_SON_DOSSIER_ADMISSION) ||
-            $this->isAllowed($admission, AdmissionPrivileges::ADMISSION_MODIFIER_TOUS_DOSSIERS_ADMISSION)) {
+        if ($this->peutModifierAdmission($admission)) {
             $this->admissionForm->get('inscription')->bindValues($data['inscription']);
             //Si le fieldest Inscription n'est pas encore en BDD
             if (!$inscription instanceof Inscription) {
@@ -576,8 +574,7 @@ class AdmissionController extends AdmissionAbstractController {
         /** @var Financement $financement */
         $financement = $this->admissionFinancementService->getRepository()->findOneByAdmission($admission);
         //Lier les valeurs des données en session avec le formulaire
-        if ($this->isAllowed($admission, AdmissionPrivileges::ADMISSION_MODIFIER_SON_DOSSIER_ADMISSION) ||
-            $this->isAllowed($admission, AdmissionPrivileges::ADMISSION_MODIFIER_TOUS_DOSSIERS_ADMISSION)) {
+        if ($this->peutModifierAdmission($admission)) {
             $this->admissionForm->get('financement')->bindValues($data['financement']);
             //Si le fieldest Financement n'est pas encore en BDD
             if (!$financement instanceof Financement) {
@@ -735,8 +732,7 @@ class AdmissionController extends AdmissionAbstractController {
         $prevButton->setAttribute('class', $prevButton->getAttribute('class') . ' btn btn-primary');
         $cancelButton->setAttribute('class', $confirmButton->getAttribute('class') . ' visually-hidden');
 
-        $canModifierAdmission = $this->isAllowed($admission, AdmissionPrivileges::ADMISSION_MODIFIER_SON_DOSSIER_ADMISSION) ||
-                                $this->isAllowed($admission, AdmissionPrivileges::ADMISSION_MODIFIER_TOUS_DOSSIERS_ADMISSION);
+        $canModifierAdmission = $this->peutModifierAdmission($admission);
         //si le dossier est validé, rejeté, en cours de validation ou abandonné et que l'utilisateur connecté n'a pas le droit de modifier le dossier
         if(!$canModifierAdmission){
             $submitButton->setValue("Revenir à l'accueil");
@@ -895,5 +891,12 @@ class AdmissionController extends AdmissionAbstractController {
         return new ViewModel([
             'tabEtablissementsVariables' => $tabEtablissementsVariables,
         ]);
+    }
+
+    private function peutModifierAdmission($admission): bool
+    {
+        return $this->isAllowed($admission, AdmissionPrivileges::ADMISSION_MODIFIER_TOUS_DOSSIERS_ADMISSION)
+            || $this->isAllowed($admission, AdmissionPrivileges::ADMISSION_MODIFIER_SON_DOSSIER_ADMISSION)
+            || $this->isAllowed($admission, AdmissionPrivileges::ADMISSION_MODIFIER_DOSSIER_ADMISSION_GESTION);
     }
 }
