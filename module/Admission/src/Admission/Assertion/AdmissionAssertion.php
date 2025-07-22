@@ -143,8 +143,19 @@ class AdmissionAssertion extends AdmissionAbstractAssertion implements UserConte
         if (!parent::assertEntity($entity, $privilege)) {
             return false;
         }
+
         $this->admission = $entity;
+
         try {
+            switch ($privilege) {
+                case AdmissionPrivileges::ADMISSION_MODIFIER_DOSSIER_ADMISSION_GESTION:
+                    $this->assertTrue(
+                        in_array($this->admission->getEtat()->getCode(),[Admission::ETAT_EN_COURS_VALIDATION, Admission::ETAT_VALIDE]),
+                        "Le dossier d'admission doit être en cours de validation ou validé"
+                    );
+                    $this->assertAppartenanceAdmission($this->admission);
+            }
+
             switch ($privilege) {
                 case AdmissionPrivileges::ADMISSION_MODIFIER_TOUS_DOSSIERS_ADMISSION:
                 case AdmissionPrivileges::ADMISSION_MODIFIER_SON_DOSSIER_ADMISSION:
@@ -171,7 +182,6 @@ class AdmissionAssertion extends AdmissionAbstractAssertion implements UserConte
                 case AdmissionPrivileges::ADMISSION_AFFICHER_SON_DOSSIER_ADMISSION_DANS_LISTE:
                 case AdmissionPrivileges::ADMISSION_SUPPRIMER_SON_DOSSIER_ADMISSION:
                 case AdmissionPrivileges::ADMISSION_MODIFIER_SON_DOSSIER_ADMISSION:
-                case AdmissionPrivileges::ADMISSION_MODIFIER_DOSSIER_ADMISSION_GESTION:
                 case AdmissionPrivileges::ADMISSION_TELEVERSER_SON_DOCUMENT:
                 case AdmissionPrivileges::ADMISSION_SUPPRIMER_SON_DOCUMENT:
                 case AdmissionPrivileges::ADMISSION_TELECHARGER_SON_DOCUMENT:

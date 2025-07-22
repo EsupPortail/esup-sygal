@@ -8,6 +8,7 @@ Journal des modifications
 - Formulaires Métadonnées et Rdv BU : saisie des mots clés comme des tags réordonnables
 - Bandeau et pied de page de couleur rouge sur la version de test/démo et verte sur la version de dev.
 - Module Dépôt de thèse : diminution du temps d'affichage initial des pages (en supprimant le chargement asynchrone par bloc).
+- Module Admission : Ajout d'un privilège pour permettre de modifier un dossier lorsque le circuit de validations est commencé
 - Module Doctorant :
   - Recherche des doctorants, avec possibilité de filtrage par ED/UR/Étab (en fonction de l'utilisateur connecté)
   - Tableau de bord visible par le doctorant (dès la page d'accueil), ainsi que par la Maison du doctorat/Gestionnaire d'ED/UR/Responsable d'ED/UR
@@ -22,9 +23,9 @@ Journal des modifications
 - [FIX] Bouton de dé·validation de la thèse corrigée par le doctorant : mécanisme de confirmation plus léger (js).
 - [FIX] Bouton de dé·validation de la page de couverture : mécanisme de confirmation plus léger (js).
 - [FIX] Plantage dans la génération de doc à cause d'une signature de méthode dans AdmissionFinancementTemplateVariable.
-- [FIX] Modue Dépôt de thèse : impossibilité de déposer des fichiers hors PDF expurgés pour une version corrigée (aka second dépôt).
-- [FIX] Modue Dépôt de thèse : impossibilité de supprimer le fichier de thèse PDF expurgé pour une version corrigée (aka second dépôt).
-- [FIX] Modue Dépôt de thèse : impossibilité de supprimer le fichier de thèse PDF expurgé pour une version corrigée (aka second dépôt).
+- [FIX] Module Dépôt de thèse : impossibilité de déposer des fichiers hors PDF expurgés pour une version corrigée (aka second dépôt).
+- [FIX] Module Dépôt de thèse : impossibilité de supprimer le fichier de thèse PDF expurgé pour une version corrigée (aka second dépôt).
+- [FIX] Module Dépôt de thèse : impossibilité de supprimer le fichier de thèse PDF expurgé pour une version corrigée (aka second dépôt).
 - [FIX] Export Excel des formations/sessions/séances : correction de la config pour inclure les colonnes session_statut_inscription et session_nb_heures.
 
 10.2.1
