@@ -5,7 +5,6 @@ namespace RapportActivite\Assertion;
 use Application\Assertion\AbstractAssertion;
 use Application\Assertion\Exception\FailedAssertionException;
 use Application\Assertion\ThrowsFailedAssertionExceptionTrait;
-use Application\Entity\Db\Role;
 use Application\RouteMatch;
 use Application\Service\UserContextServiceAwareInterface;
 use Application\Service\UserContextServiceAwareTrait;
@@ -16,7 +15,6 @@ use RapportActivite\Provider\Privilege\RapportActivitePrivileges;
 use RapportActivite\Rule\Creation\RapportActiviteCreationRuleAwareTrait;
 use RapportActivite\Rule\Operation\RapportActiviteOperationRuleAwareTrait;
 use RapportActivite\Service\RapportActiviteServiceAwareTrait;
-use RuntimeException;
 use These\Entity\Db\These;
 use UnicaenApp\Service\MessageCollectorAwareInterface;
 use UnicaenApp\Service\MessageCollectorAwareTrait;
@@ -102,6 +100,7 @@ class RapportActiviteAssertion extends AbstractAssertion
                 case 'ajouter':
                 case 'modifier':
                 case 'supprimer':
+                case 'supprimer-forcer':
                 case 'consulter':
                 case 'telecharger':
                 case 'generer':
@@ -113,6 +112,7 @@ class RapportActiviteAssertion extends AbstractAssertion
                 case 'ajouter':
                 case 'modifier':
                 case 'supprimer':
+                case 'supprimer-forcer':
                     $this->assertEtatThese($this->rapportActivite->getThese());
                     break;
             }
@@ -124,8 +124,15 @@ class RapportActiviteAssertion extends AbstractAssertion
                     break;
 
                 case 'modifier':
-                case 'supprimer':
                     $this->assertModificationPossible($this->rapportActivite);
+                    break;
+
+                case 'supprimer':
+                    $this->assertSuppressionPossible($this->rapportActivite);
+                    break;
+
+                case 'supprimer-forcer':
+                    $this->assertSuppressionForceePossible($this->rapportActivite);
                     break;
             }
 
@@ -163,6 +170,7 @@ class RapportActiviteAssertion extends AbstractAssertion
             case 'consulter':
             case 'modifier':
             case 'supprimer':
+            case 'supprimer-forcer':
             case 'generer':
             case 'telecharger':
                 $this->rapportActivite = $this->getRequestedRapport();
@@ -182,7 +190,6 @@ class RapportActiviteAssertion extends AbstractAssertion
     /**
      * @param RapportActivite $entity
      * @param string $privilege
-     * @return boolean
      */
     protected function assertEntity(ResourceInterface $entity, $privilege = null): bool
     {
@@ -203,6 +210,8 @@ class RapportActiviteAssertion extends AbstractAssertion
                 case RapportActivitePrivileges::RAPPORT_ACTIVITE_TELEVERSER_SIEN:
                 case RapportActivitePrivileges::RAPPORT_ACTIVITE_SUPPRIMER_TOUT:
                 case RapportActivitePrivileges::RAPPORT_ACTIVITE_SUPPRIMER_SIEN:
+                case RapportActivitePrivileges::RAPPORT_ACTIVITE_SUPPRIMER_TOUT_FORCER:
+                case RapportActivitePrivileges::RAPPORT_ACTIVITE_SUPPRIMER_SIEN_FORCER:
                     $this->assertEtatThese($this->rapportActivite->getThese());
             }
 
@@ -212,6 +221,7 @@ class RapportActiviteAssertion extends AbstractAssertion
                 case RapportActivitePrivileges::RAPPORT_ACTIVITE_MODIFIER_SIEN:
                 case RapportActivitePrivileges::RAPPORT_ACTIVITE_TELEVERSER_SIEN:
                 case RapportActivitePrivileges::RAPPORT_ACTIVITE_SUPPRIMER_SIEN:
+                case RapportActivitePrivileges::RAPPORT_ACTIVITE_SUPPRIMER_SIEN_FORCER:
                 case RapportActivitePrivileges::RAPPORT_ACTIVITE_TELECHARGER_SIEN:
                 case RapportActivitePrivileges::RAPPORT_ACTIVITE_GENERER_SIEN:
                     $this->assertAppartenanceThese($this->rapportActivite->getThese());
@@ -238,9 +248,19 @@ class RapportActiviteAssertion extends AbstractAssertion
             switch ($privilege) {
                 case RapportActivitePrivileges::RAPPORT_ACTIVITE_MODIFIER_TOUT:
                 case RapportActivitePrivileges::RAPPORT_ACTIVITE_MODIFIER_SIEN:
+                    $this->assertModificationPossible($this->rapportActivite);
+            }
+
+            switch ($privilege) {
                 case RapportActivitePrivileges::RAPPORT_ACTIVITE_SUPPRIMER_TOUT:
                 case RapportActivitePrivileges::RAPPORT_ACTIVITE_SUPPRIMER_SIEN:
-                    $this->assertModificationPossible($this->rapportActivite);
+                    $this->assertSuppressionPossible($this->rapportActivite);
+            }
+
+            switch ($privilege) {
+                case RapportActivitePrivileges::RAPPORT_ACTIVITE_SUPPRIMER_TOUT_FORCER:
+                case RapportActivitePrivileges::RAPPORT_ACTIVITE_SUPPRIMER_SIEN_FORCER:
+                    $this->assertSuppressionForceePossible($this->rapportActivite);
             }
 
         } catch (FailedAssertionException $e) {
@@ -278,6 +298,19 @@ class RapportActiviteAssertion extends AbstractAssertion
         }
     }
 
+    private function assertSuppressionPossible(RapportActivite $rapportActivite): void
+    {
+        if ($rapportActivite->getRapportValidations()->count() + $rapportActivite->getRapportAvis()->count()) {
+            // modif impossible si une validation/avis existe
+            throw new FailedAssertionException("La suppression n'est plus possible car le rapport a fait l'objet de validation/avis.");
+        }
+    }
+
+    private function assertSuppressionForceePossible(RapportActivite $rapportActivite): void
+    {
+        // pour l'instant aucune contrainte particulière de plus ici
+    }
+
     private function assertEtatThese(These $these)
     {
         $this->assertTrue(
@@ -286,46 +319,16 @@ class RapportActiviteAssertion extends AbstractAssertion
         );
     }
 
-    private function assertAppartenanceThese(These $these)
+    private function assertAppartenanceThese(These $these): void
     {
         $role = $this->userContextService->getSelectedIdentityRole();
         if (!$role) {
             return;
         }
 
-        if ($role->isDoctorant()) {
-            $doctorant = $this->userContextService->getIdentityDoctorant();
-            $this->assertTrue(
-                $these->getDoctorant()->getId() === $doctorant->getId(),
-                "La thèse n'appartient pas au doctorant " . $doctorant
-            );
-        }
-        elseif ($roleEcoleDoctorale = $this->userContextService->getSelectedRoleEcoleDoctorale()) {
-            $this->assertTrue(
-                $these->getEcoleDoctorale()->getStructure()->getId() === $roleEcoleDoctorale->getStructure()->getId(),
-                "La thèse n'est pas rattachée à l'ED " . $roleEcoleDoctorale->getStructure()->getCode()
-            );
-        }
-        elseif ($roleUniteRech = $this->userContextService->getSelectedRoleUniteRecherche()) {
-            $this->assertTrue(
-                $these->getUniteRecherche()->getStructure()->getId() === $roleUniteRech->getStructure()->getId(),
-                "La thèse n'est pas rattachée à l'UR " . $roleUniteRech->getStructure()->getCode()
-            );
-        }
-        elseif ($this->userContextService->getSelectedRoleDirecteurThese()) {
-            $individuUtilisateur = $this->userContextService->getIdentityDb()->getIndividu();
-            $this->assertTrue(
-                $these->hasActeurWithRole($individuUtilisateur, Role::CODE_DIRECTEUR_THESE),
-                "La thèse n'est pas dirigée par " . $individuUtilisateur
-            );
-        }
-        elseif ($this->userContextService->getSelectedRoleCodirecteurThese()) {
-            $individuUtilisateur = $this->userContextService->getIdentityDb()->getIndividu();
-            $this->assertTrue(
-                $these->hasActeurWithRole($individuUtilisateur, Role::CODE_CODIRECTEUR_THESE),
-                "La thèse n'est pas codirigée par " . $individuUtilisateur
-            );
-        }
+        $messages = [];
+        $ok = $this->userContextService->isStructureDuRoleRespecteeForThese($these, $messages);
+        $this->assertTrue($ok, implode(PHP_EOL, $messages));
     }
 
     private function assertRapportEstDematerialise(RapportActivite $rapportActivite)

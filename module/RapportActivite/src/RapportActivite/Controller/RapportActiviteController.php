@@ -242,7 +242,7 @@ class RapportActiviteController extends AbstractController
     }
 
     /**
-     * Suppression d'un rapport.
+     * Suppression d'un rapport n'ayant fait l'objet d'aucune validation/avis.
      */
     public function supprimerAction(): Response
     {
@@ -251,7 +251,28 @@ class RapportActiviteController extends AbstractController
 
         $event = $this->rapportActiviteService->deleteRapport($rapport);
 
-        $this->flashMessenger()->addSuccessMessage("Rapport supprimé avec succès.");
+        $this->flashMessenger()->addSuccessMessage("$rapport supprimé avec succès.");
+
+        if ($messages = $event->getMessages()) {
+            foreach ($messages as $namespace => $message) {
+                $this->flashMessenger()->addMessage($message, $namespace);
+            }
+        }
+
+        return $this->redirect()->toRoute('rapport-activite/lister', ['these' => IdifyFilter::id($these)]);
+    }
+
+    /**
+     * Suppression d'un rapport *ayant fait l'objet de validations/avis*.
+     */
+    public function supprimerForcerAction(): Response
+    {
+        $rapport = $this->requestedRapport();
+        $these = $rapport->getThese();
+
+        $event = $this->rapportActiviteService->deleteRapportForced($rapport);
+
+        $this->flashMessenger()->addSuccessMessage("$rapport supprimé avec succès.");
 
         if ($messages = $event->getMessages()) {
             foreach ($messages as $namespace => $message) {

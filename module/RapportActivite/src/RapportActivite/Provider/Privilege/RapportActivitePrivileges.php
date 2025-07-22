@@ -20,6 +20,8 @@ class RapportActivitePrivileges extends Privileges
     public const RAPPORT_ACTIVITE_TELEVERSER_SIEN = 'rapport-activite-televerser-sien';
     public const RAPPORT_ACTIVITE_SUPPRIMER_TOUT = 'rapport-activite-supprimer-tout';
     public const RAPPORT_ACTIVITE_SUPPRIMER_SIEN = 'rapport-activite-supprimer-sien';
+    public const RAPPORT_ACTIVITE_SUPPRIMER_TOUT_FORCER = 'rapport-activite-supprimer-tout-forcer'; // même si validation/avis existants
+    public const RAPPORT_ACTIVITE_SUPPRIMER_SIEN_FORCER = 'rapport-activite-supprimer-sien-forcer'; //
     public const RAPPORT_ACTIVITE_TELECHARGER_TOUT = 'rapport-activite-telecharger-tout';
     public const RAPPORT_ACTIVITE_TELECHARGER_SIEN = 'rapport-activite-telecharger-sien';
     public const RAPPORT_ACTIVITE_GENERER_TOUT = 'rapport-activite-generer-tout';

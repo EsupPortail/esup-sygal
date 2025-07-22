@@ -10,7 +10,7 @@ use Application\Service\UserContextServiceAwareTrait;
 use Validation\Service\ValidationThese\ValidationTheseServiceAwareTrait;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
-use Doctrine\ORM\ORMException;
+use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\Query\Expr\Join;
 use Individu\Service\IndividuServiceAwareInterface;
 use Individu\Service\IndividuServiceAwareTrait;
@@ -127,11 +127,9 @@ class RapportActiviteValidationService extends BaseService
     }
 
     /**
-     * Supprime physiquement en bdd la validation d'un rapport d'activité.
-     *
-     * @param RapportActivite $rapportActivite
+     * Supprime physiquement en bdd les validations d'un rapport d'activité.
      */
-    public function deleteRapportValidationForRapportActivite(RapportActivite $rapportActivite)
+    public function deleteAllValidationsForRapportActivite(RapportActivite $rapportActivite): void
     {
         // NB : inclusion des validations historisées
         foreach ($rapportActivite->getRapportValidations(true) as $validation) {

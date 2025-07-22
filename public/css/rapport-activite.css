@@ -82,6 +82,10 @@ div.rapport-activite-container p.en, div.rapport-activite-container span.en {
 div.rapport-activite-container p.help.en {
   padding-top: 0.3em; }
 
+table.rapport-activite th.fichier, table.rapport-activite td.fichier {
+  max-width: 120px; }
+table.rapport-activite th.operation, table.rapport-activite td.operation {
+  min-width: 230px; }
 table.rapport-activite .card {
   font-size: 90%;
   line-height: 95%;
@@ -93,5 +97,16 @@ table.rapport-activite .card {
     margin-bottom: 3px !important; }
   table.rapport-activite .card p {
     margin-bottom: 3px; }
+
+.card.validation-rapport-activite {
+  font-size: 95%;
+  margin-bottom: 1rem; }
+  .card.validation-rapport-activite .card-header {
+    padding: .25rem 0.5rem;
+    font-weight: 500; }
+  .card.validation-rapport-activite .card-body {
+    padding: 0.5rem; }
+  .card.validation-rapport-activite p {
+    margin-bottom: 0.5rem; }
 
 /*# sourceMappingURL=rapport-activite.css.map */

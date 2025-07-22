@@ -90,6 +90,22 @@ $canGen =
                 <span class="icon icon-supprimer"></span>
                 Supprimer ce rapport d'activité
             </a>
+        <?php else: ?>
+            <?php
+            $canDelForced =
+                $this->isAllowed($rapport, RapportActivitePrivileges::RAPPORT_ACTIVITE_SUPPRIMER_TOUT_FORCER) ||
+                $this->isAllowed($rapport, RapportActivitePrivileges::RAPPORT_ACTIVITE_SUPPRIMER_SIEN_FORCER);
+            if ($canDelForced): ?>
+                <a class="btn btn-danger"
+                   href="<?php echo $this->url('rapport-activite/supprimer-forcer', ['rapport' => $rapport->getId()]) ?>"
+                   data-toggle="confirmationx"
+                   data-bs-toggle="tooltip"
+                   data-bs-html="true"
+                   title="Une confirmation avant la suppression vous sera demandée">
+                    <span class="icon icon-supprimer"></span>
+                    Supprimer ce rapport d'activité et toutes les validations ou avis associés
+                </a>
+            <?php endif; ?>
         <?php endif; ?>
 
         <?php if ($canDl): ?>

@@ -294,42 +294,67 @@ class UserContextService extends BaseUserContextService
     }
 
     /**
-     * Teste si la structure sur laquelle porte le profil courant de l'utilisateur est compatible avec la thèse spécifiée.
-     *
-     * @param These $these
-     * @return bool
+     * Teste si la structure sur laquelle porte le rôle courant de l'utilisateur est compatible avec la thèse spécifiée.
      */
-    public function isStructureDuRoleRespecteeForThese(These $these)
+    public function isStructureDuRoleRespecteeForThese(These $these, ?array &$messages = []): bool
     {
         $role = $this->getSelectedIdentityRole();
 
-        if($role->getCode() === Role::CODE_GEST_HDR) return false;
-
-        if ($role->isTheseDependant()) {
-            if ($role->isDoctorant()) {
-                return $these->getDoctorant()->getId() === $this->getIdentityDoctorant()->getId();
-            }elseif ($role->isActeurDeThese()) {
-                if ($individu = $this->getIdentityIndividu()) {
-                    return $these->hasActeurWithRole($individu, $role->getCode());
-                }
-                return false;
-            }
-        }elseif($role->isHDRDependant()){
+        if ($role->getCode() === Role::CODE_GEST_HDR) {
             return false;
         }
 
-        elseif ($role->isStructureDependant()) {
+        if ($role->isTheseDependant()) {
+            if ($role->isDoctorant()) {
+                $ok = $these->getDoctorant()->getId() === $this->getIdentityDoctorant()->getId();
+                !$ok && $messages[] = sprintf(
+                    "L'auteur de la thèse (%s) ne correspond pas au doctorant %s",
+                    $these->getDoctorant(),
+                    $this->getIdentityDoctorant()
+                );
+                return $ok;
+            } elseif ($role->isActeurDeThese()) {
+                if ($individu = $this->getIdentityIndividu()) {
+                    $ok = $these->hasActeurWithRole($individu, $role->getCode());
+                    !$ok && $messages[] = sprintf(
+                        "L'individu %s n'exerce pas le rôle %s sur cette thèse",
+                        $individu,
+                        $role
+                    );
+                    return $ok;
+                }
+                return false;
+            }
+        } elseif ($role->isHDRDependant()) {
+            return false;
+        } elseif ($role->isStructureDependant()) {
             if ($role->isEtablissementDependant()) {
                 // On ne voit que les thèses de son établissement.
-                return $these->getEtablissement()->getStructure() === $role->getStructure();
-            }
-            elseif ($role->isEcoleDoctoraleDependant()) {
+                $ok = $these->getEtablissement()->getStructure() === $role->getStructure();
+                !$ok && $messages[] = sprintf(
+                    "L'établissement d'inscription de cette thèse (%s) ne correspond pas à l'établissement du rôle (%s)",
+                    $these->getEtablissement()->getStructure(),
+                    $role->getStructure()
+                );
+                return $ok;
+            } elseif ($role->isEcoleDoctoraleDependant()) {
                 // On ne voit que les thèses concernant son ED.
-                return $these->getEcoleDoctorale()?->getStructure() === $role->getStructure();
-            }
-            elseif ($role->isUniteRechercheDependant()) {
+                $ok = $these->getEcoleDoctorale()?->getStructure() === $role->getStructure();
+                !$ok && $messages[] = sprintf(
+                    "L'école doctorale de cette thèse (%s) ne correspond pas à celle du rôle (%s)",
+                    $these->getEcoleDoctorale()?->getStructure(),
+                    $role->getStructure()
+                );
+                return $ok;
+            } elseif ($role->isUniteRechercheDependant()) {
                 // On ne voit que les thèses concernant son UR.
-                return $these->getUniteRecherche()?->getStructure() === $role->getStructure();
+                $ok = $these->getUniteRecherche()?->getStructure() === $role->getStructure();
+                !$ok && $messages[] = sprintf(
+                    "L'unité de recherche de cette thèse (%s) ne correspond pas à celle du rôle (%s)",
+                    $these->getUniteRecherche()?->getStructure(),
+                    $role->getStructure()
+                );
+                return $ok;
             }
         }
 

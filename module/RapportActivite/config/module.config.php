@@ -133,6 +133,8 @@ return [
                             RapportActivitePrivileges::RAPPORT_ACTIVITE_TELEVERSER_SIEN,
                             RapportActivitePrivileges::RAPPORT_ACTIVITE_SUPPRIMER_SIEN,
                             RapportActivitePrivileges::RAPPORT_ACTIVITE_SUPPRIMER_TOUT,
+                            RapportActivitePrivileges::RAPPORT_ACTIVITE_SUPPRIMER_SIEN_FORCER,
+                            RapportActivitePrivileges::RAPPORT_ACTIVITE_SUPPRIMER_TOUT_FORCER,
                             RapportActivitePrivileges::RAPPORT_ACTIVITE_TELECHARGER_TOUT,
                             RapportActivitePrivileges::RAPPORT_ACTIVITE_TELECHARGER_SIEN,
                             RapportActivitePrivileges::RAPPORT_ACTIVITE_GENERER_TOUT,
@@ -237,6 +239,17 @@ return [
                     'privileges' => [
                         RapportActivitePrivileges::RAPPORT_ACTIVITE_SUPPRIMER_TOUT,
                         RapportActivitePrivileges::RAPPORT_ACTIVITE_SUPPRIMER_SIEN,
+                    ],
+                    'assertion' => RapportActiviteAssertion::class,
+                ],
+                [
+                    'controller' => RapportActiviteController::class,
+                    'action' => [
+                        'supprimer-forcer',
+                    ],
+                    'privileges' => [
+                        RapportActivitePrivileges::RAPPORT_ACTIVITE_SUPPRIMER_TOUT_FORCER,
+                        RapportActivitePrivileges::RAPPORT_ACTIVITE_SUPPRIMER_SIEN_FORCER,
                     ],
                     'assertion' => RapportActiviteAssertion::class,
                 ],
@@ -473,6 +486,19 @@ return [
                             'defaults' => [
                                 'action' => 'supprimer',
                                 /* @see RapportActiviteController::supprimerAction() */
+                            ],
+                        ],
+                    ],
+                    'supprimer-forcer' => [
+                        'type' => 'Segment',
+                        'options' => [
+                            'route' => '/supprimer-forcer/:rapport',
+                            'constraints' => [
+                                'rapport' => '\d+',
+                            ],
+                            'defaults' => [
+                                'action' => 'supprimer-forcer',
+                                /* @see RapportActiviteController::supprimerForcerAction() */
                             ],
                         ],
                     ],

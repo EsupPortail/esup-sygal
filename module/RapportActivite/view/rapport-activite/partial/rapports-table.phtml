@@ -110,12 +110,12 @@ $ajaxModalEvent = 'EVENT_AVIS_SAISI';
             Création
         </th>
 
-        <th>
+        <th class="fichier">
             Fichier
         </th>
 
         <?php if ($displayAvis || $displayValidation): ?>
-            <th>
+            <th class="operation">
                 Validations
             </th>
         <?php endif ?>
@@ -217,7 +217,7 @@ $ajaxModalEvent = 'EVENT_AVIS_SAISI';
                 <?php echo $rapport->getHistoCreation()->format('d/m/Y H:i') ?>
             </td>
 
-            <td>
+            <td class="fichier">
                 <?php if ($fichier = $rapport->getFichier()): ?>
                     <?php if ($canDl): ?>
                         <a href="<?php echo $this->url('rapport-activite/telecharger', ['rapport' => IdifyFilter::id($rapport)], ['query' => ['redirect' => $returnUrl]]) ?>"
@@ -239,7 +239,7 @@ $ajaxModalEvent = 'EVENT_AVIS_SAISI';
             </td>
 
             <?php if ($displayAvis || $displayValidation): ?>
-            <td>
+            <td class="operation">
                 <?php foreach ($operationss[$rapport->getId()] as $i => $operation): ?>
                     <?php
                     echo $this->partial('rapport-activite/partial/operation-card', [
@@ -267,6 +267,20 @@ $ajaxModalEvent = 'EVENT_AVIS_SAISI';
                        data-bs-html="true"
                        data-toggle="confirmationx"
                        data-message="Êtes-vous sûr de vouloir supprimer ce rapport ?"><span class="icon icon-delete iconly text-danger"></span></a>
+                <?php else: ?>
+                    <?php
+                    $canDelForced =
+                        $this->isAllowed($rapport, RapportActivitePrivileges::RAPPORT_ACTIVITE_SUPPRIMER_TOUT_FORCER) ||
+                        $this->isAllowed($rapport, RapportActivitePrivileges::RAPPORT_ACTIVITE_SUPPRIMER_SIEN_FORCER);
+                    if ($canDelForced): ?>
+                        <a href="<?php echo $this->url('rapport-activite/supprimer-forcer', ['rapport' => $rapport->getId()], ['query' => ['redirect' => $returnUrl]]) ?>"
+                           data-toggle="confirmationx"
+                           data-message="Êtes-vous sûr de vouloir supprimer ce rapport ainsi que les validations/avis associés ?"
+                           data-bs-toggle="tooltip"
+                           data-bs-html="true"
+                           title="Supprimer ce rapport et les validations/avis assocciés <br>(Une confirmation avant la suppression vous sera demandée)"><span class="icon icon-delete iconly text-danger"></span>
+                        </a>
+                    <?php endif; ?>
                 <?php endif; ?>
                 <?php if ($canGen): ?>
                     <a href="<?php echo $this->url('rapport-activite/generer', ['rapport' => $rapport->getId()]) ?>"

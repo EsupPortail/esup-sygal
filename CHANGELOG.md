@@ -18,6 +18,7 @@ Journal des modifications
     - Récapitulatif par années : Rapports à déposer/Soutenance
 - Refonte CSS de la page de connexion/page d'accueil
 - Masquage du bouton de ré-import à la demande d'une thèse à partir d'Apogée car ce n'est plus possible pour l'instant.
+- Rapports d'activité : possibilité de supprimer un rapport ainsi que toutes les validations/avis associées.
 - [FIX] Modification d'une structure impossible
 - [FIX] Recherche d'individus : suppression de la limite de 100 résultats maximum.
 - [FIX] Dépôt de thèse : plantage de l'annulation de la validation des corrections de la thèse.

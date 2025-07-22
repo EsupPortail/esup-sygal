@@ -40,7 +40,6 @@ use Structure\Service\Structure\StructureServiceAwareTrait;
 use Structure\Service\StructureDocument\StructureDocumentServiceAwareTrait;
 use These\Entity\Db\These;
 use UnicaenApp\Exception\RuntimeException;
-use UnicaenApp\Exporter\Pdf;
 use UnicaenParametre\Service\Parametre\ParametreServiceAwareTrait;
 use Validation\Entity\Db\TypeValidation;
 use Validation\Service\ValidationServiceAwareTrait;
@@ -180,8 +179,8 @@ class RapportActiviteService extends BaseService
     }
 
     /**
-     * @param RapportActivite $rapportActivite
-     * @return \RapportActivite\Event\RapportActiviteEvent
+     * Suppression d'un rapport, sans les validations/avis associés.
+     * NB : ne devrait pas être appelée si le rapport possède des validations/avis !
      */
     public function deleteRapport(RapportActivite $rapportActivite): RapportActiviteEvent
     {
@@ -189,15 +188,14 @@ class RapportActiviteService extends BaseService
 
         $this->entityManager->beginTransaction();
         try {
-            $this->rapportActiviteAvisService->deleteAllAvisForRapportActivite($rapportActivite);
-            $this->rapportActiviteValidationService->deleteRapportValidationForRapportActivite($rapportActivite);
             if ($fichier) {
                 $rapportActivite->removeFichier();
                 $this->fichierService->supprimerFichiers([$fichier]);
             }
 
             $rapportActivite->historiser();
-            $this->entityManager->flush($rapportActivite);
+
+            $this->entityManager->flush();
             $this->entityManager->commit();
 
             $event = $this->triggerEvent(
@@ -206,7 +204,25 @@ class RapportActiviteService extends BaseService
             );
         } catch (Exception $e) {
             $this->entityManager->rollback();
-            throw new RuntimeException("Erreur survenue lors de la suppression des rapports, rollback!", 0, $e);
+            throw new RuntimeException("Erreur survenue lors de la suppression du rapport, rollback!", 0, $e);
+        }
+
+        return $event;
+    }
+
+    public function deleteRapportForced(RapportActivite $rapportActivite): RapportActiviteEvent
+    {
+        $this->entityManager->beginTransaction();
+        try {
+            $this->rapportActiviteAvisService->deleteAllAvisForRapportActivite($rapportActivite);
+            $this->rapportActiviteValidationService->deleteAllValidationsForRapportActivite($rapportActivite);
+            $event = $this->deleteRapport($rapportActivite);
+
+            $this->entityManager->flush();
+            $this->entityManager->commit();
+        } catch (Exception $e) {
+            $this->entityManager->rollback();
+            throw new RuntimeException("Erreur survenue lors de la suppression du rapport et de ses validations/avis, rollback!", 0, $e);
         }
 
         return $event;
