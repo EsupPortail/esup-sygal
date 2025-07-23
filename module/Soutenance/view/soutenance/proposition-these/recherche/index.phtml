@@ -112,7 +112,7 @@ $canVoirThese = $this->isAllowed(ThesePrivileges::getResourceId(ThesePrivileges:
                 <?php endif; ?>
             </td>
             <td>
-                <?php echo $this->etatSoutenance()->render($proposition->getEtat()); ?>
+                <?php echo $this->etatHelper($proposition->getEtat(), null, "", ['textTooltip' => 'État de la proposition','afficherLibelleLong' => true]); ?>
             </td>
             <td>
                 <a

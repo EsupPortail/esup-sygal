@@ -65,7 +65,7 @@ $this->headTitle("Proposition de soutenance");
     <small><?php echo $this->partial('these/these/partial/titre') ?></small>
 </h1>
 
-<?php echo $this->etatSoutenance()->render($proposition->getEtat()); ?>
+<?php echo $this->etatHelper($proposition->getEtat(), null, "", ['textTooltip' => 'État de la proposition','afficherLibelleLong' => true]); ?>
 
 <p class="lead">
     Afin d'être validée et traitée par l'école doctorale, la proposition de soutenance doit être validée par tous les
@@ -278,7 +278,7 @@ if ($validationMDD and $proposition->getEtat()->getCode() === Etat::ETABLISSEMEN
 <?php endif; ?>
 
 <style>
-    .informations-compl-div{
+    .etat-informations-div{
         margin-left: auto;
     }
 </style>

@@ -161,7 +161,7 @@ $canAddThese = $this->isAllowed(Privileges::getResourceId(ThesePrivileges::THESE
                     </td>
                 <?php } ?>
                 <td>
-                    <?= $this->etatHelper($these->getEtatThese(), $these->getResultat(), $these->getResultatToString()) ?>
+                    <?= $this->etatHelper(["libelle" => $these->getEtatTheseToString(), "code" => $these->getEtatThese()], $these->getResultat(), $these->getResultatToString()) ?>
                 </td>
                 <td><?php echo $these->getDoctorant()->getNumeroEtudiant() ?></td>
                 <td><?php echo $these->getDoctorant() ?></td>

@@ -65,7 +65,10 @@ use Soutenance\Entity\Etat;
                         <option value="">Tous les etats </option>
                         <?php foreach ($etats as $etat) : ?>
                             <option value="<?php echo $etat->getId(); ?>" <?php if ($etat->getId() == $etatId) echo " selected "; ?>
-                                    data-content='<?php echo $this->etatSoutenance()->render($etat); ?>'
+                                    data-content='<?php echo $this->etatHelper($etat, null, "", [
+                                        'textTooltip' => 'État de la proposition',
+                                        'afficherLibelleLong' => true,
+                                    ]); ?>'
                             >
                                 <?php echo $etat->getLibelle(); ?>
                             </option>

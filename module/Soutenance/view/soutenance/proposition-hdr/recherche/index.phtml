@@ -109,7 +109,7 @@ $canVoirHDR = $this->isAllowed(HDRPrivileges::getResourceId(HDRPrivileges::HDR_C
                     <?php endif; ?>
                 </td>
                 <td>
-                    <?php echo $this->etatSoutenance()->render($proposition->getEtat()); ?>
+                    <?php echo $this->etatHelper($proposition->getEtat(), null, "", ['textTooltip' => 'État de la proposition','afficherLibelleLong' => true]); ?>
                 </td>
                 <td>
                     <?php if ($canVoirHDR) : ?>

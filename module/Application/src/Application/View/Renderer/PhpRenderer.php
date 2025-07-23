@@ -2,6 +2,7 @@
 
 namespace Application\View\Renderer;
 
+use Application\View\Helper\Etat\EtatViewHelper;
 use Depot\View\Helper\Url\UrlDepotHelper;
 use Fichier\Entity\Db\Fichier;
 use Fichier\View\Helper\Fichier\FichierViewHelper;
@@ -165,6 +166,7 @@ use UnicaenIdref\View\Helper\IdrefLinkViewHelper;
  * @method ActualiteViewHelper actualite()
  * @method StructureViewHelper structure(Structure|Etablissement|EcoleDoctorale|UniteRecherche $structure, bool $afficherLibelle = true, bool $sansOmbre = false, $options = [])
  * @method FichierViewHelper fichier(Fichier $object, string $urlTelechargementFichier, string $urlSuppressionFichier, bool $canGererFichier, string $libelleOptionnel = "", bool $voirHistoInfo = true, bool $canVoirSuppression = true, bool $isTargetBlank = false, array $options = [])
+ * @method EtatViewHelper etatHelper(mixed $etat = null, int|null $resultat = null, string|null $resultatString = "", $options = [])
  *
  * @method IdrefLinkViewHelper idrefLink(string $ppn)
  *

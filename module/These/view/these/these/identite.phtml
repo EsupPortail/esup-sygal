@@ -98,7 +98,7 @@ switch ($these->getEtatThese()){
     <div class="col-md-6 informations-compl-card">
         <h2 class="informations-titre-these-card" data-bs-toggle="tooltip" data-bs-original-title="Titre de la thèse"><?= $these->getTitre(); ?></h2>
     </div>
-    <div class="col-md-6 informations-compl-card information-etat-card <?=$etatTheseClass?>-etat-card"
+    <div class="col-md-6 informations-compl-card etat-informations-card <?=$etatTheseClass?>-etat-card"
          data-bs-toggle="tooltip" data-bs-original-title="<?=$etatTheseTextTooltip?>">
         <span class="icon icon-<?=$iconEtatThese?>"></span>
         <h2><?= $these->getEtatTheseToString(); ?></h2>

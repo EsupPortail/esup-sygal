@@ -161,7 +161,7 @@ echo $this->partial('admission/admission/partial/header', []); ?>
                     <td><?php echo $admission->getIndividu()->getNomCompletFormatter()->avecNomPatronymique()->f() ?></td>
                     <td >
                         <div class="d-flex align-items-center">
-                            <?php echo $this->etatHelper($admission->getEtat(), null, "") ?>
+                            <?php echo $this->etatHelper($admission->getEtat()) ?>
                             <a href="<?php echo $this->url('admission/generer-statut-dossier', ['action' => 'generer-statut-dossier','admission' => $admission->getId()], [], true) ?>"
                                title="Appuyer pour avoir plus de détails"
                                data-bs-toggle="tooltip" data-bs-html="true" data-event="acces-statut-dossier" class="action ajax-modal" style="margin-left: 5px">

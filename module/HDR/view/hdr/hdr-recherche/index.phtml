@@ -118,7 +118,7 @@ $canAddHDR = $this->isAllowed(Privileges::getResourceId(HDRPrivileges::HDR_MODIF
                     </td>
                 <?php } ?>
                 <td>
-                    <?= $this->etatHelper($hdr->getEtatHDR(), $hdr->getResultat(), $hdr->getResultatToString()) ?>
+                    <?= $this->etatHelper(["libelle" => $hdr->getEtatHDRToString(), "code" => $hdr->getEtatHDR()], $hdr->getResultat(), $hdr->getResultatToString()) ?>
                 </td>
                 <td class="acteurs">
                     <?php

@@ -82,7 +82,7 @@ $canGenererDocument = $canFeuVert;
     <small><?php echo $this->partial('hdr/hdr/partial/titre') ?></small>
 </h1>
 
-<?php echo $this->etatSoutenance()->render($proposition->getEtat()); ?>
+<?php echo $this->etatHelper($proposition->getEtat(), null, "", ['textTooltip' => 'État de la proposition','afficherLibelleLong' => true]); ?>
 
 <?php echo $this->alertes()
     ->addAlertesFromFlashMessenger()
@@ -424,7 +424,7 @@ $canGenererDocument = $canFeuVert;
         border-left: 2px gray solid;
         padding: 0.5rem;
     }
-    .informations-compl-div{
+    .etat-informations-div{
         margin-left: auto;
     }
     .etape-encore-non-disponible{

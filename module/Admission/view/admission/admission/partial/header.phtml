@@ -30,11 +30,12 @@ $canConfigurerModule = $this->isAllowed(AdmissionPrivileges::getResourceId(Admis
         </a>
     <?php endif; ?>
 
+    <?php if(isset($individu)): ?>
+        <?php echo $this->etatHelper($admission->getEtat(), null, '', ['css' => 'margin-left:10px;', 'textTooltip' => 'État du dossier d\'admission', 'afficherLibelleLong' => true]) ?>
+    <?php endif; ?>
 
     <p class="introduction">Ce module permet dans un premier temps de candidater à un parcours doctoral.
         <br>Vous devrez remplir un formulaire en ligne et déposer les documents demandés.<br>
         Les données que vous saisissez dans ce formulaire sont automatiquement sauvegardées dès que vous avancez vers l'étape suivante, ou que vous revenez à l'étape précédente.
     </p>
-
-
 </div>

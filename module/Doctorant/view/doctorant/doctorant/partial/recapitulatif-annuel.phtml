@@ -78,7 +78,11 @@ if(is_array($anneesUniv)):
                         </div>
                         <div class="card-body">
                             <div class="col-md-12">
-                                <?php echo $this->etatSoutenance()->render($proposition->getEtat(), ["css" => "margin-bottom:unset; margin-left: 15px; margin-right: 15px;"]); ?>
+                                <?php echo $this->etatHelper($proposition->getEtat(), null, "", [
+                                    'textTooltip' => 'État de la proposition',
+                                    'afficherLibelleLong' => true,
+                                    'css' => 'margin-bottom:unset; margin-left: 15px; margin-right: 15px;'
+                                ]); ?>
                             </div>
                             <?php if($canVisualiserProposition): ?>
                                 <ul>

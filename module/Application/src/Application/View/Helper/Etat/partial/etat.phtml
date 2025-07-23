@@ -1,14 +1,33 @@
 <?php
 
 /**
- * @var string $colorClass
+ * @var mixed $etat
+ * @var string $css
  * @var string $iconEtatClass
- * @var string $etatTextTooltipClass
+ * @var string $textTooltip
+ * @var string $etatLibelle
+ * @var array $options
  **/
 
+$afficherLibelleLong = isset($options['afficherLibelleLong']) && $options['afficherLibelleLong'] === true ?? false;
 ?>
 
-<span class="badge text-white" style="background-color: <?= $colorClass ?>"
-      data-bs-toggle="tooltip" data-bs-original-title="<?= $etatTextTooltipClass ?>">
-      <span class="<?= $iconEtatClass ?>" style="padding-right: unset"></span>
-</span>
+<?php if($etat === null): ?>
+    <p>Pas d'état</p>
+<?php else: ?>
+    <?php if($afficherLibelleLong): ?>
+        <div class="row etat-informations-div">
+            <div class="col-md-6 etat-informations-card"
+                 style="<?=$css?>"
+                 data-bs-toggle="tooltip" data-bs-original-title="<?=$textTooltip?>">
+                <span class="<?=$iconEtatClass?>"></span>
+                <h2><?= $etatLibelle; ?></h2>
+            </div>
+        </div>
+    <?php else: ?>
+        <span class="badge text-white" style="<?=$css?>"
+              data-bs-toggle="tooltip" data-bs-original-title="<?= $textTooltip ?>">
+          <span class="<?= $iconEtatClass ?>" style="padding-right: unset"></span>
+    </span>
+    <?php endif; ?>
+<?php endif; ?>
