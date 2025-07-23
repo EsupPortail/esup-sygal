@@ -1,6 +1,7 @@
 <?php
 
 use Laminas\Form\Element;
+use Soutenance\Entity\Membre;
 use Soutenance\Entity\Proposition;
 use Soutenance\Form\Membre\MembreForm;
 use These\Entity\Db\These;
@@ -13,10 +14,7 @@ use These\Entity\Db\These;
  */
 
 $object = $proposition->getObject();
-?>
 
-
-<?php
 if(isset($validationsDejaEffectuees) && $validationsDejaEffectuees): ?>
     <div class="alert alert-warning">
         <span class="icon icon-attention"></span>
@@ -46,21 +44,32 @@ if ($object->getEtablissement()->estComue()) {
 }
 
 echo $this->formControlGroup($form->get('exterieur'));
-echo $this->formControlGroup($form->get('visio'));
-echo $this->formControlGroup($form->get('role'));
+echo $this->formControlGroup($form->get('visio')); ?>
+<div id="form-role-wrapper"
+     data-hdr-roles-to-disable='<?= json_encode([
+         Membre::RAPPORTEUR_JURY,
+         Membre::RAPPORTEUR_VISIO,
+         Membre::RAPPORTEUR_ABSENT
+     ]) ?>'>
+    <?= $this->formControlGroup($form->get('role')); ?>
+</div>
 
-echo $this->formControlGroup($form->get('submit'));
-echo $this->form()->closeTag();
-?>
-
+<div id="role-warning" class="mt-2" style="display: none;">
+    <div class="alert alert-warning">
+        <span class="icon icon-info"></span>
+        Seuls des <strong>membres extérieurs à la COMUE</strong> peuvent être rapporteurs.
+    </div>
+</div>
 
 <?php
-//echo $this->form($form);
+    echo $this->formControlGroup($form->get('submit'));
+    echo $this->form()->closeTag();
 ?>
 
 <script>
-    $('select').selectpicker();
+    document.addEventListener('DOMContentLoaded', initMembreForm);
     $(function () {
+        $('select').selectpicker();
         $('[data-bs-toggle="tooltip"]').tooltip({});
     });
 </script>

@@ -393,4 +393,13 @@ return [
             __DIR__ . '/../view',
         ],
     ],
+    'public_files' => [
+        'inline_scripts' => [
+        ],
+        'stylesheets' => [
+        ],
+        'head_scripts' => [
+            '081_hdr' => "/js/hdr.js",
+        ],
+    ],
 ];
