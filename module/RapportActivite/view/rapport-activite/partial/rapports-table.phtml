@@ -228,10 +228,12 @@ $ajaxModalEvent = 'EVENT_AVIS_SAISI';
                         <?php echo $fichier->getNom() ?>
                     <?php endif; ?>
                     <span class="icon icon-info text-info"
+                          data-bs-toggle="tooltip"
                           title="Il s'agit d'un rapport non dématérialisé téléversé dans l'ancienne version du module Rapport d'activité"></span>
                 <?php else: ?>
                     Aucun
                     <span class="icon icon-info text-info"
+                          data-bs-toggle="tooltip"
                           title="Aucun fichier téléversé car il s'agit d'un rapport dématérialisé créé avec le nouveau module Rapport d'activité"></span>
                 <?php endif; ?>
             </td>

@@ -227,7 +227,7 @@ $canSimulerRemonter = $this->isAllowed(PresoutenancePrivileges::getResourceId(Pr
                 /** @var ValidationThese $validation_pdc */
                 $validation_pdc = current($validationPDC);
                 ?>
-                <div class="alert alert-info">
+                <div class="alert alert-success">
                     <span class="icon icon-ok"></span>
                     La page de couverture a été validée le
                     <?php echo $validation_pdc->getHistoModification()->format(Constants::DATETIME_FORMAT); ?>

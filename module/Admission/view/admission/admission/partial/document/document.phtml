@@ -102,7 +102,14 @@ $enCours = isset($admission) && $admission->getEtat()->getCode() === Etat::CODE_
                             'role' => $role,
                             'fieldsetConventionSignee' => $fieldsetConventionSignee,
                         ]); ?>
-                    <?php endif ?>
+                    <?php elseif(!($canAccederConventionFormationDoctorale && $enCours) && $conventionFormationDoctorale === null): ?>
+                        <a class="btn btn-primary access-conv-form-doct-btn required disabled"
+                        title="Aucune convention de formation doctorale n'a été remplie"
+                        data-bs-toggle="tooltip"
+                        style="pointer-events: initial">
+                            Lire la convention de formation doctorale
+                        </a>
+                    <?php endif;?>
                 </div>
             <?php else: ?>
                 <div class="col-lg-5 upload-file">
