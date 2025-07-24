@@ -301,7 +301,6 @@ h1.app-name {
     padding: 0.5rem 0;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     background: #ffffff;
-    min-width: 200px;
   }
 
   .dropdown-menu {
@@ -384,9 +383,54 @@ h1.app-name {
   }
 }
 
-.nav-tabs .nav-link {
-    color:var(--primary-color)
+.nav-tabs {
+  border-bottom: 2px solid #dee2e6;
+  gap: 0.5rem;
+  display: flex;
+  position: relative;
 }
+
+.nav-tabs .nav-link {
+  border: none;
+  background: none;
+  color: #6c757d;
+  font-weight: 500;
+  padding: 0.75rem 1rem;
+  position: relative;
+  transition: color 0.3s ease;
+}
+
+.nav-tabs .nav-link::after {
+  content: '';
+  display: block;
+  height: 2px;
+  background: var(--primary-color);;
+  position: absolute;
+  bottom: 0;
+  left: 25%;
+  right: 25%;
+  transform: scaleX(0);
+  transition: transform 0.3s ease;
+  border-radius: 1px;
+}
+
+.nav-tabs .nav-link:hover {
+  color: var(--primary-color);;
+}
+
+.nav-tabs .nav-link:hover::after {
+  transform: scaleX(1);
+}
+
+.nav-tabs .nav-link.active {
+  color: var(--primary-color);;
+  font-weight: 600;
+}
+
+.nav-tabs .nav-link.active::after {
+  transform: scaleX(1);
+}
+
 /**
  Table
  */
@@ -431,4 +475,214 @@ h1.app-name {
 
 .table-shadow{
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/**
+/* Page d'accueil
+ */
+
+#page-accueil {
+  #content.jumbotron {
+    border-radius: 1rem;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+    padding: 2rem;
+    margin: 2rem auto;
+  }
+
+  /* Paragraphe lead */
+  #content .lead {
+    font-size: 15px;
+    color: #444;
+  }
+
+  /* Texte de connexion/déconnexion */
+  #content .text-danger strong {
+    font-size: 15px;
+  }
+
+  /* Bouton de connexion */
+  #content .btn-success {
+    padding: 0.75rem 1.5rem;
+    font-size: 15px;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 12px rgba(0, 128, 0, 0.2);
+    transition: background-color 0.3s ease, transform 0.2s ease;
+  }
+
+  #content .btn-success:hover {
+    background-color: #218838;
+    transform: translateY(-2px);
+  }
+}
+
+/**
+/* Page de connexion
+ */
+
+#page-connexion, #page-connexion .btn-primary, #page-gestion-creation-compte, #page-gestion-creation-compte .btn-primary{
+  font-size:14px;
+}
+
+#page-connexion h2, #page-gestion-creation-compte h2 {
+  font-size: 2rem;
+}
+
+#page-connexion, #page-gestion-creation-compte {
+  /* Onglets */
+  .nav-pills .nav-link{
+    color: var(--secondary-color);
+    border: 2px solid transparent;
+    border-radius: 2rem;
+    padding: 0.75rem 1.5rem;
+    background-color: rgba(0, 64, 128, 0.05); /* très léger fond bleu */
+    transition: background-color 0.3s, border-color 0.3s;
+  }
+
+  /* Onglet actif */
+  .nav-pills .nav-link.active {
+    background-color: var(--secondary-color);
+    color: #fff;
+    border: 1px solid var(--secondary-color);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+
+  .nav-pills .nav-link.active:hover {
+    background-color: var(--secondary-color);
+  }
+
+  .nav-pills .nav-link {
+    background-color: rgba(0, 64, 128, 0.05);
+  }
+
+  .nav-pills .nav-link:hover {
+    background-color: rgba(0, 64, 128, 0.1);
+  }
+
+  .tab-content {
+    border-left: none !important;
+  }
+
+  .card-body {
+    background-color: rgba(0, 64, 128, 0.05);
+    border-radius: 1rem;
+    padding: 2rem;
+    transition: background-color 0.3s ease;
+  }
+
+  /* Zone d'inscription mise en valeur */
+  #div-connexion {
+    margin-top: 1.5rem;
+    padding: 1rem;
+    text-align: center;
+    background-color: #fff;
+    border: 1px solid var(--secondary-color);
+    border-radius: 0.5rem;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.05);
+  }
+
+  #div-connexion a {
+    color: var(--secondary-color);
+    font-weight: 600;
+    text-decoration: underline;
+    transition: color 0.3s ease;
+  }
+
+  #div-connexion a:hover {
+    color: var(--primary-color);
+  }
+
+  /* Pied de page discret */
+  .text-muted, .text-muted a {
+    color: #666 !important;
+  }
+
+  .text-muted a {
+    text-decoration: underline;
+  }
+
+  /* Mettre en valeur la description de connexion */
+  .connect-description, .register-infos {
+    background-color: #fff;
+    border-left: 4px solid var(--primary-color);
+    padding: 1.25rem 1rem;
+    margin-bottom: 1.5rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    line-height: 1.5;
+    width:fit-content;
+  }
+
+  .connect-description p, .register-infos p {
+    margin-bottom: 0.75rem;
+    color: #333;
+  }
+
+  .connect-description strong, .register-infos strong {
+    color: #004080;
+  }
+}
+
+/**
+ Style général du bloc FAQ
+*/
+
+dl.faq {
+  margin-top: 2rem;
+  border-left: 2px solid var(--secondary-color);
+  padding-left: 1rem;
+}
+
+/* Question */
+dl.faq dt {
+  font-weight: 600;
+  font-size: 0.85rem;
+  padding: 0.35rem 0.7rem;
+  background-color: var(--primary-color);
+  color: white;
+  border-radius: 0.5rem;
+  cursor: default;
+  transition: background-color 0.3s;
+  position: relative;
+  border-bottom: none;
+}
+
+dl.faq dt.selected {
+  background-color: rgba(13, 110, 253, 0.15);
+  color: #0d6efd;
+}
+
+/* Réponse */
+dl.faq dd {
+  margin-left: 0;
+  padding: 0.5rem 0.7rem;
+  background-color: #f8f9fa;
+  border-radius: 0 0 0.5rem 0.5rem;
+  border: 1px solid #dee2e6;
+  border-top: none;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+  margin-bottom: 0.7rem;
+}
+
+dl.faq dd.selected {
+  border-left: 4px solid #0d6efd;
+}
+
+  dl.faq dd .float-start {
+  max-width: 85%;
+}
+
+/* Boutons d’action */
+dl.faq dd .float-end a {
+  margin-left: 0.5rem;
+}
+
+@media (max-width: 768px) {
+  dl.faq dd .float-start,
+  dl.faq dd .float-end {
+    float: none !important;
+    display: block;
+    width: 100%;
+    text-align: left;
+    margin-top: 0.5rem;
+  }
 }

@@ -228,8 +228,7 @@ h1.app-name {
     border-radius: 0.75rem;
     padding: 0.5rem 0;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    background: #ffffff;
-    min-width: 200px; }
+    background: #ffffff; }
   #navbar .dropdown-menu {
     opacity: 0;
     transform: translateY(10px);
@@ -287,8 +286,46 @@ h1.app-name {
     overflow: hidden;
     border-top: 1px solid rgba(0, 0, 0, 0.15); }
 
+.nav-tabs {
+  border-bottom: 2px solid #dee2e6;
+  gap: 0.5rem;
+  display: flex;
+  position: relative; }
+
 .nav-tabs .nav-link {
+  border: none;
+  background: none;
+  color: #6c757d;
+  font-weight: 500;
+  padding: 0.75rem 1rem;
+  position: relative;
+  transition: color 0.3s ease; }
+
+.nav-tabs .nav-link::after {
+  content: '';
+  display: block;
+  height: 2px;
+  background: var(--primary-color);
+  position: absolute;
+  bottom: 0;
+  left: 25%;
+  right: 25%;
+  transform: scaleX(0);
+  transition: transform 0.3s ease;
+  border-radius: 1px; }
+
+.nav-tabs .nav-link:hover {
   color: var(--primary-color); }
+
+.nav-tabs .nav-link:hover::after {
+  transform: scaleX(1); }
+
+.nav-tabs .nav-link.active {
+  color: var(--primary-color);
+  font-weight: 600; }
+
+.nav-tabs .nav-link.active::after {
+  transform: scaleX(1); }
 
 /**
  Table
@@ -325,5 +362,162 @@ h1.app-name {
 /* Ajout d'un effet d'ombre */
 .table-shadow {
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); }
+
+/**
+/* Page d'accueil
+ */
+#page-accueil {
+  /* Paragraphe lead */
+  /* Texte de connexion/déconnexion */
+  /* Bouton de connexion */ }
+  #page-accueil #content.jumbotron {
+    border-radius: 1rem;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+    padding: 2rem;
+    margin: 2rem auto; }
+  #page-accueil #content .lead {
+    font-size: 15px;
+    color: #444; }
+  #page-accueil #content .text-danger strong {
+    font-size: 15px; }
+  #page-accueil #content .btn-success {
+    padding: 0.75rem 1.5rem;
+    font-size: 15px;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 12px rgba(0, 128, 0, 0.2);
+    transition: background-color 0.3s ease, transform 0.2s ease; }
+  #page-accueil #content .btn-success:hover {
+    background-color: #218838;
+    transform: translateY(-2px); }
+
+/**
+/* Page de connexion
+ */
+#page-connexion, #page-connexion .btn-primary, #page-gestion-creation-compte, #page-gestion-creation-compte .btn-primary {
+  font-size: 14px; }
+
+#page-connexion h2, #page-gestion-creation-compte h2 {
+  font-size: 2rem; }
+
+#page-connexion, #page-gestion-creation-compte {
+  /* Onglets */
+  /* Onglet actif */
+  /* Zone d'inscription mise en valeur */
+  /* Pied de page discret */
+  /* Mettre en valeur la description de connexion */ }
+  #page-connexion .nav-pills .nav-link, #page-gestion-creation-compte .nav-pills .nav-link {
+    color: var(--secondary-color);
+    border: 2px solid transparent;
+    border-radius: 2rem;
+    padding: 0.75rem 1.5rem;
+    background-color: rgba(0, 64, 128, 0.05);
+    /* très léger fond bleu */
+    transition: background-color 0.3s, border-color 0.3s; }
+  #page-connexion .nav-pills .nav-link.active, #page-gestion-creation-compte .nav-pills .nav-link.active {
+    background-color: var(--secondary-color);
+    color: #fff;
+    border: 1px solid var(--secondary-color);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); }
+  #page-connexion .nav-pills .nav-link.active:hover, #page-gestion-creation-compte .nav-pills .nav-link.active:hover {
+    background-color: var(--secondary-color); }
+  #page-connexion .nav-pills .nav-link, #page-gestion-creation-compte .nav-pills .nav-link {
+    background-color: rgba(0, 64, 128, 0.05); }
+  #page-connexion .nav-pills .nav-link:hover, #page-gestion-creation-compte .nav-pills .nav-link:hover {
+    background-color: rgba(0, 64, 128, 0.1); }
+  #page-connexion .tab-content, #page-gestion-creation-compte .tab-content {
+    border-left: none !important; }
+  #page-connexion .card-body, #page-gestion-creation-compte .card-body {
+    background-color: rgba(0, 64, 128, 0.05);
+    border-radius: 1rem;
+    padding: 2rem;
+    transition: background-color 0.3s ease; }
+  #page-connexion #div-connexion, #page-gestion-creation-compte #div-connexion {
+    margin-top: 1.5rem;
+    padding: 1rem;
+    text-align: center;
+    background-color: #fff;
+    border: 1px solid var(--secondary-color);
+    border-radius: 0.5rem;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.05); }
+  #page-connexion #div-connexion a, #page-gestion-creation-compte #div-connexion a {
+    color: var(--secondary-color);
+    font-weight: 600;
+    text-decoration: underline;
+    transition: color 0.3s ease; }
+  #page-connexion #div-connexion a:hover, #page-gestion-creation-compte #div-connexion a:hover {
+    color: var(--primary-color); }
+  #page-connexion .text-muted, #page-connexion .text-muted a, #page-gestion-creation-compte .text-muted, #page-gestion-creation-compte .text-muted a {
+    color: #666 !important; }
+  #page-connexion .text-muted a, #page-gestion-creation-compte .text-muted a {
+    text-decoration: underline; }
+  #page-connexion .connect-description, #page-connexion .register-infos, #page-gestion-creation-compte .connect-description, #page-gestion-creation-compte .register-infos {
+    background-color: #fff;
+    border-left: 4px solid var(--primary-color);
+    padding: 1.25rem 1rem;
+    margin-bottom: 1.5rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    line-height: 1.5;
+    width: fit-content; }
+  #page-connexion .connect-description p, #page-connexion .register-infos p, #page-gestion-creation-compte .connect-description p, #page-gestion-creation-compte .register-infos p {
+    margin-bottom: 0.75rem;
+    color: #333; }
+  #page-connexion .connect-description strong, #page-connexion .register-infos strong, #page-gestion-creation-compte .connect-description strong, #page-gestion-creation-compte .register-infos strong {
+    color: #004080; }
+
+/**
+ Style général du bloc FAQ
+*/
+dl.faq {
+  margin-top: 2rem;
+  border-left: 2px solid var(--secondary-color);
+  padding-left: 1rem; }
+
+/* Question */
+dl.faq dt {
+  font-weight: 600;
+  font-size: 0.85rem;
+  padding: 0.35rem 0.7rem;
+  background-color: var(--primary-color);
+  color: white;
+  border-radius: 0.5rem;
+  cursor: default;
+  transition: background-color 0.3s;
+  position: relative;
+  border-bottom: none; }
+
+dl.faq dt.selected {
+  background-color: rgba(13, 110, 253, 0.15);
+  color: #0d6efd; }
+
+/* Réponse */
+dl.faq dd {
+  margin-left: 0;
+  padding: 0.5rem 0.7rem;
+  background-color: #f8f9fa;
+  border-radius: 0 0 0.5rem 0.5rem;
+  border: 1px solid #dee2e6;
+  border-top: none;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+  margin-bottom: 0.7rem; }
+
+dl.faq dd.selected {
+  border-left: 4px solid #0d6efd; }
+
+dl.faq dd .float-start {
+  max-width: 85%; }
+
+/* Boutons d’action */
+dl.faq dd .float-end a {
+  margin-left: 0.5rem; }
+
+@media (max-width: 768px) {
+  dl.faq dd .float-start,
+  dl.faq dd .float-end {
+    float: none !important;
+    display: block;
+    width: 100%;
+    text-align: left;
+    margin-top: 0.5rem; } }
 
 /*# sourceMappingURL=charte.css.map */

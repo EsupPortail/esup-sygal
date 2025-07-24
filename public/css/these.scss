@@ -101,6 +101,40 @@ td .informations-compl-div, td .etat-informations-div{
   display: flex;
 }
 
+.badge-mission-enseignement {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: #f4f6f8;
+  border: 1px solid #dfe3e8;
+  font-size: 0.9em;
+  color: #333;
+  margin: 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  transition: background 0.2s;
+}
+
+.badge-mission-enseignement:hover {
+  background: #e9ecef;
+}
+
+.badge-mission-enseignement .icon-mission-enseignement {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background-color: var(--primary-color, #007bff);
+  color: white;
+  font-family: "Font Awesome 5 Free", serif;
+  font-weight: 900;
+  font-size: 0.75rem;
+  line-height: 1;
+}
+
 @media (max-width: 768px) {
   .informations-these-header {
     flex-direction: column;

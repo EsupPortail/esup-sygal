@@ -1,0 +1,39 @@
+<?php
+
+/**
+ * @var MissionEnseignement $missionEnseignement
+ * @var These $these
+ * @var array $options
+ **/
+
+use Doctorant\Entity\Db\MissionEnseignement;
+use These\Entity\Db\These;
+
+$canMissionGerer = $options['canMissionGerer'] ?? false;
+$canEditThese = $options['canEditThese'] ?? false;
+?>
+
+<span class="badge-mission-enseignement"
+      data-bs-toggle="tooltip">
+    <span class="icon-mission-enseignement">
+        <i class="fas fa-chalkboard-teacher"></i>
+    </span>
+   Mission d'enseignement pour l'année <?php echo $missionEnseignement->getAnneeUniversitaire(); ?>/<?php echo ($missionEnseignement->getAnneeUniversitaire()+1); ?>
+    <?php if ($canMissionGerer && $canEditThese) : ?>
+        <a  <?php /**  @see \Doctorant\Controller\MissionEnseignementController::retirerAction() */ ?>
+            class="ajax-modal" data-event="modification"
+            data-toggle="confirmationx"
+            data-message="Êtes-vous sûr·e de vouloir retirer cette mission d'enseignement ?"
+            data-bs-toggle="tooltip"
+            data-bs-html="true"
+            title="Une confirmation avant la suppression vous sera demandée"
+            href="<?php echo $this->url('doctorant/mission-enseignement/retirer', ['mission' => $missionEnseignement->getId(), 'doctorant' => $these->getDoctorant()->getId()], [], true); ?>"
+        >
+            <span class="icon icon-supprimer"></span>
+        </a>
+    <?php endif; ?>
+</span>
+
+<style>
+
+</style>

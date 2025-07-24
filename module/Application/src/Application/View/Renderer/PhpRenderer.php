@@ -4,6 +4,8 @@ namespace Application\View\Renderer;
 
 use Application\View\Helper\Etat\EtatViewHelper;
 use Depot\View\Helper\Url\UrlDepotHelper;
+use Doctorant\Entity\Db\MissionEnseignement;
+use Doctorant\View\Helper\MissionEnseignementViewHelper;
 use Fichier\Entity\Db\Fichier;
 use Fichier\View\Helper\Fichier\FichierViewHelper;
 use Laminas\Form\ElementInterface;
@@ -167,6 +169,7 @@ use UnicaenIdref\View\Helper\IdrefLinkViewHelper;
  * @method StructureViewHelper structure(Structure|Etablissement|EcoleDoctorale|UniteRecherche $structure, bool $afficherLibelle = true, bool $sansOmbre = false, $options = [])
  * @method FichierViewHelper fichier(Fichier $object, string $urlTelechargementFichier, string $urlSuppressionFichier, bool $canGererFichier, string $libelleOptionnel = "", bool $voirHistoInfo = true, bool $canVoirSuppression = true, bool $isTargetBlank = false, array $options = [])
  * @method EtatViewHelper etatHelper(mixed $etat = null, int|null $resultat = null, string|null $resultatString = "", $options = [])
+ * @method MissionEnseignementViewHelper missionEnseignement(MissionEnseignement $missionEnseignement, These $these, $options = [])
  *
  * @method IdrefLinkViewHelper idrefLink(string $ppn)
  *

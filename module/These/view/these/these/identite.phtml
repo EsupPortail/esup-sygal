@@ -223,18 +223,7 @@ switch ($these->getEtatThese()){
                             <?php else: ?>
                                 <ul>
                                     <?php foreach ($missions as $mission) : ?>
-                                        <li>Mission d'enseignement pour l'année <?php echo $mission->getAnneeUniversitaire(); ?>/<?php echo ($mission->getAnneeUniversitaire()+1); ?>
-                                        <?php if ($canMissionGerer && $canEditThese) : ?>
-                                            <a  <?php /**  @see \Doctorant\Controller\MissionEnseignementController::retirerAction() */ ?>
-                                                    class="ajax-modal" data-event="modification"
-                                                    data-toggle="confirmationx" data-message="Êtes-vous sûr·e de vouloir retirer cette mission d'enseignement ?"
-                                                    data-bs-toggle="tooltip"
-                                                    data-bs-html="true"
-                                                    title="Une confirmation avant la suppression vous sera demandée"
-                                                    href="<?php echo $this->url('doctorant/mission-enseignement/retirer', ['mission' => $mission->getId(), 'doctorant' => $these->getDoctorant()->getId()], [], true); ?>"
-                                            ><span class="icon icon-supprimer"></span></a>
-                                            </li>
-                                        <?php endif; ?>
+                                        <?php echo $this->missionEnseignement($mission, $these, ['canMissionGerer' => $canMissionGerer, 'canEditThese' => $canEditThese]); ?>
                                     <?php endforeach; ?>
                                 </ul>
                             <?php endif; ?>
@@ -454,4 +443,3 @@ switch ($these->getEtatThese()){
         });
     });
 </script>
-

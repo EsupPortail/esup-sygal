@@ -35,6 +35,7 @@ use Doctorant\Service\MissionEnseignement\MissionEnseignementService;
 use Doctorant\Service\MissionEnseignement\MissionEnseignementServiceFactory;
 use Doctorant\Service\Search\DoctorantSearchService;
 use Doctorant\Service\Search\DoctorantSearchServiceFactory;
+use Doctorant\View\Helper\MissionEnseignementViewHelper;
 use Laminas\Router\Http\Literal;
 use Laminas\Router\Http\Segment;
 use UnicaenPrivilege\Guard\PrivilegeController;
@@ -461,6 +462,11 @@ return [
     'controller_plugins' => [
         'invokables' => [
             'urlDoctorant' => 'Doctorant\Controller\Plugin\UrlDoctorant',
+        ],
+    ],
+    'view_helpers' => [
+        'invokables' => [
+            'missionEnseignement' => MissionEnseignementViewHelper::class,
         ],
     ],
 ];
