@@ -36,13 +36,13 @@ echo $this->partial('admission/admission/partial/header', []); ?>
 
 <?= $this->messenger()->addCurrentMessagesFromFlashMessengerWithNoNamespace() ?>
 
-<?php if($canRechercherDossiersAdmission) { ?>
+<?php if($canRechercherDossiersAdmission) : ?>
     <div class="admission-form">
         <form action="<?php echo $this->url('admission', [], [], true); ?>" method="post">
             <div class="row individu-recherche-index-container">
                 <div class="col-lg-4 col-sm-12 search-individu-label">
                     <label for="individuId">Entrez l'individu recherché</label>
-                    <?php if($role->getCode() === Role::CODE_ADMISSION_DIRECTEUR_THESE || $role->getCode() === Role::CODE_DIRECTEUR_THESE ) { ?>
+                    <?php if($role->getCode() === Role::CODE_ADMISSION_DIRECTEUR_THESE || $role->getCode() === Role::CODE_DIRECTEUR_THESE ) : ?>
                         <span class="icon icon-information admission-info-bulle" data-toggle="tooltip">
                             <span class="tooltip-text">
                                 Vous ne pourrez accéder à un dossier d'admission que si  : <br>
@@ -50,13 +50,13 @@ echo $this->partial('admission/admission/partial/header', []); ?>
                                 - ou que vous êtes le (co-)directeur de thèse de celui-ci.
                             </span>
                         </span>
-                    <?php }else if($role->isEcoleDoctoraleDependant() || $role->isUniteRechercheDependant()){ ?>
+                    <?php elseif($role->isEcoleDoctoraleDependant() || $role->isUniteRechercheDependant()): ?>
                         <span class="icon icon-information admission-info-bulle" data-toggle="tooltip">
                             <span class="tooltip-text">
                                 Vous ne pourrez accéder à un dossier d'admission que si votre école doctorale/unité de recherche est déclarée dans celui-ci.
                             </span>
                         </span>
-                    <?php }?>
+                    <?php endif; ?>
                      :
                 </div>
                 <div class="col-lg-4 col-sm-12 search-individu-input">
@@ -68,7 +68,7 @@ echo $this->partial('admission/admission/partial/header', []); ?>
             </div>
         </form>
     </div>
-<?php } else if(!empty($operations)){ ?>
+<?php elseif(!empty($operations)): ?>
     <h2>Statut de votre dossier d'admission</h2>
     <?php
     $returnUrl = $this->url('admission', ['individu' => $individu]);
@@ -83,9 +83,9 @@ echo $this->partial('admission/admission/partial/header', []); ?>
         'commentaires' => $commentaires,
         'role' => $role
     ]);
-} ?>
+endif; ?>
 
-<?php if($canListerDossiersAdmission) { ?>
+<?php if($canListerDossiersAdmission) : ?>
 
     <!-- Formulaire de filtrage -->
     <div class="float-start">
@@ -177,26 +177,26 @@ echo $this->partial('admission/admission/partial/header', []); ?>
                     <?php
                     $etabInscription =  $admission?->getInscription()->first() ? $admission->getInscription()->first()->getEtablissementInscription() : null;
                     echo "<td>";
-                    if($etabInscription){ ?>
+                    if($etabInscription): ?>
                             <?php echo $this->structure($etabInscription, false) ?>
-                    <?php }
+                    <?php endif;
                     echo "</td>";
                     ?>
                     <td class="acteurs">
                         <?php
-                        if($admission->getInscription()->first()){
+                        if($admission->getInscription()->first()):
                             $directeur = $admission->getInscription()->first()->getDirecteur();
-                            if($directeur){
+                            if($directeur):
                                 echo $directeur;
-                            }else{
-                                if(!empty($admission->getInscription()->first()->getDenominationDirecteurThese())){
+                            else:
+                                if(!empty($admission->getInscription()->first()->getDenominationDirecteurThese())):
                                     echo $admission->getInscription()->first()->getDenominationDirecteurThese();?>
                                     <span class="icon icon-warning admission-info-bulle" data-toggle="tooltip">
                                         <span class="tooltip-text">Le dossier n'a pas pu être associé au directeur de thèse désigné, puisque <b>l'individu n'est pas connu de l'application.</b> <br><br> Veillez à bien sélectionner un individu dans la liste proposée ou enregistrer ce dernier dans l'application</span>
                                     </span>
-                                <?php }
-                            }
-                        }
+                                <?php endif;
+                            endif;
+                        endif;
                         ?>
                     </td>
                     <td>
@@ -221,13 +221,13 @@ echo $this->partial('admission/admission/partial/header', []); ?>
                         </a>
                         <?php
                          $canSupprimerAdmission  = $this->isAllowed($admission, AdmissionPrivileges::ADMISSION_SUPPRIMER_SON_DOSSIER_ADMISSION);
-                         if($canSupprimerAdmission){ ?>
+                         if($canSupprimerAdmission): ?>
                             <a href="<?php echo $this->url('admission/ajouter',['action' => 'supprimer', 'individu' => $admission->getIndividu()->getId()], [], true); ?>"
                                data-toggle="confirmationx" data-event="modification"
                                title="Suppression du dossier d'admission #<?php echo $admission->getId(); ?> <br>(Une confirmation avant la suppression vous sera demandée)" data-bs-toggle="tooltip" data-bs-html="true">
                                 <span class="icon icon-supprimer text-danger"></span>
                             </a>
-                        <?php } ?>
+                        <?php endif; ?>
                     </td>
                 </tr>
             <?php endforeach ?>
@@ -245,21 +245,21 @@ echo $this->partial('admission/admission/partial/header', []); ?>
         <?php endif ?>
 
     <?php endif ?>
-<?php }else{ ?>
+<?php else: ?>
     <div class="row acces-admission-btn-container">
         <?php $texteBtn = $role->getRoleId() === Role::ROLE_ID_USER ? "Créer votre dossier d'admission" : "Accéder à votre dossier d'admission" ?>
         <a href="<?php echo $this->url('admission/ajouter', ['action' => 'etudiant','individu' => $individu->getId()], ['query' => ['refresh' => 'true']], true) ?>" class="btn btn-primary acces-admission-btn"><?php echo $texteBtn; ?></a>
     </div>
-<?php } ?>
+<?php endif; ?>
 
-<?php if ($canExportAdmissions) { ?>
+<?php if ($canExportAdmissions) : ?>
     <a href="<?php echo $this->url('admission/generer-export-csv', [], ['query' => $this->queryParams()], true); ?>"
        class="btn btn-secondary"
     >
         <span class="icon icon-zip"></span>
         Générer l'export CSV des dossiers d'admissions validés
     </a>
-<?php } ?>
+<?php endif; ?>
 
 <script>
     $(function() {
