@@ -34,7 +34,7 @@ class TefService
             throw new TefServiceException("Le répertoire destination spécifié existe déjà : " . $this->outputDir);
         }
 
-        mkdir($this->outputDir, 0600, true);
+        mkdir($this->outputDir, 0744, true);
     }
 
     /**

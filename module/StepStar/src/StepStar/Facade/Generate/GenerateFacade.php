@@ -157,7 +157,7 @@ class GenerateFacade
     private function genererXmlFileForThesesToDir(array $theses): string
     {
         if (!is_dir($this->xmlThesesOutputDirPath)) {
-            $ok = mkdir($this->xmlThesesOutputDirPath, 0600, true);
+            $ok = mkdir($this->xmlThesesOutputDirPath, 0744, true);
             if (!$ok) {
                 throw new Exception("Impossible de créer le répertoire '$this->xmlThesesOutputDirPath'.");
             }
