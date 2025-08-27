@@ -34,7 +34,7 @@ return [
             PrivilegeRuleProvider::class => [
                 'allow' => [
                     [
-                        'privilege' => [
+                        'privileges' => [
                             IndividuPrivileges::INDIVIDU_CONSULTER,
                             IndividuPrivileges::INDIVIDU_MODIFIER,
                             IndividuPrivileges::INDIVIDU_SUPPRIMER,

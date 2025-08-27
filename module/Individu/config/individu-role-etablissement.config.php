@@ -23,7 +23,7 @@ return [
                         'rechercher-etablissement',
                     ],
                     'roles' => [],
-//                    'privilege' => [
+//                    'privileges' => [
 //                        UtilisateurPrivileges::UTILISATEUR_ATTRIBUTION_ROLE,
 //                    ],
                 ],

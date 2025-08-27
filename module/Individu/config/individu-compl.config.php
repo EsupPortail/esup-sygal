@@ -24,7 +24,7 @@ return [
                     'action' => [
                         'index',
                     ],
-                    'privilege' => [
+                    'privileges' => [
                         IndividuPrivileges::INDIVIDU_COMPLMENT_INDEX,
                     ],
                 ],
@@ -33,7 +33,7 @@ return [
                     'action' => [
                         'afficher',
                     ],
-                    'privilege' => [
+                    'privileges' => [
                         IndividuPrivileges::INDIVIDU_COMPLMENT_AFFICHER,
                     ],
                 ],
@@ -46,7 +46,7 @@ return [
                         'historiser',
                         'restaurer'
                     ],
-                    'privilege' => [
+                    'privileges' => [
                         IndividuPrivileges::INDIVIDU_COMPLMENT_AFFICHER,
                     ],
                 ],
@@ -55,7 +55,7 @@ return [
                     'action' => [
                         'detruire',
                     ],
-                    'privilege' => [
+                    'privileges' => [
                         IndividuPrivileges::INDIVIDU_COMPLMENT_SUPPRIMER,
                     ],
                 ],
