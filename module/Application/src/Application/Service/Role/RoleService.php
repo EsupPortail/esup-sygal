@@ -6,10 +6,8 @@ use Application\Entity\Db\Privilege;
 use Application\Entity\Db\Profil;
 use Application\Entity\Db\Repository\RoleRepository;
 use Application\Entity\Db\Role;
-use Application\Service\Profil\ProfilServiceAwareTrait;
 use Application\Service\Source\SourceServiceAwareTrait;
 use Application\SourceCodeStringHelperAwareTrait;
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\Query\Expr\Join;
@@ -26,17 +24,18 @@ class RoleService extends \UnicaenUtilisateur\Service\Role\RoleService
 {
     use SourceServiceAwareTrait;
     use SourceCodeStringHelperAwareTrait;
-    use ProfilServiceAwareTrait;
 
-    /**
-     * @return RoleRepository
-     */
     public function getRepository(): RoleRepository
     {
         /** @var RoleRepository $repo */
         $repo = $this->entityManager->getRepository(Role::class);
 
         return $repo;
+    }
+
+    public function getRepo(): RoleRepository
+    {
+        return $this->getRepository();
     }
 
     /**
@@ -428,32 +427,6 @@ class RoleService extends \UnicaenUtilisateur\Service\Role\RoleService
             $this->getEntityManager()->flush($role);
         } catch (ORMException $e) {
             throw new RuntimeException("Un problème est survenu lors de la déassociation entre le role et le profil.", null, $e);
-        }
-    }
-
-    /**
-     * @param ArrayCollection $roles
-     * @param Privilege $privilege
-     * @param boolean $etat
-     */
-    public function applyChangement($roles, $privilege, $etat)
-    {
-        /** @var Role $role */
-        foreach ($roles as $role) {
-            if ($etat) {
-                $privilege->addRole($role);
-            } else {
-                $privilege->removeRole($role);
-            }
-            try {
-                $this->getEntityManager()->flush($privilege);
-            } catch (ORMException $e) {
-                throw new RuntimeException(
-                    "Un problème est survenu lors de l'application du changement du profil aux rôles associés.",
-                    null,
-                    $e
-                );
-            }
         }
     }
 }

@@ -7,8 +7,8 @@ use Application\Entity\Db\Privilege;
 use Application\Entity\Db\Role;
 use UnicaenPrivilege\Guard\PrivilegeController;
 use UnicaenPrivilege\Provider\Privilege\PrivilegePrivileges;
+use UnicaenPrivilege\Provider\Privilege\PrivilegeProvider;
 use UnicaenPrivilege\Provider\Rule\PrivilegeRuleProvider;
-use UnicaenPrivilege\Service\Privilege\PrivilegeService;
 use UnicaenUtilisateur\Controller\RoleController;
 use UnicaenUtilisateur\Provider\Privilege\RolePrivileges;
 
@@ -31,10 +31,10 @@ return [
     'bjyauthorize' => [
         'resource_providers' => [
             /**
-             * Le service Privilèges peut aussi être une source de ressources,
-             * si on souhaite tester directement l'accès à un privilège
+             * Le PrivilegeProvider est aussi une source de Ressource, du fait que dans unicaen/auth
+             * on souhaite tester directement l'accès à un privilège (i.e. privilège === ressource).
              */
-            PrivilegeService::class => [],
+            PrivilegeProvider::class => [],
         ],
 
         'rule_providers' => [

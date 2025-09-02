@@ -19,7 +19,7 @@
             </join-columns>
         </many-to-one>
 
-        <many-to-many target-entity="Application\Entity\Db\Role" field="roles">
+        <many-to-many target-entity="Application\Entity\Db\Role" field="roles" inversed-by="privileges">
             <join-table name="role_privilege">
                 <join-columns>
                     <join-column name="privilege_id" referenced-column-name="id"/>

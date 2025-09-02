@@ -7,8 +7,11 @@ use Application\Entity\Db\Profil;
 use Application\Entity\Db\Repository\ProfilRepository;
 use Application\Entity\Db\Role;
 use Application\Service\BaseService;
+use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\OptimisticLockException;
+use Exception;
+use Laminas\View\Model\JsonModel;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Service\EntityManagerAwareTrait;
 use UnicaenPrivilege\Service\Privilege\PrivilegeServiceAwareTrait;
@@ -98,6 +101,43 @@ class ProfilService extends BaseService
     }
 
     /**
+     * Ajout ou retrait d'un privilège à un profil, puis application aux rôles liés à ce profil.
+     * @throws \Exception
+     */
+    public function inverserPrivilegeForProfil(Profil $profil, Privilege $privilege): int
+    {
+        // refetch avec données liées utiles
+        /** @var \Application\Entity\Db\Profil $profil */
+        $profil = $this->getRepository()->createQueryBuilder('profil')
+            ->leftJoin('profil.privileges', 'p')->addSelect('p')
+            ->leftJoin('profil.roles', 'r')->addSelect('r')
+            // ne pas ajouter ->leftJoin('r.privileges', 'rp')->addSelect('rp') : trop long !
+            ->where('profil = :profil')->setParameter('profil', $profil)
+            ->getQuery()->getOneOrNullResult();
+
+        if ($profil->hasPrivilege($privilege)) {
+            // retrait du privilège au profil, puis aux rôles liés au profil
+            $profil->removePrivilege($privilege);
+            foreach ($profil->getRoles() as $role) {
+                $privilege->removeRole($role);
+            }
+            $return = 0;
+        } else {
+            // ajout du privilège au profil, puis aux rôles liés au profil
+            $profil->addPrivilege($privilege);
+            foreach ($profil->getRoles() as $role) {
+                $privilege->addRole($role);
+            }
+            $return = 1;
+        }
+
+        // enregistrement + déclenchement d'evt par le PrivilegeService (pour vidage du cache)
+        $this->privilegeService->update();
+
+        return $return;
+    }
+
+    /**
      * // TODO : /?\ DQL plutôt que cela /?\
      * Lors de l'affectation d'un profil à un rôle :
      * 1 - retrait des anciens privilèges accordés ;
@@ -105,56 +145,36 @@ class ProfilService extends BaseService
      * @param Profil $profil
      * @param Role $role
      */
-    public function applyProfilToRole($profil, $role)
+    public function applyProfilToRole(Profil $profil, Role $role): void
     {
-        // Comment accéder à la liste des privilèges d'un rôle ??? (la relation est unidirectionnelle est c'est génant ici) ...
-//        foreach ($role->getPrivileges() as $privilege) {
+        $privileges = $this->privilegeService->getRepo()->findAll();
 
-        $privileges = $this->getPrivilegeService()->getRepo()->findAll();
         /** @var Privilege $privilege */
         foreach ($privileges as $privilege) {
             if ($privilege->hasRole($role)) {
                 $privilege->removeRole($role);
-                try {
-                    $this->getEntityManager()->flush($privilege);
-                } catch (OptimisticLockException $e) {
-                    throw new RuntimeException("Un problème est survenu lors du retrait d'un privilège", $e);
-                }
             }
         }
 
         foreach ($profil->getPrivileges() as $privilege) {
             $privilege->addRole($role);
-            try {
-                $this->getEntityManager()->flush($privilege);
-            } catch (OptimisticLockException $e) {
-                throw new RuntimeException("Un problème est survenu lors de l'ajout d'un privilège", $e);
-            }
         }
+
+        // enregistrement + déclenchement d'evt par le PrivilegeService (pour vidage du cache)
+        $this->privilegeService->update();
     }
 
-    /**
-     * @param Profil $from
-     * @param Profil $to
-     */
-    public function copyPrivilegeFrom($from, $to)
+    public function copyPrivilegeFrom(Profil $from, Profil $to): void
     {
         foreach ($to->getPrivileges() as $privilege) {
             $to->removePrivilege($privilege);
-        }
-        try {
-            $this->getEntityManager()->flush($to);
-        } catch (OptimisticLockException $e) {
-            throw new RuntimeException("Un problème est survenu lors du retrait des privilèges initiaux", $e);
         }
 
         foreach ($from->getPrivileges() as $privilege) {
             $to->addPrivilege($privilege);
         }
-        try {
-            $this->getEntityManager()->flush($to);
-        } catch (OptimisticLockException $e) {
-            throw new RuntimeException("Un problème est survenu lors de l'ajout des privilèges", $e);
-        }
+
+        // enregistrement + déclenchement d'evt par le PrivilegeService (pour vidage du cache)
+        $this->privilegeService->update();
     }
 }

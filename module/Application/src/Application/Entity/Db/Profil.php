@@ -174,7 +174,9 @@ class Profil
     }
 
 
-    /** @return ArrayCollection */
+    /**
+     * @return ArrayCollection<\Application\Entity\Db\Role>
+     */
     public function getRoles()
     {
         return $this->roles;

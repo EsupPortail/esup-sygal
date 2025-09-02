@@ -59,16 +59,7 @@
 
         <many-to-many field="users" target-entity="Application\Entity\Db\Utilisateur" mapped-by="roles"/>
 
-        <many-to-many field="privileges" target-entity="Application\Entity\Db\Privilege" inversed-by="roles">
-            <join-table name="role_privilege">
-                <join-columns>
-                    <join-column name="role_id" referenced-column-name="id"/>
-                </join-columns>
-                <inverse-join-columns>
-                    <join-column name="privilege_id" referenced-column-name="id"/>
-                </inverse-join-columns>
-            </join-table>
-        </many-to-many>
+        <many-to-many field="privileges" target-entity="Application\Entity\Db\Privilege" mapped-by="roles"/>
 
         <many-to-many target-entity="Application\Entity\Db\Profil" field="profils">
             <join-table name="profil_to_role">

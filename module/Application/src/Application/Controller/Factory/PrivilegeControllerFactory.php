@@ -3,12 +3,13 @@
 namespace Application\Controller\Factory;
 
 use Application\Controller\PrivilegeController;
-use Structure\Service\Etablissement\EtablissementService;
 use Application\Service\Role\RoleService;
-use Structure\Service\Structure\StructureService;
 use Doctrine\ORM\EntityManager;
-use Interop\Container\ContainerInterface;
+use Psr\Container\ContainerInterface;
+use Structure\Service\Etablissement\EtablissementService;
+use Structure\Service\Structure\StructureService;
 use UnicaenPrivilege\Service\Privilege\PrivilegeCategorieService;
+use UnicaenPrivilege\Service\Privilege\PrivilegeService;
 
 class PrivilegeControllerFactory
 {
@@ -34,6 +35,14 @@ class PrivilegeControllerFactory
         $controller->setApplicationRoleService($roleService);
         $controller->setEtablissementService($etablissementService);
         $controller->setStructureService($structureService);
+
+        /** @var RoleService $roleService */
+        $roleService = $container->get(RoleService::class);
+        $controller->setApplicationRoleService($roleService);
+
+        /** @var PrivilegeService $privilegeService */
+        $privilegeService = $container->get(PrivilegeService::class);
+        $controller->setPrivilegeService($privilegeService);
 
         /** @var PrivilegeCategorieService $categoriesPrivilegeService */
         $categoriesPrivilegeService = $container->get(PrivilegeCategorieService::class);

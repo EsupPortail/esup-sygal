@@ -11,6 +11,20 @@ use UnicaenApp\Exception\RuntimeException;
 class RoleRepository extends DefaultEntityRepository
 {
     /**
+     * NB : Attention, cette méthode est appelé par unicaen/bjy-authorize.
+     * @see \BjyAuthorize\Provider\Role\ObjectRepositoryProvider::getRoles()
+     */
+    public function findAll(): array
+    {
+        $qb = $this->createQueryBuilder('r');
+        $qb
+            ->addSelect('s')->leftJoin('r.structure', 's')
+            ->orderBy('r.libelle, s.libelle');
+
+        return $qb->getQuery()->getResult();
+    }
+
+    /**
      * @param string $roleCode
      * @return Role|null
      */

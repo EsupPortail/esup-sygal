@@ -8,7 +8,6 @@ return [
     'modules' => [
         'DoctrineModule',
         'DoctrineORMModule',
-
         'Laminas\ApiTools',
         'Laminas\ApiTools\Provider',
         'Laminas\ApiTools\Documentation',
@@ -22,8 +21,9 @@ return [
         'Laminas\ApiTools\Rest',
         'Laminas\ApiTools\Rpc',
         'Laminas\ApiTools\Versioning',
-
         'Laminas\Cache',
+        'Laminas\Cache\Storage\Adapter\Filesystem',
+//        'Laminas\Cache\Storage\Adapter\Apcu',
         'Laminas\Filter',
         'Laminas\Form',
         'Laminas\Hydrator',
@@ -41,7 +41,6 @@ return [
         'Laminas\Router',
         'Laminas\Session',
         'Laminas\Validator',
-
         'ZfcUser',
         'BjyAuthorize',
         'UnicaenApp',
@@ -63,7 +62,6 @@ return [
         'Unicaen\Console',
         'UnicaenParametre',
         'UnicaenSearch',
-
         'Feature',
         'Horodatage',
         'Structure',

@@ -135,6 +135,7 @@ return [
                 'options'       => [
                     'route'    => '/modifier-profil-privilege/:profil/:privilege',
                     'defaults' => [
+                        /** @see ProfilController::modifierProfilPrivilegeAction() */
                         'controller'    => ProfilController::class,
                         'action'        => 'modifier-profil-privilege',
                     ],

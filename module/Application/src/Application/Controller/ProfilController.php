@@ -8,9 +8,8 @@ use Application\Entity\Db\Role;
 use Application\Form\ProfilForm;
 use Application\Service\Profil\ProfilServiceAwareTrait;
 use Application\Service\Role\ApplicationRoleServiceAwareTrait;
-use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\QueryBuilder;
-use UnicaenApp\Exception\RuntimeException;
+use Exception;
 use UnicaenPrivilege\Service\Privilege\PrivilegeCategorieServiceAwareTrait;
 use UnicaenPrivilege\Service\Privilege\PrivilegeServiceAwareTrait;
 use Laminas\Http\Request;
@@ -185,33 +184,27 @@ class ProfilController extends AbstractActionController
 
     }
 
-    public function modifierProfilPrivilegeAction()
+    public function modifierProfilPrivilegeAction(): JsonModel
     {
         $privilegeId = $this->params()->fromRoute("privilege");
         $profilId = $this->params()->fromRoute("profil");
 
         /** @var Profil $profil */
-        $profil = $this->getProfilService()->getProfil($profilId);
+        $profil = $this->getProfilService()->getRepository()->find($profilId);
         /** @var Privilege $privilege */
         $privilege = $this->getPrivilegeService()->getRepo()->find($privilegeId);
 
-        $value = null;
-        if( $profil->hasPrivilege($privilege)) {
-            $privilege->removeProfil($profil);
-            $value = 0;
-        } else {
-            $privilege->addProfil($profil);
-            $value = 1;
-        }
         try {
-            $this->getPrivilegeService()->getEntityManager()->flush($privilege);
-        } catch (OptimisticLockException $e) {
-            throw new RuntimeException("Un problème lors du changement de rôle s'est produit", $e);
+            $value = $this->profilService->inverserPrivilegeForProfil($profil, $privilege);
+        } catch (Exception $e) {
+            return new JsonModel([
+                'success' => false,
+                'error' => "Un problème lors du changement de rôle s'est produit : " . $e->getMessage(),
+            ]);
         }
-        // Application aux rôles associés au profil
-        $this->getApplicationRoleService()->applyChangement($profil->getRoles(), $privilege, $value);
 
         return new JsonModel([
+            'success' => true,
             'value' => $value,
         ]);
     }

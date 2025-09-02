@@ -70,11 +70,7 @@ class Privilege extends AbstractPrivilege
         return $this->roles;
     }
 
-    /**
-     * @param RoleInterface $role
-     * @return bool
-     */
-    public function hasRole($role)
+    public function hasRole(RoleInterface $role): bool
     {
         return $this->roles->contains($role);
     }

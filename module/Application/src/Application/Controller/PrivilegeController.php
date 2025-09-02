@@ -5,14 +5,13 @@ namespace Application\Controller;
 use Application\Entity\Db\Privilege;
 use Application\Entity\Db\Role;
 use Application\Service\Role\ApplicationRoleServiceAwareTrait;
-use Doctrine\ORM\Exception\ORMException;
-use Doctrine\ORM\OptimisticLockException;
+use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\QueryBuilder;
+use Exception;
 use Laminas\View\Model\JsonModel;
 use Laminas\View\Model\ViewModel;
 use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
 use Structure\Service\Structure\StructureServiceAwareTrait;
-use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Service\EntityManagerAwareTrait;
 use UnicaenPrivilege\Service\Privilege\PrivilegeCategorieServiceAwareTrait;
 use UnicaenPrivilege\Service\Privilege\PrivilegeServiceAwareTrait;
@@ -38,7 +37,7 @@ class PrivilegeController extends AbstractController
         $categorie = $this->params()->fromQuery("categorie");
         $role = $this->params()->fromQuery("role");
 
-        $qbRoles = $this->entityManager->getRepository(Role::class)->createQueryBuilder("r");
+        $qbRoles = $this->applicationRoleService->getRepository()->createQueryBuilder("r");
         $qbRoles
             ->addSelect('p')
             ->leftJoin('r.profils', 'p')
@@ -52,7 +51,7 @@ class PrivilegeController extends AbstractController
         /** @var Role[] $roles */
         $roles = $qbRoles->getQuery()->execute();
 
-        $qbPrivileges = $this->entityManager->getRepository(Privilege::class)->createQueryBuilder("p");
+        $qbPrivileges = $this->privilegeService->getRepo()->createQueryBuilder("p");
         $qbPrivileges
             ->addSelect('r')
             ->leftJoin('p.roles', 'r')
@@ -73,7 +72,7 @@ class PrivilegeController extends AbstractController
     private function fetchRolesForFilter($depend)
     {
         // pour filtre par (libellé de) rôle
-        $qb = $this->entityManager->getRepository(Role::class)->createQueryBuilder("r");
+        $qb = $this->applicationRoleService->getRepository()->createQueryBuilder("r");
         $qb
             ->orderBy('r.libelle');
 
@@ -95,32 +94,52 @@ class PrivilegeController extends AbstractController
      */
     public function modifierAction(): JsonModel
     {
-        /** @var Role $role */
-        $role = $this->entityManager->getRepository(Role::class)->find($this->params()->fromRoute("role"));
-        if ($role->getProfil()) {
-            throw new RuntimeException("Seuls les rôles sans profil sont concernés");
-        }
-
-        /** @var Privilege $privilege */
-        $privilege = $this->entityManager->getRepository(Privilege::class)->find($this->params()->fromRoute("privilege"));
-
-        if (in_array($role, $privilege->getRoles()->toArray())) {
-            $privilege->removeRole($role);
-            $value = 0;
-        } else {
-            $privilege->addRole($role);
-            $value = 1;
-        }
+        $qb = $this->applicationRoleService->getRepository()->createQueryBuilder('r')
+            ->leftJoin('r.profils', 'p')->addSelect('p')
+            ->where('r = :role')->setParameter('role', $this->params()->fromRoute('role'));
         try {
-            $this->getEntityManager()->flush($privilege);
-        } catch (ORMException $e) {
-            throw new RuntimeException(
-                sprintf("Un problème est survenu lors de %s du privilège.", $value ? "l'ajout" : "la suppression"),
-                $e
-            );
+            /** @var Role $role */
+            $role = $qb->getQuery()->getOneOrNullResult();
+        } catch (NonUniqueResultException $e) {
+            return new JsonModel([
+                'success' => false,
+                'error' => "Anomalie rencontrée : plusieurs rôles trouvés avec le même id !",
+            ]);
+        }
+
+        if ($role->getProfil()) {
+            return new JsonModel([
+                'success' => false,
+                'error' => "Seuls les rôles sans profil sont concernés !",
+            ]);
+        }
+
+        $qb = $this->privilegeService->getRepo()->createQueryBuilder('p')
+            ->leftJoin('p.roles', 'r')->addSelect('r')
+            ->where('p = :privilege')->setParameter('privilege', $this->params()->fromRoute('privilege'));
+        try {
+            /** @var Privilege $privilege */
+            $privilege = $qb->getQuery()->getOneOrNullResult();
+        } catch (NonUniqueResultException $e) {
+            return new JsonModel([
+                'success' => false,
+                'error' => "Anomalie rencontrée : plusieurs privilèges trouvés avec le même id !",
+            ]);
+        }
+
+        try {
+            // NB : PrivilegeService déclenchera un événement permettant de vider le cache des rôles par privilèges.
+            $value = (int) $this->privilegeService->toggle($role, $privilege);
+        } catch (Exception $e) {
+            return new JsonModel([
+                'success' => false,
+                'error' => "Un problème est survenu lors de l'ajout/retrait du privilège : " . $e->getMessage(),
+                'trace' => $e->getTrace(),
+            ]);
         }
 
         return new JsonModel([
+            'success' => true,
             'value' => $value,
         ]);
     }
