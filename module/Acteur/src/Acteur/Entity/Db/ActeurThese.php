@@ -53,4 +53,13 @@ class ActeurThese extends AbstractActeur
 
         return $this;
     }
+
+    public function getLibelleQualite(): string
+    {
+        if ($this->getSource()->getImportable()) {
+            return trim($this->libelleQualite);
+        }
+
+        return $this->qualite ?: '';
+    }
 }

@@ -42,7 +42,7 @@ abstract class AbstractActeurController extends AbstractController
 
             if ($this->acteurForm->isValid()) {
                 $this->saveActeur();
-                $this->flashMessenger()->addSuccessMessage(sprintf("l'acteur '%s' modifié avec succès.", $this->acteur));
+                $this->flashMessenger()->addSuccessMessage(sprintf("L'acteur '%s' a été modifié avec succès.", $this->acteur));
 
                 if (!$request->isXmlHttpRequest()) {
                     return $this->redirect()->toUrl($this->urlIdentite());
@@ -51,12 +51,14 @@ abstract class AbstractActeurController extends AbstractController
                 $this->flashMessenger()->addErrorMessage(sprintf("L'acteur '%s' n'a pas pu être modifié.", $this->acteur));
             }
         }
+
         $vm = new ViewModel();
         $vm->setVariables([
             'form' => $this->acteurForm,
             'title' => $this->acteur->getId() === null ? "Ajout d'un acteur" : "Modification de l'acteur ".$this->acteur->getDenomination()
         ]);
         $vm->setTemplate("acteur/acteur/modifier");
+
         return $vm;
     }
 

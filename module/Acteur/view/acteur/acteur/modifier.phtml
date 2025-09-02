@@ -3,14 +3,14 @@
 /**
  * @see ActeurTheseController::modifierAction()
  * @see ActeurHDRController::modifierAction()
+ *
  * @var \Acteur\Form\ActeurThese\ActeurTheseForm|\Acteur\Form\ActeurHDR\ActeurHDRForm $form
  * @var string $returnUrl
- * @var Membre $membre
  */
 
 use Acteur\Entity\Db\ActeurHDR;
 use Acteur\Entity\Db\ActeurThese;
-use Soutenance\Entity\Membre;
+use Laminas\Form\Element\Text;
 
 $this->headTitle()->append("Acteur");
 
@@ -24,12 +24,12 @@ if (!$form->getObject()->getId() && !$form->getObject()->getSource()->getImporta
     <div class="row">
         <div class="alert alert-warning">
             <span class="icon icon-attention"></span>
-            Si le membre n'est pas connu de SyGAL, merci de bien vouloir <a data-event="modification-association-jury" href="<?php echo $this->url('individu/ajouter', [], ['query' => ['redirect' => $returnUrl]]); ?>">l'ajouter</a> dans l'application.
+            Si l'acteur/membre n'est pas connu de SyGAL, merci de bien vouloir <a data-event="modification-association-jury" href="<?php echo $this->url('individu/ajouter', [], ['query' => ['redirect' => $returnUrl]]); ?>">l'ajouter</a> dans l'application.
         </div>
     </div>
 <?php endif ?>
 
-<h3>Informations concernant le membre</h3>
+<h3>Informations concernant l'acteur/membre</h3>
 <table class="table table-extra-condensed">
     <thead>
     <tr>
@@ -41,10 +41,10 @@ if (!$form->getObject()->getId() && !$form->getObject()->getSource()->getImporta
     </thead>
     <tbody>
     <tr>
-        <td>    <?php echo $membre->getDenomination(); ?>                                                   </td>
-        <td>    <?php echo $membre->getRole(); ?>                                                           </td>
-        <td>    <?php echo ($membre->getQualite()) ? $membre->getQualite()->getLibelle() : "Non définie"; ?>    </td>
-        <td>    <?php echo $membre->getEtablissement(); ?>                                                  </td>
+        <td><?php echo $acteur->getDenomination(); ?></td>
+        <td><?php echo $acteur->getRole(); ?></td>
+        <td><?php echo $acteur->getLibelleQualite() ?: "(Non définie)"; ?></td>
+        <td><?php echo $acteur->getEtablissement(); ?></td>
     </tr>
     </tbody>
 </table>
@@ -67,7 +67,11 @@ if (!$form->getObject()->getId() && !$form->getObject()->getSource()->getImporta
             <?php echo $this->formControlGroup($fieldset->get('qualite')); ?>
         <?php elseif($estImporte): ?>
             Qualité : <br>
-            <?php echo $acteur->getLibelleQualite(); ?>
+            <?php echo $this->formControlGroup(
+                    (new Text('_qualite'))
+                        ->setAttribute('disabled', 'disabled')
+                        ->setValue($acteur->getLibelleQualite() ?: "(Non définie)")
+            ); ?>
         <?php endif; ?>
     </div>
 </div>

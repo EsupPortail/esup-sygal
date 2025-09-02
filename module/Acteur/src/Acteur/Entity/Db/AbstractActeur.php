@@ -253,17 +253,9 @@ abstract class AbstractActeur implements HistoriqueAwareInterface, ResourceInter
         return $this;
     }
 
-    /**
-     * @return string qualite
-     */
     public function getLibelleQualite(): string
     {
-        $estImportable = $this->getSource()->getImportable();
-        if($estImportable){
-            return $this->libelleQualite === null ? " " : $this->libelleQualite;
-        }else{
-            return $this->qualite ?: "";
-        }
+        return $this->qualite ?: '';
     }
 
     /**
