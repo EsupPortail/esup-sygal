@@ -26,6 +26,6 @@ class EtatViewHelper extends AbstractHelper
         $view = $this->getView();
         $view->resolver()->attach(new TemplatePathStack(['script_paths' => [__DIR__ . "/partial"]]));
 
-        return $view->partial('etat', ['etat' => $object->getEtat(), 'options' => $options]);
+        return $view->partial('etat-formation', ['etat' => $object->getEtat(), 'options' => $options]);
     }
 }
