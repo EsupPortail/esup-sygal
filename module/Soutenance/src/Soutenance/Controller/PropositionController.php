@@ -606,12 +606,17 @@ abstract class PropositionController extends AbstractSoutenanceController
 
     /** Adresse de la soutenance **************************************************************************************/
 
-    public function ajouterAdresseAction(): ViewModel
+    public function ajouterAdresseAction(): ViewModel|Response
     {
         $this->initializeFromType();
 
+        if ($adresse = $this->proposition->getAdresseActive()) {
+            return $this->redirect()->toRoute("soutenance_{$this->type}/proposition/modifier-adresse", ['id' => $this->entity->getId(), 'adresse' => $adresse->getId()], [], true);
+        }
+
         $adresse = new Adresse();
         $adresse->setProposition($this->proposition);
+
         $form = $this->getAdresseSoutenanceForm();
         $form->setAttribute('action', $this->url()->fromRoute("soutenance_{$this->type}/proposition/ajouter-adresse", ['id' => $this->entity->getId(), 'proposition' => $this->proposition->getId()], [], true));
         $form->bind($adresse);
@@ -632,6 +637,7 @@ abstract class PropositionController extends AbstractSoutenanceController
             'form' => $form,
         ]);
         $vm->setTemplate('soutenance/default/default-form');
+
         return $vm;
     }
 

@@ -336,18 +336,12 @@ class Proposition implements HistoriqueAwareInterface, HasHorodatagesInterface {
 
     public function getAdresseActive() : ?Adresse
     {
-        $result = null;
-        /** @var Adresse $adresse */
-        foreach ($this->adresses as $adresse) {
-            if ($adresse->estNonHistorise()) {
-                if ($result === null) {
-                    $result = $adresse;
-                } else {
-                    throw new RuntimeException("Plusieurs [".Adresse::class."] sont actives pour la proposition [".$this->getId()."]");
-                }
-            }
+        $adresses = $this->adresses->filter(fn($adresse) => $adresse->estNonHistorise());
+        if ($adresses->count() > 1) {
+            throw new RuntimeException("Plusieurs [".Adresse::class."] sont actives pour la proposition [".$this->getId()."]");
         }
-        return $result;
+
+        return $adresses->first() ?: null;
     }
 
     /**
