@@ -5,18 +5,38 @@
  */
 
 use Depot\Entity\Db\Diffusion;
+
 ?>
 
 <?php if ($diffusion->getAutorisMel() === Diffusion::AUTORISATION_OUI_IMMEDIAT): ?>
 
 
-
-<?php elseif ($diffusion->getAutorisMel() === Diffusion::AUTORISATION_OUI_EMBARGO || $diffusion->getAutorisMel() === Diffusion::AUTORISATION_NON): ?>
+<?php elseif ($diffusion->getAutorisMel() === Diffusion::AUTORISATION_OUI_EMBARGO): ?>
 
     <p>
-        La thèse est disponible en version imprimée au service de documentation de l’établissement d’accueil et en PDF
-        pour l'ensemble de la communauté universitaire (en intranet ou dans le cadre du Prêt Entre
-        Bibliothèques).
+        Pendant la période d’embargo, conformément à l’Arrêté du 25 mai 2016 modifié le 26 août 2022, le manuscrit de
+        thèse est obligatoirement accessible à l’ensemble de la communauté universitaire française. Normandie Université
+        et les établissements co-accrédités remplissent cette obligation en rendant accessible le manuscrit au format
+        PDF sur l’intranet de l’Agence bibliographique de l’enseignement supérieur (Abes, <a href="https://abes.fr">https://abes.fr</a>)
+        disponible
+        depuis le site theses.fr. L’accès à cet intranet est possible uniquement après une authentification Renater
+        (<a href="https://www.renater.fr">https://www.renater.fr</a>).<br>
+        La diffusion en ligne sur le réseau international internet de la thèse est ensuite effectuée automatiquement le
+        lendemain de l’expiration du délai, sans préavis. Une demande de prolongation de l’embargo auprès du service de
+        documentation concerné est possible, mais doit anticiper le délai de traitement de la demande (un mois, hors
+        périodes de fermeture).
+    </p>
+
+<?php elseif ($diffusion->getAutorisMel() === Diffusion::AUTORISATION_NON): ?>
+
+    <p>
+        La thèse n’est pas diffusée sur le réseau international internet. Cependant, conformément à l’Arrêté du 25 mai
+        2016 modifié le modifié le 26 août 2022, le manuscrit de thèse est obligatoirement accessible à l’ensemble de la
+        communauté universitaire française. Normandie Université et les établissements co-accrédités remplissent cette
+        obligation en rendant accessible le manuscrit au format PDF sur l’intranet de l’Agence bibliographique de
+        l’enseignement supérieur (Abes, <a href="https://abes.fr">https://abes.fr</a>) disponible depuis le site
+        theses.fr. L’accès à cet intranet
+        est possible uniquement après une authentification Renater (<a href="https://www.renater.fr">https://www.renater.fr</a>).
     </p>
 
 <?php endif ?>
