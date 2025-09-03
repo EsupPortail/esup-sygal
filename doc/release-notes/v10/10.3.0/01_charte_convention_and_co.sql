@@ -351,7 +351,7 @@ VALUES ('DEPOT_CONVENTION_DE_MISE_EN_LIGNE', '<p>Convention de mise en ligne d''
     {% if comue %}
         <img src="{{ UrlFichier.getLogoEtablissementComue }}" height="3cm" alt="Logo de Normandie Université"/>
     {% endif %}
-    <img src="{{ UrlFichier.getLogoEtablissementInsc }}" height="3cm" alt="Logo de l\'établissement d\'inscription"/>
+    <img src="{{ UrlFichier.getLogoEtablissementInscr }}" height="3cm" alt="Logo de l\'établissement d\'inscription"/>
 </div>
 
 <p>
