@@ -25,9 +25,6 @@ use These\Entity\Db\These;
 
 $privilege = DepotPrivileges::THESE_SAISIE_AUTORISATION_DIFFUSION_($version);
 $canEdit = $this->isAllowed($these, $privilege);
-if ($version->estVersionCorrigee() && ! $resaisirAutorisationDiffusionVersionCorrigee) {
-    $canEdit = false;
-}
 ?>
 
 <div class="box card">
@@ -35,9 +32,6 @@ if ($version->estVersionCorrigee() && ! $resaisirAutorisationDiffusionVersionCor
     <div class="card-header bg-dark text-white">
         <h2 class="first">
             Autorisation de diffusion
-            <?php if ($diffusion && $diffusion->estCreationAuto() && !$resaisirAutorisationDiffusionVersionCorrigee): ?>
-                <span>(Rappel)</span>
-            <?php endif ?>
         </h2>
     </div>
 

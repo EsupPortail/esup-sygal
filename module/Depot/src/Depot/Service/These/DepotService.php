@@ -214,17 +214,15 @@ class DepotService extends BaseService implements ListenerAggregateInterface
     /**
      * Lors du dépôt d'une version originale corrigée, selon la config de l'appli, il peut être nécessaire de créer
      * automatiquement Diffusion et Attestation.
-     *
-     * @param These $these
      */
-    private function onFichierTheseTeleverseVersionCorrigee(These $these)
+    private function onFichierTheseTeleverseVersionCorrigee(These $these): void
     {
-        // Création automatique d'une Diffusion pour la version corrigée si l'utilisateur n'a pas le privilège d'en saisir une.
-        if (! $this->resaisirAutorisationDiffusionVersionCorrigee) {
+        // Création automatique d'une Diffusion pour la version corrigée
+        if (! $this->getResaisirAutorisationDiffusionVersionCorrigeeForThese($these)) {
             $this->createDiffusionVersionCorrigee($these);
         }
-        // Création automatique d'une Attestation pour la version corrigée si l'utilisateur n'a pas le privilège d'en saisir une.
-        if (! $this->resaisirAttestationsVersionCorrigee) {
+        // Création automatique d'une Attestation pour la version corrigée
+        if (! $this->getResaisirAttestationsVersionCorrigeeForThese($these)) {
             $this->createAttestationVersionCorrigee($these);
         }
     }

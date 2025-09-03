@@ -22,9 +22,6 @@ use These\Entity\Db\These;
 
 $privilege = DepotPrivileges::THESE_SAISIE_ATTESTATIONS_($version);
 $canEdit = $this->isAllowed($these, $privilege);
-if ($version->estVersionCorrigee() && ! $resaisirAttestationsVersionCorrigee) {
-    $canEdit = false;
-}
 ?>
 
 <div class="box card">
@@ -32,9 +29,6 @@ if ($version->estVersionCorrigee() && ! $resaisirAttestationsVersionCorrigee) {
     <div class="card-header bg-dark text-white">
         <h2>
             Attestation
-            <?php if ($attestation && $attestation->estCreationAuto() && !$resaisirAttestationsVersionCorrigee): ?>
-                <span>(Rappel)</span>
-            <?php endif ?>
         </h2>
     </div>
 
