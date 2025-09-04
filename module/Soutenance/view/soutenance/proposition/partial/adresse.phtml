@@ -26,7 +26,7 @@ $object = $proposition->getObject();
                     <p class="lead">Vous pouvez modifier celle-ci sans annulation du dossier tant que les convocations n'ont pas été éditées.</p>
                 <?php endif; ?>
                 <?php if ($proposition->getEtat()->getCode() !== Etat::VALIDEE) : ?>
-                    <?php if ($adresse) : ?>
+                    <?php if ($adresse === null) : ?>
                         <?php /** @see \Soutenance\Controller\PropositionController::ajouterAdresseAction() */ ?>
                         <a href="<?php echo $this->url("soutenance_{$typeProposition}/proposition/ajouter-adresse", ['id' => $object->getId(), 'proposition' => $proposition->getId()], [], true); ?>"
                            class="btn btn-primary ajax-modal" data-event="edition-adresse">
