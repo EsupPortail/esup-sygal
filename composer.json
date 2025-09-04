@@ -54,7 +54,7 @@
         "unicaen/app": "^6.2",
         "unicaen/auth-token": "^7.1",
         "unicaen/authentification": "^6.4",
-        "unicaen/privilege": "dev-release_6.3.0 as 6.2.1",
+        "unicaen/privilege": "^6.3.0",
         "unicaen/console": "^6.0",
         "unicaen/db-anonym": "^4.0",
         "unicaen/db-import": "^7.2",

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "015cca876e016938e7dcefe9b8034238",
+    "content-hash": "5be5a2d4b048b254ee46d782ee0b95e7",
     "packages": [
         {
             "name": "apereo/phpcas",
@@ -12156,11 +12156,11 @@
         },
         {
             "name": "unicaen/privilege",
-            "version": "dev-release_6.3.0",
+            "version": "6.3.0",
             "source": {
                 "type": "git",
                 "url": "https://git.unicaen.fr/lib/unicaen/privilege.git",
-                "reference": "0000850567e75e1cd7e2bdafc9b94e43727fbbd1"
+                "reference": "2e834e244522b56280df842017e4f206e4b472f1"
             },
             "require": {
                 "laminas/laminas-cache": "^3.13",
@@ -12182,7 +12182,7 @@
                 ]
             },
             "description": "Module reprenant la gestion des privileges  - Version laminas",
-            "time": "2025-09-03T06:22:28+00:00"
+            "time": "2025-09-04T09:49:42+00:00"
         },
         {
             "name": "unicaen/renderer",
@@ -15221,17 +15221,9 @@
             "time": "2025-03-24T14:11:06+00:00"
         }
     ],
-    "aliases": [
-        {
-            "package": "unicaen/privilege",
-            "version": "dev-release_6.3.0",
-            "alias": "6.2.1",
-            "alias_normalized": "6.2.1.0"
-        }
-    ],
+    "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
-        "unicaen/privilege": 20,
         "unicaen/renderer": 20,
         "unicaen/search": 20,
         "unicaen/sql": 20,
