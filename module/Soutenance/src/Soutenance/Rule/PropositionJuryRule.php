@@ -68,11 +68,12 @@ class PropositionJuryRule implements RuleInterface
 
         /** Bad rapporteur */
         $nbRapporteursBad = 0;
-        foreach ($this->proposition->getMembres() as $membre) {
-            if ($membre->estRapporteur() and $membre->getQualite()->isRangB() and $membre->getQualite()->getHdr() !== 'O') {
-                $nbRapporteursBad++;
-            }
-        }
+        // mise en commentaire provisoire : les gestionnaires vérifieront ce critère par eux-même
+//        foreach ($this->proposition->getMembres() as $membre) {
+//            if ($membre->estRapporteur() and $membre->getQualite()->isRangB() and $membre->getQualite()->getHdr() !== 'O') {
+//                $nbRapporteursBad++;
+//            }
+//        }
         if (!$forcerValidite && $nbRapporteursBad > 0) {
             $indicateurs["bad-rapporteur"]["valide"] = false;
             $indicateurs["bad-rapporteur"]["alerte"] = "Des rapporteurs de rang B ne sont pas titulaires d'une HDR";

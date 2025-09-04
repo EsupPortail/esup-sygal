@@ -170,6 +170,11 @@ $object = $proposition->getObject();
             </div>
         </div>
 
+        <p class="mt-4">
+            <span class="icon icon-attention"></span>
+            <strong>Rappel : sur les trois rapporteurs à désigner, au moins deux doivent être habilités à diriger des recherches.</strong>
+        </p>
+
         <table class="table table-extra-condensed table-hover table-composition-jury">
             <thead>
             <tr>
@@ -197,7 +202,7 @@ $object = $proposition->getObject();
                 $str = "Rapporteur de rang B non titulaire d'une HDR";
             ?>
             <?php foreach($membres as $membre): ?>
-                <tr <?php if ($membre->estRapporteur() AND $membre->getQualite()->isRangB() AND $membre->getQualite()->getHdr() !== 'O') echo " data-toggle='tooltip' title='".htmlentities($str, ENT_QUOTES)."' style='background:lightsalmon;' "; ?>>
+                <tr>
                     <td> <?php echo $membre->getCiviliteCourte(); ?> </td>
                     <td> <?php echo $membre->getPrenom(); ?> </td>
                     <td> <?php echo $membre->getNom(); ?> </td>

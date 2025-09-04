@@ -34,6 +34,7 @@ Journal des modifications
 - [FIX] Module Step-Star : création des répertoires de travail avec les bonnes permissions.
 - [FIX] Modification d'un acteur sur la fiche Thèse : l'affichage du formulaire (bouton 'crayon') plantait (pb dans la vue).
 - [FIX] Soutenance : la création de plusieurs adresses de soutenance doit être empêchée (màj BDD requise).
+- [FIX] Module HDR : désactivation du comptage des rapporteurs de rang B sans HDR (les gestionnaires vérifieront manuellement).
 
 10.2.1
 ------
