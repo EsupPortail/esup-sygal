@@ -755,7 +755,7 @@ class DepotController extends AbstractController
         return $vm;
     }
 
-    public function validationTheseCorrigeeAction()
+    public function validationTheseCorrigeeAction(): ViewModel
     {
         $these = $this->requestedThese();
         $version = $this->fichierTheseService->fetchVersionFichier(VersionFichier::CODE_ORIG_CORR);
@@ -1171,7 +1171,10 @@ class DepotController extends AbstractController
                     // création automatique d'une validation du dépôt de la version corrigée (par le doctorant)
                     if ($validite->getEstValide() && $version->estVersionCorrigee()) {
                         $this->depotValidationService->validateDepotTheseCorrigee($these);
-                        $this->depotService->notifierCorrectionsApportees($these);
+                        $resultArray = $this->depotService->notifierCorrectionsApportees($these);
+                        if ($resultArray[0] === 'error') {
+                            $this->flashMessenger()->addErrorMessage("Notification impossibble. " . $resultArray[1]);
+                        }
                     }
                 } catch (ValidationImpossibleException $vie) {
                     // Le test d'archivabilité du fichier '%s' a rencontré un problème indépendant de notre volonté
@@ -1541,7 +1544,7 @@ class DepotController extends AbstractController
         return $fieldset;
     }
 
-    public function modifierCertifConformiteAction()
+    public function modifierCertifConformiteAction(): ViewModel
     {
         $these = $this->requestedThese();
         $versionArchivage = $this->fichierTheseService->fetchVersionFichier($this->params()->fromQuery('version'));
@@ -1559,7 +1562,10 @@ class DepotController extends AbstractController
                 $this->fichierTheseService->updateConformiteFichierTheseRetraitee($these, $conforme);
                 if ($conforme && $versionArchivage->estVersionCorrigee()) {
                     $this->depotValidationService->validateDepotTheseCorrigee($these);
-                    $this->depotService->notifierCorrectionsApportees($these);
+                    $resultArray = $this->depotService->notifierCorrectionsApportees($these);
+                    if ($resultArray[0] === 'error') {
+                        $this->flashMessenger()->addErrorMessage("Notification impossibble. " . $resultArray[1]);
+                    }
                 }
             }
         }

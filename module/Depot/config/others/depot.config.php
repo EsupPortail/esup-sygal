@@ -653,7 +653,7 @@ return [
                                 'these' => '\d+',
                             ],
                             'defaults' => [
-                                /** @see TheseController::accorderSursisCorrectionAction() */
+                                /** @see DepotController::validationTheseCorrigeeAction() */
                                 'controller' => DepotController::class,
                                 'action' => 'validation-these-corrigee',
                             ],
@@ -706,6 +706,7 @@ return [
                                 'these' => '\d+',
                             ],
                             'defaults' => [
+                                /** @see DepotController::modifierCertifConformiteAction() */
                                 'controller' => DepotController::class,
                                 'action' => 'modifier-certif-conformite',
                             ],

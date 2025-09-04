@@ -20,6 +20,7 @@ Journal des modifications
 - Masquage du bouton de ré-import à la demande d'une thèse à partir d'Apogée car ce n'est plus possible pour l'instant.
 - Rapports d'activité : possibilité de supprimer un rapport ainsi que toutes les validations/avis associées.
 - Second dépôt de thèse (version corrigée) : reprise automatique des choix réalisés dans le premier dépôt concernant 'Autorisation de diffusion' mais possibilité pour le doctorant de revenir sur le formulaire pour pouvoir téléverser une version de diffusion (et modifier le reste aussi).
+- Module Dépôt de thèse : remontée propre d'une erreur en cas de notification impossible du PJ en cas d'absence de PJ.
 - [FIX] Modification d'une structure impossible
 - [FIX] Recherche d'individus : suppression de la limite de 100 résultats maximum.
 - [FIX] Dépôt de thèse : plantage de l'annulation de la validation des corrections de la thèse.

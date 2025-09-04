@@ -503,7 +503,7 @@ EOS;
     {
         $president = $these->getPresidentJury();
         if ($president === null) {
-            throw new InvalidArgumentException("Aucun président du jury pour la thèse [".$these->getId()."]");
+            return ['error', "Aucune action réalisée car aucun aucun président du jury n'a été trouvé pour la thèse."];
         }
 
         //Recherche de l'utilisateur  associé à l'individu
