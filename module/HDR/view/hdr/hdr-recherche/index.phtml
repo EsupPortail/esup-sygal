@@ -14,7 +14,6 @@ use UnicaenPrivilege\Provider\Privilege\Privileges;
  * @var SearchResultPaginator $hdrs
  * @var string      $text
  * @var Role        $roleGarant
- * @var bool        $displayEtablissement
  * @var bool        $displayDateSoutenance
  * @var string      $filtersRoute
  *
@@ -70,14 +69,12 @@ $canAddHDR = $this->isAllowed(Privileges::getResourceId(HDRPrivileges::HDR_MODIF
                     <?php echo $this->translate("Candidat"); ?>
                 </a> <?php echo $s->icon() ?>
             </th>
-            <?php if ($displayEtablissement): ?>
-                <th>
-                    <a href="<?php echo $s = $this->sortable(HDRSorter::NAME_etablissement); ?>"
-                       title="<?php echo $this->translate("Établissement");?> ">
-                        <?php echo $this->translate("Étab."); ?>
-                    </a> <?php echo $s->icon() ?>
-                </th>
-            <?php endif ?>
+            <th>
+                <a href="<?php echo $s = $this->sortable(HDRSorter::NAME_etablissement); ?>"
+                   title="<?php echo $this->translate("Établissement");?> ">
+                    <?php echo $this->translate("Étab."); ?>
+                </a> <?php echo $s->icon() ?>
+            </th>
             <th>
                 <a href="<?php echo $s = $this->sortable(HDRSorter::NAME_etatHDR); ?>"
                    title="<?php echo $this->translate("État de l'HDR");?> ">
@@ -111,12 +108,9 @@ $canAddHDR = $this->isAllowed(Privileges::getResourceId(HDRPrivileges::HDR_MODIF
         foreach ($hdrs as $hdr): ?>
             <tr>
                 <td><?php echo $hdr->getCandidat()->getIndividu()->getNomComplet() ?></td>
-                <?php
-                if ($displayEtablissement) { ?>
-                    <td>
-                        <?php echo $this->structure($hdr->getEtablissement(), false); ?>
-                    </td>
-                <?php } ?>
+                <td>
+                    <?php echo $this->structure($hdr->getEtablissement(), false); ?>
+                </td>
                 <td>
                     <?= $this->etatHelper(["libelle" => $hdr->getEtatHDRToString(), "code" => $hdr->getEtatHDR()], $hdr->getResultat(), $hdr->getResultatToString()) ?>
                 </td>

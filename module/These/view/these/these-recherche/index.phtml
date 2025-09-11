@@ -14,7 +14,6 @@ use UnicaenPrivilege\Provider\Privilege\Privileges;
  * @var SearchResultPaginator $theses
  * @var string      $text
  * @var Role        $roleDirecteurThese
- * @var bool        $displayEtablissement
  * @var bool        $displayDateSoutenance
  * @var string      $filtersRoute
  *
@@ -84,14 +83,12 @@ $canAddThese = $this->isAllowed(Privileges::getResourceId(ThesePrivileges::THESE
                     <?php echo $this->translate("Titre"); ?>
                 </a> <?php echo $s->icon() ?>
             </th>
-            <?php if ($displayEtablissement): ?>
-                <th>
-                    <a href="<?php echo $s = $this->sortable(TheseSorter::NAME_etablissement); ?>"
-                       title="<?php echo $this->translate("Établissement");?> ">
-                        <?php echo $this->translate("Étab."); ?>
-                    </a> <?php echo $s->icon() ?>
-                </th>
-            <?php endif ?>
+            <th>
+                <a href="<?php echo $s = $this->sortable(TheseSorter::NAME_etablissement); ?>"
+                   title="<?php echo $this->translate("Établissement");?> ">
+                    <?php echo $this->translate("Étab."); ?>
+                </a> <?php echo $s->icon() ?>
+            </th>
             <th>
                 <a href="<?php echo $s = $this->sortable(TheseSorter::NAME_etatThese); ?>"
                    title="<?php echo $this->translate("État de la thèse");?> ">
@@ -154,12 +151,9 @@ $canAddThese = $this->isAllowed(Privileges::getResourceId(ThesePrivileges::THESE
                         </a>
                     </span>
                 </td>
-                <?php
-                if ($displayEtablissement) { ?>
-                    <td>
-                        <?php echo $this->structure($these->getEtablissement(), false); ?>
-                    </td>
-                <?php } ?>
+                <td>
+                    <?php echo $this->structure($these->getEtablissement(), false); ?>
+                </td>
                 <td>
                     <?= $this->etatHelper(["libelle" => $these->getEtatTheseToString(), "code" => $these->getEtatThese()], $these->getResultat(), $these->getResultatToString()) ?>
                 </td>

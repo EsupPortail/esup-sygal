@@ -42,14 +42,12 @@ class TheseRechercheController extends AbstractController implements SearchContr
         /** @var SearchResultPaginator $paginator */
         $paginator = $result;
 
-        $etablissement = $this->searchService->getEtablissementInscSearchFilter()->getValue();
         $etatThese = $this->searchService->getFilterValueByName(TheseSearchService::NAME_etatThese);
 
         return new ViewModel([
             'theses' => $paginator,
             'text' => $text,
             'roleDirecteurThese' => $this->applicationRoleService->getRepository()->findOneBy(['sourceCode' => Role::CODE_DIRECTEUR_THESE]),
-            'displayEtablissement' => !$etablissement,
             'displayDateSoutenance' => $etatThese === These::ETAT_SOUTENUE || !$etatThese,
             'etatThese' => $etatThese,
             'filtersRoute' => 'these/recherche/filters',

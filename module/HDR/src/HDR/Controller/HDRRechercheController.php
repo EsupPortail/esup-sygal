@@ -58,7 +58,6 @@ class HDRRechercheController extends AbstractController implements SearchControl
             'hdrs' => $paginator,
             'text' => $text,
             'roleGarant' => $this->applicationRoleService->getRepository()->findOneBy(['sourceCode' => Role::CODE_HDR_GARANT]),
-            'displayEtablissement' => !$etablissement,
             'displayDateSoutenance' => $etatHDR === HDR::ETAT_SOUTENUE || !$etatHDR,
             'etatHDR' => $etatHDR,
             'filtersRoute' => $filtersRoute,
