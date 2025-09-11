@@ -47,7 +47,7 @@ class Role extends AbstractRole implements SourceAwareInterface, HistoriqueAware
     public const CODE_BU = 'BU';
     public const CODE_BDD = 'BDD'; // maison du doctorat
     public const CODE_GEST_HDR = 'HDR_GEST'; // maison du doctorat
-    public const CODE_OBSERVATEUR = "Observateur";
+    public const CODE_OBSERVATEUR = "OBSERV";
 
     //
     // rôles ED/UR-dépendants

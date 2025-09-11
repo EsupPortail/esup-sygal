@@ -107,6 +107,7 @@ class PropositionTheseAssertion implements  AssertionInterface {
                 switch ($role) {
                     case Role::CODE_ADMIN_TECH:
                         return true;
+                    case Role::CODE_OBSERVATEUR:
                     case Role::CODE_BDD :
                         return $structure === $theseEtablissementStructure;
                     case Role::CODE_RESP_ED :
