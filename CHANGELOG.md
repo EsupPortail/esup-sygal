@@ -21,6 +21,8 @@ Journal des modifications
 - Rapports d'activité : possibilité de supprimer un rapport ainsi que toutes les validations/avis associées.
 - Second dépôt de thèse (version corrigée) : reprise automatique des choix réalisés dans le premier dépôt concernant 'Autorisation de diffusion' mais possibilité pour le doctorant de revenir sur le formulaire pour pouvoir téléverser une version de diffusion (et modifier le reste aussi).
 - Module Dépôt de thèse : remontée propre d'une erreur en cas de notification impossible du PJ en cas d'absence de PJ.
+- Soutenance thèse/HDR : ajout d'un message à propos de la possibilité de générer l'avis de soutenance dans le cas où la présidence de l'établissement veut passer outre tous les avis défavorables.
+- Annuaire des thèses/HDR : affichage systématique de l'établissement d'inscription et plus seulement si le filtre est vierge.
 - [FIX] Modification d'une structure impossible
 - [FIX] Recherche d'individus : suppression de la limite de 100 résultats maximum.
 - [FIX] Dépôt de thèse : plantage de l'annulation de la validation des corrections de la thèse.

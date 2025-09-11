@@ -367,6 +367,18 @@ $canSimulerRemonter = $this->isAllowed(PresoutenancePrivileges::getResourceId(Pr
     }
     $bgcolor = $tousLesAvisSontDefavorables ? "bg-danger" : $bgcolor;
     $cssClass = $tousLesAvisSontDefavorables ? "" : $cssClass;
+
+    // NB : la présidence de l'établissement peut passer outre les avis défavorables donc
+    // laisser la possibilité de générer l'avis de soutenance dans le cas où tous les avis sont défavorables
+    $canGenererAvisSoutenance = false;
+    $messageGenererAvisSoutenance = null;
+    if ($proposition->getEtat()->getCode() === Etat::ETABLISSEMENT && $tousLesAvisSontDefavorables) {
+        $canGenererAvisSoutenance = true;
+        $messageGenererAvisSoutenance = "Vous avez la possibilité de générer l'avis de soutenance dans le cas où la présidence de l'établissement veut passer outre tous les avis défavorables.";
+    }
+    if ($proposition->getEtat()->getCode() === Etat::COMPLET) {
+        $canGenererAvisSoutenance = true;
+    }
     ?>
 
     <div class="box card">
@@ -380,10 +392,12 @@ $canSimulerRemonter = $this->isAllowed(PresoutenancePrivileges::getResourceId(Pr
                 Dans le cas où l'ensemble des avis serait défavorable, la soutenance pourra être rejetée par l'établissement.
             </p>
 
-            <!-- la présidence de l'établissement peut passer outre les avis défavorables donc -->
-            <!-- laisser la possibilité de générer l'avis de soutenance dans le cas où tous les avis sont défavorables -->
-            <?php if (($proposition->getEtat()->getCode() === Etat::ETABLISSEMENT && $tousLesAvisSontDefavorables) ||
-                $proposition->getEtat()->getCode() === Etat::COMPLET): ?>
+            <?php if ($canGenererAvisSoutenance): ?>
+                <?php if ($messageGenererAvisSoutenance): ?>
+                    <p class="lead">
+                        <?php echo $messageGenererAvisSoutenance ?>
+                    </p>
+                <?php endif ?>
                 <div>
                     <a  <?php /** @see \Soutenance\Controller\PresoutenanceController::avisSoutenanceAction() */ ?>
                             href="<?php echo $this->url("soutenance_{$typeProposition}/presoutenance/avis-soutenance", ['id' => $proposition->getThese()->getId()], [], true); ?>"
