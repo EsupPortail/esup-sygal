@@ -36,6 +36,7 @@ Journal des modifications
 - [FIX] Soutenance : la création de plusieurs adresses de soutenance doit être empêchée (màj BDD requise).
 - [FIX] Module HDR : désactivation du comptage des rapporteurs de rang B sans HDR (les gestionnaires vérifieront manuellement).
 - [FIX] Le rôle Observateur Structure étais éjecté des pages Soutenances (thèses et HDR).
+- [FIX] Soutenance : la révocation d'un avis de soutenance est impossible dès lors que le dossier de soutenance est passé à l'état 'Dossier complet'.
 
 10.2.1
 ------

@@ -15,6 +15,7 @@ use HDR\Entity\Db\HDR;
 use Laminas\Permissions\Acl\Assertion\AssertionInterface;
 use Laminas\Permissions\Acl\Resource\ResourceInterface;
 use Soutenance\Entity\Avis;
+use Soutenance\Entity\Etat;
 use Soutenance\Entity\Membre;
 use Soutenance\Entity\Proposition;
 use Soutenance\Entity\PropositionThese;
@@ -82,7 +83,6 @@ class AvisSoutenanceAssertion extends AbstractAssertion implements  AssertionInt
      */
     protected function assertEntity(ResourceInterface $entity, $privilege = null): bool
     {
-
         if (! parent::assertEntity($entity, $privilege)) {
             return false;
         }
@@ -93,6 +93,7 @@ class AvisSoutenanceAssertion extends AbstractAssertion implements  AssertionInt
          */
         $rapporteur = $entity;
         $object = $rapporteur instanceof ActeurThese ? $rapporteur->getThese() : $rapporteur->getHDR();
+        $proposition = $this->propositionService->findOneForObject($object);
 
         if($object instanceof These){
             if(!$this->userContextService->isStructureDuRoleRespecteeForThese($object)) return false;
@@ -120,19 +121,17 @@ class AvisSoutenanceAssertion extends AbstractAssertion implements  AssertionInt
                     throw new RuntimeException("Problème de récupération de la date");
                 }
 
-                /** @var Proposition $proposition */
-                $proposition = $this->getPropositionService()->findOneForObject($object);
                 $dateRetour = ($proposition->getRenduRapport())->add(new DateInterval('P1D'));
                 if ($currentDate > $dateRetour) return false;
-            /**
-             * Les personnes pouvant révoquer un avis
-             * - le rapporteur
-             * - le bdd de l'etablissement
-             */
+
             case AvisSoutenancePrivileges::AVIS_ANNULER :
+                if ($proposition->getEtat()->getCode() === Etat::COMPLET) {
+                    return false;
+                }
                 $etatObject = $object instanceof These ? $object->getEtatThese() : $object->getEtatHDR();
                 if($etatObject === These::ETAT_SOUTENUE || $etatObject === HDR::ETAT_SOUTENUE) return false;
         }
+
         return true;
     }
 
