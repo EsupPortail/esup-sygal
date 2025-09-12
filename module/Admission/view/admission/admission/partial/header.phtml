@@ -30,7 +30,7 @@ $canConfigurerModule = $this->isAllowed(AdmissionPrivileges::getResourceId(Admis
         </a>
     <?php endif; ?>
 
-    <?php if(isset($individu)): ?>
+    <?php if (isset($admission) && isset($individu)): ?>
         <?php echo $this->etatHelper($admission->getEtat(), null, '', ['css' => 'margin-left:10px;', 'textTooltip' => 'État du dossier d\'admission', 'afficherLibelleLong' => true]) ?>
     <?php endif; ?>
 
