@@ -59,6 +59,12 @@ $etudiant = $admission ? $admission->getEtudiant()->first() : null;
             <?php echo $this->formControlGroup($fieldset->get('etablissementInscription')) ?>
         </div>
     </div>
+</div>
+
+<div class="admission-section-form">
+    <div class="admission-section-title-container">
+        <h2 class="admission-section-title">Direction de thèse<label class="admission-section-title-en">&nbsp; /  Thesis supervision</label></h2>
+    </div>
     <div class="row subfield">
         <?php echo $this->formControlGroup($fieldset->get('directeur')) ?>
         <div class="col-lg-6 col-sm-12">
@@ -104,7 +110,7 @@ $etudiant = $admission ? $admission->getEtudiant()->first() : null;
             <?php echo $this->formControlGroup($fieldset->get('titreThese')) ?>
         </div>
     </div>
-    <?php if ($etudiant->getNiveauEtude() == 2): ?>
+    <?php if ($etudiant?->getNiveauEtude() === 2): ?>
         <div class="separator"></div>
         <div class="row subfield">
             <div class="col infos-pieces-justificatives-container">
@@ -121,6 +127,64 @@ $etudiant = $admission ? $admission->getEtudiant()->first() : null;
         </div>
     <?php endif; ?>
 </div>
+
+<div class="admission-section-form">
+    <div class="admission-section-title-container">
+        <h2 class="admission-section-title">Co-direction de thèse<label class="admission-section-title-en">&nbsp; /  Thesis co-supervision</label></h2>
+    </div>
+    <div class="row subfield">
+        <div class="col-lg-3 col-sm-12">
+            <div class="admission-form-checkboxes">
+                <?php echo $this->formControlGroup($fieldset->get('coDirection')) ?>
+            </div>
+        </div>
+        <div class="col-lg-9 col-sm-12">
+            <div id="additionalFieldsCodirection">
+                <div class="row">
+                    <?php echo $this->formControlGroup($fieldset->get('coDirecteur')) ?>
+                    <div class="col-lg-6 col-sm-12">
+                        <?php if(!$inscriptionExist ||
+                            empty($admission->getInscription()->first()->getCoDirecteur())){ ?>
+                            <label class="form-label" for="inscription[nomCoDirecteurThese]">Nom du co-directeur de thèse</label><label class="label_en">&nbsp; / Lastname of thesis co-supervisor</label>
+                            <span class="icon icon-warning admission-info-bulle" data-toggle="tooltip" style="display:none;">
+                                        <span class="tooltip-text">Le dossier n'a pas pu être associé au co-directeur de thèse désigné, puisque <b>l'individu n'est pas connu de l'application.</b> <br> Veillez à bien sélectionner un individu dans la liste proposée <br><br> Rapprochez-vous de votre gestionnaire, si vous ne trouvez pas l'individu recherché</span>
+                                    </span>
+                        <?php }else{ ?>
+                            <label class="form-label" for="inscription[nomCoDirecteurThese]">Nom du co-directeur de thèse</label><label class="label_en">&nbsp; / Lastname of thesis co-supervisor</label>
+                            <?php if($inscriptionExist &&
+                                $admission->getInscription()->first()->getCoDirecteur()){ ?>
+                                <span class="icon icon-success admission-info-bulle" data-toggle="tooltip">
+                                            <span class="tooltip-text">Le dossier a bien été associé au co-directeur de thèse désigné</span>
+                                        </span>
+                            <?php } ?>
+                        <?php } ?>
+                        <?php echo $this->formControlGroup($fieldset->get('nomCodirecteurThese')) ?>
+                    </div>
+                    <div class="col-lg-6 col-sm-12">
+                        <?php echo $this->formControlGroup($fieldset->get('prenomCodirecteurThese')) ?>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-4 col-sm-12">
+                        <?php echo $this->formControlGroup($fieldset->get('emailCodirecteurThese')) ?>
+                    </div>
+                    <div class="col-lg-4 col-sm-12">
+                        <?php echo $this->formControlGroup($fieldset->get('uniteRechercheCoDirecteur')) ?>
+                    </div>
+                    <div class="col-lg-4 col-sm-12">
+                        <?php echo $this->formControlGroup($fieldset->get('etablissementRattachementCoDirecteur')) ?>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <?php echo $this->formControlGroup($fieldset->get('fonctionCoDirecteurThese')) ?>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="admission-section-form">
     <div class="admission-section-title-container">
         <div class="row">
@@ -200,57 +264,6 @@ $etudiant = $admission ? $admission->getEtudiant()->first() : null;
                             <?php else: ?>
                                 <p class="admission-field-information"><?= $texteCotutelleCorps ?></p>
                             <?php endif; ?>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="row subfield">
-            <div class="col-lg-3 col-sm-12">
-                <div class="admission-form-checkboxes">
-                    <?php echo $this->formControlGroup($fieldset->get('coDirection')) ?>
-                </div>
-            </div>
-            <div class="col-lg-9 col-sm-12">
-                <div id="additionalFieldsCodirection">
-                    <div class="row">
-                        <?php echo $this->formControlGroup($fieldset->get('coDirecteur')) ?>
-                        <div class="col-lg-6 col-sm-12">
-                            <?php if(!$inscriptionExist ||
-                                    empty($admission->getInscription()->first()->getCoDirecteur())){ ?>
-                                    <label class="form-label" for="inscription[nomCoDirecteurThese]">Nom du co-directeur de thèse</label><label class="label_en">&nbsp; / Lastname of thesis co-supervisor</label>
-                                    <span class="icon icon-warning admission-info-bulle" data-toggle="tooltip" style="display:none;">
-                                        <span class="tooltip-text">Le dossier n'a pas pu être associé au co-directeur de thèse désigné, puisque <b>l'individu n'est pas connu de l'application.</b> <br> Veillez à bien sélectionner un individu dans la liste proposée <br><br> Rapprochez-vous de votre gestionnaire, si vous ne trouvez pas l'individu recherché</span>
-                                    </span>
-                            <?php }else{ ?>
-                                <label class="form-label" for="inscription[nomCoDirecteurThese]">Nom du co-directeur de thèse</label><label class="label_en">&nbsp; / Lastname of thesis co-supervisor</label>
-                                <?php if($inscriptionExist &&
-                                        $admission->getInscription()->first()->getCoDirecteur()){ ?>
-                                        <span class="icon icon-success admission-info-bulle" data-toggle="tooltip">
-                                            <span class="tooltip-text">Le dossier a bien été associé au co-directeur de thèse désigné</span>
-                                        </span>
-                                <?php } ?>
-                            <?php } ?>
-                            <?php echo $this->formControlGroup($fieldset->get('nomCodirecteurThese')) ?>
-                        </div>
-                        <div class="col-lg-6 col-sm-12">
-                            <?php echo $this->formControlGroup($fieldset->get('prenomCodirecteurThese')) ?>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-lg-4 col-sm-12">
-                            <?php echo $this->formControlGroup($fieldset->get('emailCodirecteurThese')) ?>
-                        </div>
-                        <div class="col-lg-4 col-sm-12">
-                            <?php echo $this->formControlGroup($fieldset->get('uniteRechercheCoDirecteur')) ?>
-                        </div>
-                        <div class="col-lg-4 col-sm-12">
-                            <?php echo $this->formControlGroup($fieldset->get('etablissementRattachementCoDirecteur')) ?>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-sm-12">
-                            <?php echo $this->formControlGroup($fieldset->get('fonctionCoDirecteurThese')) ?>
                         </div>
                     </div>
                 </div>
