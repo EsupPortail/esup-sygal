@@ -1,3 +1,7 @@
+--
+-- 10.3.0
+--
+
 insert into unicaen_privilege_privilege(ID, CATEGORIE_ID, CODE, LIBELLE, ORDRE)
 with d(ordre, code, lib) as (select 100,
                                     'admission-modifier-dossier-admission-gestion',
@@ -26,3 +30,17 @@ from PROFIL_TO_ROLE p2r
          join PROFIL_PRIVILEGE pp on pp.PROFIL_ID = pr.id
 where not exists (select * from role_privilege where role_id = p2r.role_id and privilege_id = pp.privilege_id)
 ;
+
+-- modif de 'Validation de la bonne lecture de la convention' en 'Validation de la convention'
+update admission_type_validation
+    set libelle  = 'Validation de la convention de formation doctorale par la direction de thèse'
+    where code = 'VALIDATION_CONVENTION_FORMATION_DOCT_DIR_THESE';
+update admission_type_validation
+    set libelle  = 'Validation de la convention de formation doctorale par la co-direction de thèse'
+    where code = 'VALIDATION_CONVENTION_FORMATION_DOCT_CODIR_THESE';
+update admission_type_validation
+    set libelle  = 'Validation de la convention de formation doctorale par la direction de l''unité de recherche'
+    where code = 'VALIDATION_CONVENTION_FORMATION_DOCT_DIR_UR';
+update admission_type_validation
+    set libelle  = 'Validation de la convention de formation doctorale par la direction de l''école doctorale'
+    where code = 'VALIDATION_CONVENTION_FORMATION_DOCT_DIR_ED';
