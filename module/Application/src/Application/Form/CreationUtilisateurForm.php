@@ -25,11 +25,7 @@ class CreationUtilisateurForm extends Form implements InputFilterProviderInterfa
         );
         $this->add(
             (new Radio('civilite'))
-                ->setValueOptions([
-                    '' => 'Aucune (neutre)',
-                    Individu::CIVILITE_M => Individu::CIVILITE_M,
-                    Individu::CIVILITE_MME => Individu::CIVILITE_MME,
-                ])
+                ->setValueOptions(Individu::CIVILITES)
                 ->setLabel("Civilité")
         );
         $this->add(
@@ -65,7 +61,8 @@ class CreationUtilisateurForm extends Form implements InputFilterProviderInterfa
         return [
             'civilite' => [
                 'name' => 'civilite',
-                'required' => false,
+                'required' => true,
+                'allow_empty' => true, // permet d'obliger une sélection mais autorise la civilité neutre malgré sa la valeur ''
             ],
             'nomUsuel' => [
                 'name' => 'nomUsuel',

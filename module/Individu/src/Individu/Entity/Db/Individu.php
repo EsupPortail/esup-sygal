@@ -19,9 +19,6 @@ use UnicaenUtilisateur\Entity\Db\HistoriqueAwareTrait;
 use UnicaenDbImport\Entity\Db\Interfaces\SourceAwareInterface;
 use UnicaenDbImport\Entity\Db\Traits\SourceAwareTrait;
 
-/**
- * Individu
- */
 class Individu implements
     HistoriqueAwareInterface, SourceAwareInterface, ResourceInterface,
     SubstitutionAwareEntityInterface
@@ -32,9 +29,11 @@ class Individu implements
 
     public const CIVILITE_M = 'M.';
     public const CIVILITE_MME = 'Mme';
+
     public const CIVILITES = [
-        self::CIVILITE_M => 'M',
         self::CIVILITE_MME => 'Mme',
+        self::CIVILITE_M => 'M.',
+        '' => 'Aucune (neutre)',
     ];
 
     public const TYPE_DOCTORANT = 'doctorant';

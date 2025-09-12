@@ -23,6 +23,7 @@ Journal des modifications
 - Module Dépôt de thèse : remontée propre d'une erreur en cas de notification impossible du PJ en cas d'absence de PJ.
 - Soutenance thèse/HDR : ajout d'un message à propos de la possibilité de générer l'avis de soutenance dans le cas où la présidence de l'établissement veut passer outre tous les avis défavorables.
 - Annuaire des thèses/HDR : affichage systématique de l'établissement d'inscription et plus seulement si le filtre est vierge.
+- Formulaire de création de compte local : obligation de choisir une civilité (Mme, M. ou Neutre).
 - [FIX] Modification d'une structure impossible
 - [FIX] Recherche d'individus : suppression de la limite de 100 résultats maximum.
 - [FIX] Dépôt de thèse : plantage de l'annulation de la validation des corrections de la thèse.
