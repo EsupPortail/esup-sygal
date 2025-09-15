@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "5be5a2d4b048b254ee46d782ee0b95e7",
+    "content-hash": "129044bf680a0f7f172710f0816de996",
     "packages": [
         {
             "name": "apereo/phpcas",
@@ -12278,25 +12278,25 @@
         },
         {
             "name": "unicaen/sql",
-            "version": "dev-master",
+            "version": "2.0.0",
             "source": {
                 "type": "git",
                 "url": "https://git.unicaen.fr/lib/unicaen/sql.git",
-                "reference": "b7e795c58767cc0c36d0032ce0f40fedcc0467e3"
+                "reference": "a0c1fb9af7196162c17ccfaf155cd4177155ac49"
             },
             "require": {
-                "doctrine/dbal": "^3.0",
+                "doctrine/dbal": "^3.0 || ^4.0",
                 "laminas/laminas-config": "^3.9",
-                "laminas/laminas-log": "^2.10",
                 "laminas/laminas-servicemanager": "^3.0",
                 "laminas/laminas-stdlib": "^3.10",
-                "php": "^8.0",
+                "monolog/monolog": "^2.8",
+                "php": "^8.2",
                 "unicaen/console": "^6.0",
                 "webmozart/assert": "^1.10"
             },
             "require-dev": {
-                "laminas/laminas-test": "^3.2",
-                "phpunit/phpunit": "^5.6"
+                "laminas/laminas-test": "^4.0",
+                "phpunit/phpunit": ">=9.0"
             },
             "type": "library",
             "autoload": {
@@ -12308,7 +12308,7 @@
                 ]
             },
             "description": "Module Unicaen avec des trucs pour SQL dedans !",
-            "time": "2024-05-28T15:12:28+00:00"
+            "time": "2025-09-15T06:17:13+00:00"
         },
         {
             "name": "unicaen/sygal-api",
@@ -15226,7 +15226,6 @@
     "stability-flags": {
         "unicaen/renderer": 20,
         "unicaen/search": 20,
-        "unicaen/sql": 20,
         "unicaen/sygal-api": 20,
         "unicaen/avis": 20
     },
