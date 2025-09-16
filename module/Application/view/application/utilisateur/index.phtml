@@ -5,6 +5,8 @@ namespace Application;
 use Individu\Entity\Db\Individu;
 use Application\Entity\Db\Utilisateur;
 use Application\Filter\IdifyFilter;
+use Individu\Provider\Privilege\IndividuPrivileges;
+use UnicaenPrivilege\Provider\Privilege\Privileges;
 use UnicaenSearch\Filter\SearchFilter;
 use Application\View\Renderer\PhpRenderer;
 use UnicaenApp\Util;
@@ -18,6 +20,8 @@ use Laminas\Paginator\Paginator;
  *
  * @see \Application\Controller\UtilisateurController::indexAction()
  */
+
+$canVisualiserIndividu = $this->isAllowed(Privileges::getResourceId(IndividuPrivileges::INDIVIDU_CONSULTER));
 ?>
 
 <?php $this->headTitle($this->translate("Comptes utilisateurs")) ?>
@@ -67,11 +71,14 @@ use Laminas\Paginator\Paginator;
                         <?php if ($individu->estHistorise()) : ?>
                             <span class="historise">
                             <?php echo $individu->getNomComplet(); ?>
-                            (<?php echo $individu->getId(); ?>)
                             </span>
                         <?php else: ?>
                             <?php echo $individu->getNomComplet(); ?>
-                            (<?php echo $individu->getId(); ?>)
+                        <?php endif ?>
+                        <?php if ($canVisualiserIndividu): ?>
+                            (<a data-bs-toggle="tooltip"
+                               title='Accéder à la fiche détaillée de cet individu'
+                               href="<?= $this->url('individu/voir', ['individu' => $individu->getId()], [], true) ?>"><?php echo $individu->getId(); ?></a>)
                         <?php endif ?>
                     <?php endif ?>
                 </td>
