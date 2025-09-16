@@ -93,7 +93,7 @@ class PropositionJuryRule implements RuleInterface
             $indicateurs["parité"]["valide"] = true;
         }
 
-        /** entre 4 et 8 membres */
+        /** Règle du genre "entre 4 et 8 membres" */
         $indicateurs["membre"] = ["Nombre" => $nbMembre, "Ratio" => ($nbMembre) ? $nbMembre / 10 : 0];
 
         if (!$forcerValidite && ($nbMembre < $membre_min || $nbMembre > $membre_max)) {
@@ -103,7 +103,7 @@ class PropositionJuryRule implements RuleInterface
             $indicateurs["membre"]["valide"] = true;
         }
 
-        /** Au moins deux rapporteurs */
+        /** Règle du genre "Au moins deux rapporteurs" */
         $indicateurs["rapporteur"] = ["Nombre" => $nbRapporteur, "Ratio" => ($nbMembre) ? $nbRapporteur / $nbMembre : 0];
 
         if (!$forcerValidite && $nbRapporteur < $rapporteur_min) {
@@ -113,35 +113,27 @@ class PropositionJuryRule implements RuleInterface
             $indicateurs["rapporteur"]["valide"] = true;
         }
 
-        /** Au moins la motié du jury de rang A */
+        /** Règle du genre "Au moins la motié du jury de rang A" */
         $ratioRangA = ($nbMembre) ? ($nbRangA / $nbMembre) : 0;
         $indicateurs["rang A"] = ["Nombre" => $nbRangA, "Ratio" => $ratioRangA];
         if (!$forcerValidite && ($ratioRangA < $rangA_min || !$nbMembre)) {
             $indicateurs["rang A"]["valide"] = false;
-            if($ratioRangA === 0){
-                $indicateurs["rang A"]["alerte"] = "Le nombre de membres de rang A doit représenter au moins la moitié du jury";
-            }else{
-                $indicateurs["rang A"]["alerte"] = "Le nombre de membres de rang A doit représenter au minimum " . ($ratioRangA * 100) . '%';
-            }
+            $indicateurs["rang A"]["alerte"] = "Le nombre de membres de rang A doit représenter au minimum " . ($rangA_min * 100) . '%';
         } else {
             $indicateurs["rang A"]["valide"] = true;
         }
 
-        /** Au moins la motié du jury exterieur*/
+        /** Règle du genre "Au moins la motié du jury exterieur" */
         $ratioExterieur = ($nbMembre) ? ($nbExterieur / $nbMembre) : 0;
         $indicateurs["exterieur"] = ["Nombre" => $nbExterieur, "Ratio" => $ratioExterieur];
         if (!$forcerValidite && ($ratioExterieur < $exterieur_min || !$nbMembre)) {
             $indicateurs["exterieur"]["valide"] = false;
-            if($ratioExterieur === 0){
-                $indicateurs["exterieur"]["alerte"] = "Le nombre de membres extérieurs doit représenter au moins la moitié du jury";
-            }else{
-                $indicateurs["exterieur"]["alerte"] = "Le nombre de membres extérieurs doit représenter au minimum " . ($ratioRangA * 100) . '%';
-            }
+            $indicateurs["exterieur"]["alerte"] = "Le nombre de membres extérieurs doit représenter au minimum " . ($exterieur_min * 100) . '%';
         } else {
             $indicateurs["exterieur"]["valide"] = true;
         }
 
-        /** ratio minimum d'émérites */
+        /** Règle du genre "ratio minimum d'émérites" */
         $ratioEmerites = $nbMembre ? ($nbEmerites / $nbMembre) : 0;
         $indicateurs["emerites"] = ["Nombre" => $nbEmerites, "Ratio" => $ratioEmerites];
         if (!$forcerValidite && $ratioEmerites > $emerites_max) {
