@@ -28,7 +28,7 @@ if (!file_exists($outputDirPath)) {
 }
 
 $twigTemplateDirPath = realpath(__DIR__);
-$twigTemplateName = 'doctorant-api-v1.data.twig.json'; // nom du template dans le répertoire des templates Twig
+$twigTemplateName = 'doctorant-api-v1.data.json.twig'; // nom du template dans le répertoire des templates Twig
 
 echo "Génération de $n fichiers JSON à partir du modèle $twigTemplateDirPath/$twigTemplateName..." . PHP_EOL;
 
