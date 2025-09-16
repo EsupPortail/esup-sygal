@@ -131,18 +131,4 @@ class ActeurHDRRepository extends AbstractActeurRepository
             $acteur->getIndividu() !== $garantIndividu
         );
     }
-
-    public function findActeurForSoutenanceMembre(Membre $soutenanceMembre): ActeurHDR|null
-    {
-        return parent::findActeurForSoutenanceMembre($soutenanceMembre);
-    }
-
-    /**
-     * @param Membre[] $rapporteurs
-     * @return ActeurHDR[]
-     */
-    public function findActeursForSoutenanceMembres(array $rapporteurs): array
-    {
-        return parent::findActeursForSoutenanceMembres($rapporteurs);
-    }
 }

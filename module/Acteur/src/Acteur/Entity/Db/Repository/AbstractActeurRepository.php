@@ -241,18 +241,17 @@ abstract class AbstractActeurRepository extends DefaultEntityRepository
 //        return $qb->getQuery()->getResult();
 //    }
 
-    public function findActeurForSoutenanceMembre(Membre $soutenanceMembre): ActeurThese|ActeurHDR|null
+    public function findActeurForSoutenanceMembre(Membre $membre): ActeurThese|ActeurHDR|null
     {
         $qb = $this->createQueryBuilder('a')
             ->addSelect('i')->join('a.individu', 'i')
-//            ->addSelect('t')->join('a.these', 't')
             ->addSelect('m')->join('a.membre', 'm')
             ->addSelect('r')->join('a.role', 'r')
             ->addSelect('s')->leftJoin('r.structure', 's')
             ->addSelect('u')->leftJoin('i.utilisateurs', 'u')
             ->andWhere('a.histoDestruction is null')
             ->andWhere('i.histoDestruction is null')
-            ->andWhere('m = :membre')->setParameter('membre', $soutenanceMembre);
+            ->andWhere('m = :membre')->setParameter('membre', $membre);
 
         if (get_class($this) === ActeurTheseRepository::class) {
             $qb->addSelect('ent')->join('a.these', 'ent');
@@ -268,14 +267,14 @@ abstract class AbstractActeurRepository extends DefaultEntityRepository
     }
 
     /**
-     * @param Membre[] $rapporteurs
+     * @param Membre[] $membres
      * @return ActeurThese[]
      */
-    public function findActeursForSoutenanceMembres(array $rapporteurs): array
+    public function findActeursForSoutenanceMembres(array $membres): array
     {
         $acteurs = [];
-        foreach ($rapporteurs as $rapporteur) {
-            $acteurs[$rapporteur->getId()] = $this->findActeurForSoutenanceMembre($rapporteur);
+        foreach ($membres as $membre) {
+            $acteurs[$membre->getId()] = $this->findActeurForSoutenanceMembre($membre);
         }
 
         return $acteurs;

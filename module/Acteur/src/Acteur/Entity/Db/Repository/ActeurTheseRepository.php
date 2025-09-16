@@ -140,18 +140,4 @@ class ActeurTheseRepository extends AbstractActeurRepository
         !in_array($acteur->getIndividu(), $individusExclus, true)
         );
     }
-
-    public function findActeurForSoutenanceMembre(Membre $soutenanceMembre): ActeurThese|null
-    {
-        return parent::findActeurForSoutenanceMembre($soutenanceMembre);
-    }
-
-    /**
-     * @param Membre[] $rapporteurs
-     * @return ActeurThese[]
-     */
-    public function findActeursForSoutenanceMembres(array $rapporteurs): array
-    {
-        return parent::findActeursForSoutenanceMembres($rapporteurs);
-    }
 }

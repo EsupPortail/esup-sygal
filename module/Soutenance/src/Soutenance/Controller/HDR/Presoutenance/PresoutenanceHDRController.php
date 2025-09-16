@@ -131,6 +131,7 @@ class PresoutenanceHDRController extends PresoutenanceController
     public function associerJurySygalAction() : ViewModel|Response
     {
         $this->initializeFromType();
+
         $membre = $this->getMembreService()->getRequestedMembre($this);
         $codeRole = "";
         switch ($membre->getRole()) {
@@ -182,20 +183,23 @@ class PresoutenanceHDRController extends PresoutenanceController
         /** @var ActeurHDR $acteur **/
         $acteur = $form->getData();
 
+        // si un acteur existe déjà avec les mêmes caractéristiques majeures, on modifie/complète l'existant
         $acteurInBdd = $this->acteurService->getRepository()->findActeurByIndividuAndHDRAndRole($acteur->getIndividu(), $acteur->getHDR(), $acteur->getRole());
         if ($acteurInBdd !== null) {
-            $this->flashMessenger()->addErrorMessage($acteur->getIndividu()." est déjà associé à un membre avec le rôle ".$acteur->getRole());
-            return $this->redirect()->toRoute("soutenance_{$this->type}/presoutenance", ['hdr' => $this->entity->getId()], [], true);
+            $form->bind($acteurInBdd);
+            $form->setData($data);
+            $form->isValid(); // forcément valide
+            $acteur = $form->getData();
         }
+
         try {
             //mise à jour du membre de soutenance
-//        $membre->setActeur($acteur);
-//        $this->getMembreService()->update($membre);
             $acteur->setMembre($membre);
             $this->acteurService->save($acteur);
         }catch(RuntimeException) {
             throw new RuntimeException("Un problème est survenue lors de l'enregistrement en base d'un acteur");
         }
+
         $this->flashMessenger()->addSuccessMessage($membre->getDenomination()." a bien été associé à un acteur.");
         $this->getHorodatageService()->addHorodatage($this->proposition, HorodatageService::TYPE_MODIFICATION, "Association jury");
 
@@ -214,6 +218,7 @@ class PresoutenanceHDRController extends PresoutenanceController
                 $this->acteurService->save($acteurRoleMembre);
             }
         }
+
         return $this->redirect()->toRoute("soutenance_{$this->type}/presoutenance", ['hdr' => $this->entity->getId()], [], true);
     }
 

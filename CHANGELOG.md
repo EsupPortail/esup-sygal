@@ -39,6 +39,7 @@ Journal des modifications
 - [FIX] Modification d'un acteur sur la fiche Thèse : l'affichage du formulaire (bouton 'crayon') plantait (pb dans la vue).
 - [FIX] Soutenance : la création de plusieurs adresses de soutenance doit être empêchée (màj BDD requise).
 - [FIX] Module HDR : désactivation du comptage des rapporteurs de rang B sans HDR (les gestionnaires vérifieront manuellement).
+- [FIX] Module HDR : lors de l'association membre-acteur, si un acteur existe déjà avec les mêmes caractéristiques majeures, on modifie/complète l'existant.
 - [FIX] Le rôle Observateur Structure étais éjecté des pages Soutenances (thèses et HDR).
 - [FIX] Soutenance : la révocation d'un avis de soutenance est impossible dès lors que le dossier de soutenance est passé à l'état 'Dossier complet'.
 - [FIX] Soutenance : correction des messages indiquant un jury invalide pour le ratio de rang A et le ratio d'extérieurs.

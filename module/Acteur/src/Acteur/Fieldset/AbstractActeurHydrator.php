@@ -9,6 +9,7 @@ use Application\Entity\Db\Role;
 use Doctrine\Laminas\Hydrator\DoctrineObject;
 use Individu\Entity\Db\Individu;
 use Soutenance\Entity\Qualite;
+use Structure\Entity\Db\Etablissement;
 use Structure\Entity\Db\UniteRecherche;
 
 class AbstractActeurHydrator extends DoctrineObject
@@ -35,6 +36,12 @@ class AbstractActeurHydrator extends DoctrineObject
                 'label' => $data['individu']->getNomComplet(),
             ];
         }
+        if ($data['etablissement'] instanceof Etablissement) {
+            $data['etablissement'] = [
+                'id' => $data['etablissement']->getId(),
+                'label' => (string) $data['etablissement'],
+            ];
+        }
 
         // Select
         $data['role'] = $data['role'] instanceof Role ? $data['role']->getId() : null;
@@ -48,9 +55,12 @@ class AbstractActeurHydrator extends DoctrineObject
     {
         /** @var ActeurThese|ActeurHDR $object */
 
-        $data['etablissement'] = $data['etablissement']['id'] ?? null;
-        $data['uniteRecherche'] = $data['uniteRecherche'] != "" ? $data['uniteRecherche'] : null;
+        // SearchAndSelect
         $data['individu'] = $data['individu']['id'] ?? null;
+        $data['etablissement'] = $data['etablissement']['id'] ?? null;
+
+        // Select
+        $data['uniteRecherche'] = $data['uniteRecherche'] != "" ? $data['uniteRecherche'] : null;
 
         $this->acteurRule->setActeur($object);
         $data = $this->acteurRule->prepareActeurHydratorData($data);

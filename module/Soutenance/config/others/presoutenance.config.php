@@ -7,8 +7,9 @@ use Laminas\Router\Http\Literal;
 use Laminas\Router\Http\Segment;
 use Soutenance\Assertion\PresoutenanceAssertion;
 use Soutenance\Assertion\PresoutenanceAssertionFactory;
+use Soutenance\Controller\HDR\Presoutenance\PresoutenanceHDRController;
 use Soutenance\Controller\PresoutenanceController;
-use Soutenance\Controller\PresoutenanceControllerFactory;
+use Soutenance\Controller\These\Presoutenance\PresoutenanceTheseController;
 use Soutenance\Form\AdresseSoutenance\AdresseSoutenanceForm;
 use Soutenance\Form\AdresseSoutenance\AdresseSoutenanceFormFactory;
 use Soutenance\Form\AdresseSoutenance\AdresseSoutenanceHydrator;
@@ -22,6 +23,313 @@ use Soutenance\Service\Adresse\AdresseService;
 use Soutenance\Service\Adresse\AdresseServiceFactory;
 use These\Provider\Privilege\ThesePrivileges;
 use UnicaenPrivilege\Guard\PrivilegeController;
+
+// génération des routes dont seul le contrôleur change (soit These, soit HDR)
+$soutenanceChildRoutes = fn(string $controllerClass) => [
+    // TODO :: doit devenir une route console ...
+    'notifier-retard-rapport-presoutenance' => [
+        'type' => Literal::class,
+        'may_terminate' => true,
+        'options' => [
+            'route' => '/notifier-retard-rapport-presoutenance',
+            'defaults' => [
+                'controller' => $controllerClass,
+                /** @see PresoutenanceController::notifierRetardRapportPresoutenanceAction() */
+                'action' => 'notifier-retard-rapport-presoutenance',
+            ],
+        ],
+    ],
+    'presoutenance' => [
+        'type' => Segment::class,
+        'may_terminate' => true,
+        'options' => [
+            'route' => '/presoutenance',
+            'defaults' => [
+                'controller' => $controllerClass,
+                'action' => 'presoutenance',
+            ],
+        ],
+        'child_routes' => [
+            'generer-simulation' => [
+                'type' => Segment::class,
+                'may_terminate' => true,
+                'options' => [
+                    'route' => '/generer-simulation',
+                    'defaults' => [
+                        'controller' => $controllerClass,
+                        'action' => 'generer-simulation',
+                    ],
+                ],
+            ],
+            'nettoyer-simulation' => [
+                'type' => Segment::class,
+                'may_terminate' => true,
+                'options' => [
+                    'route' => '/nettoyer-simulation',
+                    'defaults' => [
+                        'controller' => $controllerClass,
+                        'action' => 'nettoyer-simulation',
+                    ],
+                ],
+            ],
+            'avis-soutenance' => [
+                'type' => Segment::class,
+                'may_terminate' => true,
+                'options' => [
+                    'route' => '/avis-soutenance',
+                    'defaults' => [
+                        'controller' => $controllerClass,
+                        'action' => 'avis-soutenance',
+                    ],
+                ],
+            ],
+            'rapport-soutenance' => [
+                'type' => Segment::class,
+                'may_terminate' => true,
+                'options' => [
+                    'route' => '/rapport-soutenance',
+                    'defaults' => [
+                        'controller' => $controllerClass,
+                        'action' => 'rapport-soutenance',
+                    ],
+                ],
+            ],
+            'rapport-technique' => [
+                'type' => Segment::class,
+                'may_terminate' => true,
+                'options' => [
+                    'route' => '/rapport-technique',
+                    'defaults' => [
+                        'controller' => $controllerClass,
+                        'action' => 'rapport-technique',
+                    ],
+                ],
+            ],
+            'convocations' => [
+                'type' => Segment::class,
+                'may_terminate' => true,
+                'options' => [
+                    'route' => '/convocations',
+                    'defaults' => [
+                        'controller' => $controllerClass,
+                        'action' => 'convocations',
+                    ],
+                ],
+            ],
+            'convocation-doctorant' => [
+                'type' => Segment::class,
+                'may_terminate' => true,
+                'options' => [
+                    'route' => '/convocation-doctorant',
+                    'defaults' => [
+                        'controller' => $controllerClass,
+                        'action' => 'convocation-doctorant',
+                    ],
+                ],
+            ],
+            'convocation-candidat' => [
+                'type' => Segment::class,
+                'may_terminate' => true,
+                'options' => [
+                    'route' => '/convocation-candidat',
+                    'defaults' => [
+                        'controller' => $controllerClass,
+                        'action' => 'convocation-candidat',
+                    ],
+                ],
+            ],
+            'convocation-membre' => [
+                'type' => Segment::class,
+                'may_terminate' => true,
+                'options' => [
+                    'route' => '/convocation-membre/:membre',
+                    'defaults' => [
+                        'controller' => $controllerClass,
+                        'action' => 'convocation-membre',
+                    ],
+                ],
+            ],
+            'envoyer-convocation' => [
+                'type' => Segment::class,
+                'may_terminate' => true,
+                'options' => [
+                    'route' => '/envoyer-convocation',
+                    'defaults' => [
+                        'controller' => $controllerClass,
+                        'action' => 'envoyer-convocation',
+                    ],
+                ],
+            ],
+            'proces-verbal-soutenance' => [
+                'type' => Segment::class,
+                'may_terminate' => true,
+                'options' => [
+                    'route' => '/proces-verbal-soutenance',
+                    'defaults' => [
+                        'controller' => $controllerClass,
+                        'action' => 'proces-verbal-soutenance',
+                    ],
+                ],
+            ],
+            'transmettre-documents-direction' => [
+                'type' => Segment::class,
+                'may_terminate' => true,
+                'options' => [
+                    'route' => '/transmettre-documents-direction',
+                    'defaults' => [
+                        'controller' => $controllerClass,
+                        'action' => 'transmettre-documents-direction',
+                    ],
+                ],
+            ],
+            'date-rendu-rapport' => [
+                'type' => Segment::class,
+                'may_terminate' => true,
+                'options' => [
+                    'route' => '/date-rendu-rapport',
+                    'defaults' => [
+                        'controller' => $controllerClass,
+                        'action' => 'date-rendu-rapport',
+                    ],
+                ],
+            ],
+            'notifier-rapporteurs-engagement-impartialite' => [
+                'type' => Literal::class,
+                'may_terminate' => true,
+                'options' => [
+                    'route' => '/notifier-rapporteurs-engagement-impartialite',
+                    'defaults' => [
+                        /** @see PresoutenanceController::notifierRapporteursEngagementImpartialiteAction */
+                        'controller' => $controllerClass,
+                        'action' => 'notifier-rapporteurs-engagement-impartialite',
+                    ],
+                ],
+            ],
+            'associer-jury' => [
+                'type' => Segment::class,
+                'may_terminate' => true,
+                'options' => [
+                    'route' => '/associer-jury/:membre',
+                    'defaults' => [
+                        'controller' => $controllerClass,
+                        'action' => 'associer-jury',
+                    ],
+                ],
+            ],
+            'deassocier-jury' => [
+                'type' => Segment::class,
+                'may_terminate' => true,
+                'options' => [
+                    'route' => '/deassocier-jury/:membre',
+                    'defaults' => [
+                        'controller' => $controllerClass,
+                        'action' => 'deassocier-jury',
+                    ],
+                ],
+            ],
+            'associer-jury-sygal' => [
+                'type' => Segment::class,
+                'may_terminate' => true,
+                'options' => [
+                    'route' => '/associer-jury-sygal/:membre',
+                    'defaults' => [
+                        'controller' => $controllerClass,
+                        'action' => 'associer-jury-sygal',
+                    ],
+                ],
+            ],
+            'renseigner-president-jury' => [
+                'type' => Segment::class,
+                'may_terminate' => true,
+                'options' => [
+                    'route' => '/renseigner-president-jury/:acteur',
+                    'defaults' => [
+                        'controller' => $controllerClass,
+                        'action' => 'renseigner-president-jury',
+                    ],
+                ],
+            ],
+            'dissocier-president-jury' => [
+                'type' => Segment::class,
+                'may_terminate' => true,
+                'options' => [
+                    'route' => '/dissocier-president-jury/:acteur',
+                    'defaults' => [
+                        'controller' => $controllerClass,
+                        'action' => 'dissocier-president-jury',
+                    ],
+                ],
+            ],
+            'notifier-demande-avis-soutenance' => [
+                'type' => Segment::class,
+                'may_terminate' => true,
+                'options' => [
+                    'route' => '/notifier-demande-avis-soutenance[/:membre]',
+                    'defaults' => [
+                        'controller' => $controllerClass,
+                        'action' => 'notifier-demande-avis-soutenance',
+                    ],
+                ],
+            ],
+            'revoquer-avis-soutenance' => [
+                'type' => Segment::class,
+                'may_terminate' => true,
+                'options' => [
+                    'route' => '/revoquer-avis-soutenance/:avis',
+                    'defaults' => [
+                        'controller' => $controllerClass,
+                        'action' => 'revoquer-avis-soutenance',
+                    ],
+                ],
+            ],
+            'indiquer-dossier-complet' => [
+                'type' => Literal::class,
+                'may_terminate' => true,
+                'options' => [
+                    'route' => '/indiquer-dossier-complet',
+                    'defaults' => [
+                        /** @see PresoutenanceController::indiquerDossierCompletAction() */
+                        'controller' => $controllerClass,
+                        'action' => 'indiquer-dossier-complet',
+                    ],
+                ],
+            ],
+            'feu-vert' => [
+                'type' => Literal::class,
+                'may_terminate' => true,
+                'options' => [
+                    'route' => '/feu-vert',
+                    'defaults' => [
+                        'controller' => $controllerClass,
+                        'action' => 'feu-vert',
+                    ],
+                ],
+            ],
+            'stopper-demarche' => [
+                'type' => Literal::class,
+                'may_terminate' => true,
+                'options' => [
+                    'route' => '/stopper-demarche',
+                    'defaults' => [
+                        'controller' => $controllerClass,
+                        'action' => 'stopper-demarche',
+                    ],
+                ],
+            ],
+            'deliberation-jury' => [
+                'type' => Segment::class,
+                'may_terminate' => true,
+                'options' => [
+                    'route' => '/deliberation-jury/:resultat',
+                    'defaults' => [
+                        'controller' => $controllerClass,
+                        'action' => 'deliberation-jury',
+                    ],
+                ],
+            ],
+        ],
+    ],
+];
 
 return [
     'bjyauthorize' => [
@@ -125,314 +433,10 @@ return [
     'router' => [
         'routes' => [
             'soutenance_these' => [
-                'child_routes' => $soutenanceChildRoutes = [
-                    // TODO :: doit devenir une route console ...
-                    'notifier-retard-rapport-presoutenance' => [
-                        'type' => Literal::class,
-                        'may_terminate' => true,
-                        'options' => [
-                            'route' => '/notifier-retard-rapport-presoutenance',
-                            'defaults' => [
-                                'controller' => PresoutenanceController::class,
-                                /** @see PresoutenanceController::notifierRetardRapportPresoutenanceAction() */
-                                'action' => 'notifier-retard-rapport-presoutenance',
-                            ],
-                        ],
-                    ],
-                    'presoutenance' => [
-                        'type' => Segment::class,
-                        'may_terminate' => true,
-                        'options' => [
-                            'route' => '/presoutenance',
-                            'defaults' => [
-                                'controller' => PresoutenanceController::class,
-                                'action' => 'presoutenance',
-                            ],
-                        ],
-                        'child_routes' => [
-                            'generer-simulation' => [
-                                'type' => Segment::class,
-                                'may_terminate' => true,
-                                'options' => [
-                                    'route' => '/generer-simulation',
-                                    'defaults' => [
-                                        'controller' => PresoutenanceController::class,
-                                        'action' => 'generer-simulation',
-                                    ],
-                                ],
-                            ],
-                            'nettoyer-simulation' => [
-                                'type' => Segment::class,
-                                'may_terminate' => true,
-                                'options' => [
-                                    'route' => '/nettoyer-simulation',
-                                    'defaults' => [
-                                        'controller' => PresoutenanceController::class,
-                                        'action' => 'nettoyer-simulation',
-                                    ],
-                                ],
-                            ],
-                            'avis-soutenance' => [
-                                'type' => Segment::class,
-                                'may_terminate' => true,
-                                'options' => [
-                                    'route' => '/avis-soutenance',
-                                    'defaults' => [
-                                        'controller' => PresoutenanceController::class,
-                                        'action' => 'avis-soutenance',
-                                    ],
-                                ],
-                            ],
-                            'rapport-soutenance' => [
-                                'type' => Segment::class,
-                                'may_terminate' => true,
-                                'options' => [
-                                    'route' => '/rapport-soutenance',
-                                    'defaults' => [
-                                        'controller' => PresoutenanceController::class,
-                                        'action' => 'rapport-soutenance',
-                                    ],
-                                ],
-                            ],
-                            'rapport-technique' => [
-                                'type' => Segment::class,
-                                'may_terminate' => true,
-                                'options' => [
-                                    'route' => '/rapport-technique',
-                                    'defaults' => [
-                                        'controller' => PresoutenanceController::class,
-                                        'action' => 'rapport-technique',
-                                    ],
-                                ],
-                            ],
-                            'convocations' => [
-                                'type' => Segment::class,
-                                'may_terminate' => true,
-                                'options' => [
-                                    'route' => '/convocations',
-                                    'defaults' => [
-                                        'controller' => PresoutenanceController::class,
-                                        'action' => 'convocations',
-                                    ],
-                                ],
-                            ],
-                            'convocation-doctorant' => [
-                                'type' => Segment::class,
-                                'may_terminate' => true,
-                                'options' => [
-                                    'route' => '/convocation-doctorant',
-                                    'defaults' => [
-                                        'controller' => PresoutenanceController::class,
-                                        'action' => 'convocation-doctorant',
-                                    ],
-                                ],
-                            ],
-                            'convocation-candidat' => [
-                                'type' => Segment::class,
-                                'may_terminate' => true,
-                                'options' => [
-                                    'route' => '/convocation-candidat',
-                                    'defaults' => [
-                                        'controller' => PresoutenanceController::class,
-                                        'action' => 'convocation-candidat',
-                                    ],
-                                ],
-                            ],
-                            'convocation-membre' => [
-                                'type' => Segment::class,
-                                'may_terminate' => true,
-                                'options' => [
-                                    'route' => '/convocation-membre/:membre',
-                                    'defaults' => [
-                                        'controller' => PresoutenanceController::class,
-                                        'action' => 'convocation-membre',
-                                    ],
-                                ],
-                            ],
-                            'envoyer-convocation' => [
-                                'type' => Segment::class,
-                                'may_terminate' => true,
-                                'options' => [
-                                    'route' => '/envoyer-convocation',
-                                    'defaults' => [
-                                        'controller' => PresoutenanceController::class,
-                                        'action' => 'envoyer-convocation',
-                                    ],
-                                ],
-                            ],
-                            'proces-verbal-soutenance' => [
-                                'type' => Segment::class,
-                                'may_terminate' => true,
-                                'options' => [
-                                    'route' => '/proces-verbal-soutenance',
-                                    'defaults' => [
-                                        'controller' => PresoutenanceController::class,
-                                        'action' => 'proces-verbal-soutenance',
-                                    ],
-                                ],
-                            ],
-                            'transmettre-documents-direction' => [
-                                'type' => Segment::class,
-                                'may_terminate' => true,
-                                'options' => [
-                                    'route' => '/transmettre-documents-direction',
-                                    'defaults' => [
-                                        'controller' => PresoutenanceController::class,
-                                        'action' => 'transmettre-documents-direction',
-                                    ],
-                                ],
-                            ],
-                            'date-rendu-rapport' => [
-                                'type' => Segment::class,
-                                'may_terminate' => true,
-                                'options' => [
-                                    'route' => '/date-rendu-rapport',
-                                    'defaults' => [
-                                        'controller' => PresoutenanceController::class,
-                                        'action' => 'date-rendu-rapport',
-                                    ],
-                                ],
-                            ],
-                            'notifier-rapporteurs-engagement-impartialite' => [
-                                'type' => Literal::class,
-                                'may_terminate' => true,
-                                'options' => [
-                                    'route' => '/notifier-rapporteurs-engagement-impartialite',
-                                    'defaults' => [
-                                        /** @see PresoutenanceController::notifierRapporteursEngagementImpartialiteAction */
-                                        'controller' => PresoutenanceController::class,
-                                        'action' => 'notifier-rapporteurs-engagement-impartialite',
-                                    ],
-                                ],
-                            ],
-                            'associer-jury' => [
-                                'type' => Segment::class,
-                                'may_terminate' => true,
-                                'options' => [
-                                    'route' => '/associer-jury/:membre',
-                                    'defaults' => [
-                                        'controller' => PresoutenanceController::class,
-                                        'action' => 'associer-jury',
-                                    ],
-                                ],
-                            ],
-                            'deassocier-jury' => [
-                                'type' => Segment::class,
-                                'may_terminate' => true,
-                                'options' => [
-                                    'route' => '/deassocier-jury/:membre',
-                                    'defaults' => [
-                                        'controller' => PresoutenanceController::class,
-                                        'action' => 'deassocier-jury',
-                                    ],
-                                ],
-                            ],
-                            'associer-jury-sygal' => [
-                                'type' => Segment::class,
-                                'may_terminate' => true,
-                                'options' => [
-                                    'route' => '/associer-jury-sygal/:membre',
-                                    'defaults' => [
-                                        'controller' => PresoutenanceController::class,
-                                        'action' => 'associer-jury-sygal',
-                                    ],
-                                ],
-                            ],
-                            'renseigner-president-jury' => [
-                                'type' => Segment::class,
-                                'may_terminate' => true,
-                                'options' => [
-                                    'route' => '/renseigner-president-jury/:acteur',
-                                    'defaults' => [
-                                        'controller' => PresoutenanceController::class,
-                                        'action' => 'renseigner-president-jury',
-                                    ],
-                                ],
-                            ],
-                            'dissocier-president-jury' => [
-                                'type' => Segment::class,
-                                'may_terminate' => true,
-                                'options' => [
-                                    'route' => '/dissocier-president-jury/:acteur',
-                                    'defaults' => [
-                                        'controller' => PresoutenanceController::class,
-                                        'action' => 'dissocier-president-jury',
-                                    ],
-                                ],
-                            ],
-                            'notifier-demande-avis-soutenance' => [
-                                'type' => Segment::class,
-                                'may_terminate' => true,
-                                'options' => [
-                                    'route' => '/notifier-demande-avis-soutenance[/:membre]',
-                                    'defaults' => [
-                                        'controller' => PresoutenanceController::class,
-                                        'action' => 'notifier-demande-avis-soutenance',
-                                    ],
-                                ],
-                            ],
-                            'revoquer-avis-soutenance' => [
-                                'type' => Segment::class,
-                                'may_terminate' => true,
-                                'options' => [
-                                    'route' => '/revoquer-avis-soutenance/:avis',
-                                    'defaults' => [
-                                        'controller' => PresoutenanceController::class,
-                                        'action' => 'revoquer-avis-soutenance',
-                                    ],
-                                ],
-                            ],
-                            'indiquer-dossier-complet' => [
-                                'type' => Literal::class,
-                                'may_terminate' => true,
-                                'options' => [
-                                    'route' => '/indiquer-dossier-complet',
-                                    'defaults' => [
-                                        /** @see PresoutenanceController::indiquerDossierCompletAction() */
-                                        'controller' => PresoutenanceController::class,
-                                        'action' => 'indiquer-dossier-complet',
-                                    ],
-                                ],
-                            ],
-                            'feu-vert' => [
-                                'type' => Literal::class,
-                                'may_terminate' => true,
-                                'options' => [
-                                    'route' => '/feu-vert',
-                                    'defaults' => [
-                                        'controller' => PresoutenanceController::class,
-                                        'action' => 'feu-vert',
-                                    ],
-                                ],
-                            ],
-                            'stopper-demarche' => [
-                                'type' => Literal::class,
-                                'may_terminate' => true,
-                                'options' => [
-                                    'route' => '/stopper-demarche',
-                                    'defaults' => [
-                                        'controller' => PresoutenanceController::class,
-                                        'action' => 'stopper-demarche',
-                                    ],
-                                ],
-                            ],
-                            'deliberation-jury' => [
-                                'type' => Segment::class,
-                                'may_terminate' => true,
-                                'options' => [
-                                    'route' => '/deliberation-jury/:resultat',
-                                    'defaults' => [
-                                        'controller' => PresoutenanceController::class,
-                                        'action' => 'deliberation-jury',
-                                    ],
-                                ],
-                            ],
-                        ],
-                    ],
-                ],
+                'child_routes' => $soutenanceChildRoutes(PresoutenanceTheseController::class),
             ],
             'soutenance_hdr' => [
-                'child_routes' => $soutenanceChildRoutes,
+                'child_routes' => $soutenanceChildRoutes(PresoutenanceHDRController::class),
             ],
         ],
     ],
