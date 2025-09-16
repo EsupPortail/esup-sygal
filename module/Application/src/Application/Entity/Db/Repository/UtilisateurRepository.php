@@ -2,6 +2,7 @@
 
 namespace Application\Entity\Db\Repository;
 
+use Doctrine\DBAL\Exception;
 use Individu\Entity\Db\Individu;
 use Application\Entity\Db\Utilisateur;
 use Doctrine\ORM\NonUniqueResultException;
@@ -60,6 +61,63 @@ class UtilisateurRepository extends DefaultEntityRepository
         }
 
         return $utilisateur;
+    }
+
+    /**
+     * Recherche textuelle d'utilisateurs, en SQL pur.
+     *
+     * @param string $text
+     * @param int $limit
+     *
+     * @return int[] Ids des utilisateurs trouvés
+     */
+    public function findByText(string $text, int $limit = 100): array
+    {
+        if (strlen($text) < 2) return [];
+
+        $pieces = explode(' ', $text);
+
+        $sql =
+            "select u.* " .
+            "from utilisateur u " .
+            "left join individu i on i.id = u.individu_id " .
+            "left join individu_rech ir on ir.id = i.id ";
+
+        $criteria = [
+            'u.username',
+            'u.email',
+            'u.display_name',
+            'ir.haystack',
+        ];
+
+        $sqlCri = [];
+        foreach ($pieces as $p) {
+            $sqlCri[$p] = [];
+            foreach ($criteria as $c) {
+                $sqlCri[$p][] = "$c like str_reduce($$%" . $p . "%$$)";
+            }
+            $sqlCri[$p] = '(' . implode(' or ', $sqlCri[$p]) . ')';
+        }
+        $sqlCri = implode(' and ', $sqlCri);
+
+        $sql .= 'where (' . $sqlCri . ') ';
+        if ($limit > 0) {
+            $sql .= " limit " . $limit;
+        }
+
+        try {
+            $stmt = $this->getEntityManager()->getConnection()->executeQuery($sql);
+        } catch (Exception $e) {
+            throw new RuntimeException(
+                "Erreur rencontrée lors de l'exécution de la requête de recherche", null, $e);
+        }
+
+        try {
+            return $stmt->fetchAllAssociative();
+        } catch (Exception $e) {
+            throw new RuntimeException(
+                "Impossible d'obtenir les résultats de la requête de recherche", null, $e);
+        }
     }
 
     /**

@@ -13,9 +13,6 @@ class UtilisateurSearchService extends SearchService
 {
     use UtilisateurServiceAwareTrait;
 
-    /**
-     * @inheritDoc
-     */
     protected function createQueryBuilder(): QueryBuilder
     {
         $qb = $this->utilisateurService->getRepository()->createQueryBuilder('u');
@@ -30,17 +27,29 @@ class UtilisateurSearchService extends SearchService
     {
         // filtre textuel
         $textFilter = new TextSearchFilter("Recherche textuelle", 'text');
-        $textFilter->setAttributes(['title' => "Recherche sur le Display name, Username, Email ou Individu"]);
+        $textFilter->setAttributes(['title' => "Recherche sur l'identité, l'identifiant de connexion, l'adresse électronique, ou l'utilisateur lié"]);
         $textFilter->setQueryBuilderApplier(function(SearchFilter $filter, QueryBuilder $qb) {
-            $qb
-                ->andWhere($qb->expr()->orX(
-                    'UPPER(u.username)    LIKE UPPER(:text)',
-                    'UPPER(u.displayName) LIKE UPPER(:text)',
-                    'UPPER(u.email)       LIKE UPPER(:text)'
-                ))
-                ->setParameter('text', '%' . $filter->getValue() . '%');
+            $utilisateurs = $this->utilisateurService->getRepository()->findByText($filter->getValue(), limit: 0);
+            if (count($utilisateurs) > 0) {
+                $utilisateursIds = array_map(fn(array $utilisateur) => $utilisateur['id'], $utilisateurs);
+                $qb->andWhere($qb->expr()->in('u.id', $utilisateursIds));
+            }
         });
         $this->addFilter($textFilter);
+
+//        // filtre textuel
+//        $textFilter = new TextSearchFilter("Recherche textuelle", 'text');
+//        $textFilter->setAttributes(['title' => "Recherche sur le Display name, Username, Email ou Individu"]);
+//        $textFilter->setQueryBuilderApplier(function(SearchFilter $filter, QueryBuilder $qb) {
+//            $qb
+//                ->andWhere($qb->expr()->orX(
+//                    'UPPER(u.username)    LIKE UPPER(:text)',
+//                    'UPPER(u.displayName) LIKE UPPER(:text)',
+//                    'UPPER(u.email)       LIKE UPPER(:text)'
+//                ))
+//                ->setParameter('text', '%' . $filter->getValue() . '%');
+//        });
+//        $this->addFilter($textFilter);
 
         // filtre "est lié à un individu"
         $individuFilter = new CheckboxSearchFilter("Lié à un<br>individu", 'individu');

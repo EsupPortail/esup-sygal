@@ -44,10 +44,10 @@ use UnicaenAuthentification\Options\ModuleOptions;
 use UnicaenAuthentification\Service\User as AuthentificationUserService;
 use UnicaenAuthToken\Controller\TokenController;
 use UnicaenAuthToken\Service\TokenServiceAwareTrait;
-use UnicaenAuthToken\Service\TokenServiceException;
 use Webmozart\Assert\Assert;
 
 /**
+ * @property \Application\Service\Utilisateur\UtilisateurSearchService $searchService
  * @method \Application\Controller\Plugin\Forward forward()
  */
 class UtilisateurController extends \UnicaenAuthentification\Controller\UtilisateurController implements SearchControllerInterface
@@ -122,7 +122,7 @@ class UtilisateurController extends \UnicaenAuthentification\Controller\Utilisat
      *
      * @return ViewModel|Response
      */
-    public function indexAction()
+    public function indexAction(): Response|ViewModel
     {
         $result = $this->search();
         if ($result instanceof Response) {
