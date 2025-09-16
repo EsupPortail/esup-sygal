@@ -50,9 +50,13 @@ foreach ($rolesToValidate as $roleCode) {
 }
 
 //Ne pas prendre compte de savoir si le délai est respecté, si toutes les validations ont été faites
-if(($proposition->getEtat()->getCode() === Etat::EN_COURS_SAISIE ||
-        $proposition->getEtat()->getCode() === Etat::EN_COURS_EXAMEN) &&
-    !($validatedCount === count($rolesToValidate)))  $isAllOk = $isAllOk && $isDateOk;
+if (
+        ($proposition->getEtat()->getCode() === Etat::EN_COURS_SAISIE || $proposition->getEtat()->getCode() === Etat::EN_COURS_EXAMEN)
+        &&
+        $validatedCount !== count($rolesToValidate)
+) {
+    $isAllOk = $isAllOk && $isDateOk;
+}
 
 //Si tout n'est pas OK pour pouvoir valider
 //ou si tout est OK pour pouvoir valider mais qu'aucune validation n'a encore été effectuée
@@ -92,7 +96,7 @@ if ($isAllOk === false || $validatedCount === 0) {
                     <li> La proposition de soutenance doit être recevable : date et lieu, composition du jury, ... </li>
                 <?php endif; ?>
                 <?php if (!$isDateOk): ?>
-                    <li> Le délai de deux mois entre la date de validation et la date de soutenance est non respecté.</li>
+                    <li> Le délai de 2 mois entre la date de validation et la date de soutenance est n'est pas respecté.</li>
                 <?php endif; ?>
                 <?php if ($justificatifsOk === false): ?>
                     <li> Les justificatifs demandés n'ont pas tous été fournis. </li>

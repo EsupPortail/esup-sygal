@@ -55,7 +55,7 @@ foreach ($proposition->getMembres() as $membre) {
             <?php endif; ?>
 
             <?php if ($justificatifsOk !== true) : ?>
-                <div class="alert alert-warning float-end">
+                <div class="alert alert-warning float-end" style="max-width: 45%">
                     <span class="fas fa-exclamation-triangle"></span>
                     <?php if ($object instanceof HDR) : ?>
                         Liste des justificatifs manquants (<b>à déposer par le candidat</b>):
