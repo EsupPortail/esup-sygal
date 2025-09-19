@@ -38,45 +38,46 @@ line;enabled;privilege;isTheseEnCours;isTheseSoutenue;isCorrectionAttendue;isDat
 39;1;\Depot\Provider\Privilege\ValidationPrivileges::THESE_VALIDATION_RDV_BU_SUPPR;;;;;;;;;1:1;;;;;;;2:1;;;;;;;;;;0;
 40;1;\Depot\Provider\Privilege\ValidationPrivileges::THESE_VALIDATION_RDV_BU_SUPPR;;;;;;;;;1:0;;;;;;;2:1;;;;;;;;;;1;
 41;1;\Depot\Provider\Privilege\ValidationPrivileges::VALIDATION_DEPOT_THESE_CORRIGEE;;;1:0;;;;;;;;;;;;;;;;;;;;;;;0;Aucune correction n'est attendue pour cette thèse.
-42;1;\Depot\Provider\Privilege\ValidationPrivileges::VALIDATION_DEPOT_THESE_CORRIGEE;;;;;;;;;;;;1:1;;;;;;;;;;;;;;0;Opération impossible dès lors que le dépôt de la version corrigée a été validé.
-43;1;\Depot\Provider\Privilege\ValidationPrivileges::VALIDATION_DEPOT_THESE_CORRIGEE;;;;1:1;;;;;;;;;;;;;;;;;;;;;;0;La date butoir pour le dépôt de la version corrigée est dépassée.
-44;1;\Depot\Provider\Privilege\ValidationPrivileges::VALIDATION_DEPOT_THESE_CORRIGEE;;;1:1;3:0;;;;;;;;2:0;;;;;;;;;;;;;;1;
-45;1;\Depot\Provider\Privilege\ValidationPrivileges::VALIDATION_DEPOT_THESE_CORRIGEE_SUPPR;;;;;;;;;;;;;;1:1;;;;;;;;;;;;0;
-46;1;\Depot\Provider\Privilege\ValidationPrivileges::VALIDATION_DEPOT_THESE_CORRIGEE_SUPPR;;;;;;;;;;;;;;;;;;;;;;;;;;1;
-47;1;\Depot\Provider\Privilege\ValidationPrivileges::VALIDATION_CORRECTION_THESE;;;;;;;;;;;;;;;1:0;;;;;;;;;;;0;Le dépôt de la version corrigée n'a pas encore été validé par le doctorant.
-48;1;\Depot\Provider\Privilege\ValidationPrivileges::VALIDATION_CORRECTION_THESE;;;;;;;;;;;;;;;;;;;;;1:0;;;;;0;
-49;1;\Depot\Provider\Privilege\ValidationPrivileges::VALIDATION_CORRECTION_THESE;;;;;;;;;;;;;;;;;;;;;;;;;;1;
-50;1;\Depot\Provider\Privilege\ValidationPrivileges::VALIDATION_CORRECTION_THESE_SUPPR;;;;;;;;;;;;;;;;;;;;;;1:0;;;;0;
-51;1;\Depot\Provider\Privilege\ValidationPrivileges::VALIDATION_CORRECTION_THESE_SUPPR;;;;;;;;;;;;;;;;;;;;;;;;;;1;
-52;1;\Depot\Provider\Privilege\ValidationPrivileges::VALIDATION_VERSION_PAPIER_CORRIGEE;;;;;;;;;;;;;;;;;1:1;;;;;;;;;0;
-53;1;\Depot\Provider\Privilege\ValidationPrivileges::VALIDATION_VERSION_PAPIER_CORRIGEE;;;;;;;;;;;;;;;;;;;;;;;;;;1;
-54;1;\Depot\Provider\Privilege\DepotPrivileges::THESE_SAISIE_DESCRIPTION_VERSION_INITIALE;1:0;;;;;;;;;;;;;;;;;;;;;;;;;0;L’état de la thèse ne permet pas cette opération.
-55;1;\Depot\Provider\Privilege\DepotPrivileges::THESE_SAISIE_DESCRIPTION_VERSION_INITIALE;;;1:1;;;;;;;;;;;;;;;;;;;;;;;0;Opération impossible dès lors qu’une version corrigée est attendue.
-56;1;\Depot\Provider\Privilege\DepotPrivileges::THESE_SAISIE_DESCRIPTION_VERSION_INITIALE;;;;;;;;;;;;;1:1;;;;;;;;;;;;;0;Opération impossible dès lors que la bibliothèque universitaire a validé.
-57;1;\Depot\Provider\Privilege\DepotPrivileges::THESE_SAISIE_DESCRIPTION_VERSION_INITIALE;;;;;;;;;;;;;;;;;;;;;;;;;;1;
-58;1;\Depot\Provider\Privilege\DepotPrivileges::THESE_SAISIE_DESCRIPTION_VERSION_CORRIGEE;;;1:0;;;;;;;;;;;;;;;;;;;;;;;0;Aucune correction n'est attendue pour cette thèse
-59;1;\Depot\Provider\Privilege\DepotPrivileges::THESE_SAISIE_DESCRIPTION_VERSION_CORRIGEE;;;;;;;;;;;;1:1;;;;;;;;;;;;;;0;Opération impossible dès lors que le dépôt de la version corrigée a été validé.
-60;1;\Depot\Provider\Privilege\DepotPrivileges::THESE_SAISIE_DESCRIPTION_VERSION_CORRIGEE;;;;;;;;;;;;;;;;;;;;;;;;;;1;
-61;1;\Depot\Provider\Privilege\DepotPrivileges::THESE_SAISIE_ATTESTATIONS_VERSION_CORRIGEE;;;;;;1:1;;;;;;;;;;;;;;;;;;;;0;Les attestations ont déjà été renseignées.
-62;1;\Depot\Provider\Privilege\DepotPrivileges::THESE_SAISIE_ATTESTATIONS_VERSION_CORRIGEE;;;1:0;;;;;;;;;;;;;;;;;;;;;;;0;Aucune correction n'est attendue pour cette thèse
-63;1;\Depot\Provider\Privilege\DepotPrivileges::THESE_SAISIE_ATTESTATIONS_VERSION_CORRIGEE;;;;;;;;;;1:0;;;;;;;;;;;;;;;;0;Le dépôt d'une version initiale doit être fait au préalable.
-64;1;\Depot\Provider\Privilege\DepotPrivileges::THESE_SAISIE_ATTESTATIONS_VERSION_CORRIGEE;;;;;;;;;;;;1:1;;;;;;;;;;;;;;0;Opération impossible dès lors que le dépôt de la version corrigée a été validé.
-65;1;\Depot\Provider\Privilege\DepotPrivileges::THESE_SAISIE_ATTESTATIONS_VERSION_CORRIGEE;;;;;;;;;;;;;;;;;;;;;;;;;;1;
-66;1;\Depot\Provider\Privilege\DepotPrivileges::THESE_SAISIE_ATTESTATIONS_VERSION_INITIALE;;;;;1:1;;;;;;;;;;;;;;;;;;;;;0;Les attestations ont déjà été renseignées.
-67;1;\Depot\Provider\Privilege\DepotPrivileges::THESE_SAISIE_ATTESTATIONS_VERSION_INITIALE;1:0;;;;;;;;;;;;;;;;;;;;;;;;;0;L’état de la thèse ne permet pas cette opération.
-68;1;\Depot\Provider\Privilege\DepotPrivileges::THESE_SAISIE_ATTESTATIONS_VERSION_INITIALE;;;1:1;;;;;;;;;;;;;;;;;;;;;;;0;Opération impossible dès lors qu’une version corrigée est attendue.
-69;1;\Depot\Provider\Privilege\DepotPrivileges::THESE_SAISIE_ATTESTATIONS_VERSION_INITIALE;;;;;;;;;;;;;1:1;;;;;;;;;;;;;0;Opération impossible dès lors que la bibliothèque universitaire a validé.
-70;1;\Depot\Provider\Privilege\DepotPrivileges::THESE_SAISIE_ATTESTATIONS_VERSION_INITIALE;;;;;;;;;;;;;;;;;;;;;;;;;;1;
-71;1;\Depot\Provider\Privilege\DepotPrivileges::THESE_SAISIE_AUTORISATION_DIFFUSION_VERSION_CORRIGEE;;;1:0;;;;;;;;;;;;;;;;;;;;;;;0;Aucune correction n'est attendue pour cette thèse
-72;1;\Depot\Provider\Privilege\DepotPrivileges::THESE_SAISIE_AUTORISATION_DIFFUSION_VERSION_CORRIGEE;;;;;;;;;;;;2:1;;;;;;;;;;;;;;0;Opération impossible dès lors que le dépôt de la version corrigée a été validé.
-73;1;\Depot\Provider\Privilege\DepotPrivileges::THESE_SAISIE_AUTORISATION_DIFFUSION_VERSION_CORRIGEE;;;;;;;;;;;;;;;;;;;;;;;;;;1;
-74;1;\Depot\Provider\Privilege\DepotPrivileges::THESE_SAISIE_AUTORISATION_DIFFUSION_VERSION_INITIALE;1:0;;;;;;;;;;;;;;;;;;;;;;;;;0;L’état de la thèse ne permet pas cette opération.
-75;1;\Depot\Provider\Privilege\DepotPrivileges::THESE_SAISIE_AUTORISATION_DIFFUSION_VERSION_INITIALE;;;1:1;;;;;;;;;;;;;;;;;;;;;;;0;Opération impossible dès lors qu’une version corrigée est attendue.
-76;1;\Depot\Provider\Privilege\DepotPrivileges::THESE_SAISIE_AUTORISATION_DIFFUSION_VERSION_INITIALE;;;;;;;;;;;;;1:1;;;;;;;;;;;;;0;Opération impossible dès lors que la bibliothèque universitaire a validé.
-77;1;\Depot\Provider\Privilege\DepotPrivileges::THESE_SAISIE_AUTORISATION_DIFFUSION_VERSION_INITIALE;;;;;;;;;;;;;;;;;;;;;;;;;;1;
-78;1;\Depot\Provider\Privilege\DepotPrivileges::THESE_CORREC_AUTORISEE_ACCORDER_SURSIS;;;1:0;;;;;;;;;;;;;;;;;;;;;;;0;Aucune correction n'est attendue pour cette thèse
-79;1;\Depot\Provider\Privilege\DepotPrivileges::THESE_CORREC_AUTORISEE_ACCORDER_SURSIS;;;;1:0;;;;;;;;;;;;;;;;;;;;;;0;La date butoir pour le dépôt de la version corrigée n’est pas dépassée (%s).
-80;1;\Depot\Provider\Privilege\DepotPrivileges::THESE_CORREC_AUTORISEE_ACCORDER_SURSIS;;;;;;;;;;;;;;;;;;;;;;;;;;1;
-81;1;\Depot\Provider\Privilege\DepotPrivileges::THESE_CONSULTATION_CORREC_AUTORISEE_INFORMATIONS;;;;;;;;;;;;;;;;;;;;;;;;;;1;
-82;1;\Depot\Provider\Privilege\DepotPrivileges::THESE_TELECHARGEMENT_FICHIER /* évite UnexpectedPrivilegeException */;;;;;;;;;;;;;;;;;;;;;;;;;;1;
-83;1;\Depot\Provider\Privilege\DepotPrivileges::THESE_SAISIE_CORREC_AUTORISEE_FORCEE /* évite UnexpectedPrivilegeException */;;;;;;;;;;;;;;;;;;;;;;;;;;1;
+42;1;\Depot\Provider\Privilege\ValidationPrivileges::VALIDATION_DEPOT_THESE_CORRIGEE;;;;;;;;;1:0;;;;;;;;;;;;;;;;;0;Aucune version corrigée n'a été déposée.
+43;1;\Depot\Provider\Privilege\ValidationPrivileges::VALIDATION_DEPOT_THESE_CORRIGEE;;;;;;;;;;;;1:1;;;;;;;;;;;;;;0;Opération impossible dès lors que le dépôt de la version corrigée a été validé.
+44;1;\Depot\Provider\Privilege\ValidationPrivileges::VALIDATION_DEPOT_THESE_CORRIGEE;;;;1:1;;;;;;;;;;;;;;;;;;;;;;0;La date butoir pour le dépôt de la version corrigée est dépassée.
+45;1;\Depot\Provider\Privilege\ValidationPrivileges::VALIDATION_DEPOT_THESE_CORRIGEE;;;1:1;3:0;;;;;;;;2:0;;;;;;;;;;;;;;1;
+46;1;\Depot\Provider\Privilege\ValidationPrivileges::VALIDATION_DEPOT_THESE_CORRIGEE_SUPPR;;;;;;;;;;;;;;1:1;;;;;;;;;;;;0;
+47;1;\Depot\Provider\Privilege\ValidationPrivileges::VALIDATION_DEPOT_THESE_CORRIGEE_SUPPR;;;;;;;;;;;;;;;;;;;;;;;;;;1;
+48;1;\Depot\Provider\Privilege\ValidationPrivileges::VALIDATION_CORRECTION_THESE;;;;;;;;;;;;;;;1:0;;;;;;;;;;;0;Le dépôt de la version corrigée n'a pas encore été validé par le doctorant.
+49;1;\Depot\Provider\Privilege\ValidationPrivileges::VALIDATION_CORRECTION_THESE;;;;;;;;;;;;;;;;;;;;;1:0;;;;;0;
+50;1;\Depot\Provider\Privilege\ValidationPrivileges::VALIDATION_CORRECTION_THESE;;;;;;;;;;;;;;;;;;;;;;;;;;1;
+51;1;\Depot\Provider\Privilege\ValidationPrivileges::VALIDATION_CORRECTION_THESE_SUPPR;;;;;;;;;;;;;;;;;;;;;;1:0;;;;0;
+52;1;\Depot\Provider\Privilege\ValidationPrivileges::VALIDATION_CORRECTION_THESE_SUPPR;;;;;;;;;;;;;;;;;;;;;;;;;;1;
+53;1;\Depot\Provider\Privilege\ValidationPrivileges::VALIDATION_VERSION_PAPIER_CORRIGEE;;;;;;;;;;;;;;;;;1:1;;;;;;;;;0;
+54;1;\Depot\Provider\Privilege\ValidationPrivileges::VALIDATION_VERSION_PAPIER_CORRIGEE;;;;;;;;;;;;;;;;;;;;;;;;;;1;
+55;1;\Depot\Provider\Privilege\DepotPrivileges::THESE_SAISIE_DESCRIPTION_VERSION_INITIALE;1:0;;;;;;;;;;;;;;;;;;;;;;;;;0;L’état de la thèse ne permet pas cette opération.
+56;1;\Depot\Provider\Privilege\DepotPrivileges::THESE_SAISIE_DESCRIPTION_VERSION_INITIALE;;;1:1;;;;;;;;;;;;;;;;;;;;;;;0;Opération impossible dès lors qu’une version corrigée est attendue.
+57;1;\Depot\Provider\Privilege\DepotPrivileges::THESE_SAISIE_DESCRIPTION_VERSION_INITIALE;;;;;;;;;;;;;1:1;;;;;;;;;;;;;0;Opération impossible dès lors que la bibliothèque universitaire a validé.
+58;1;\Depot\Provider\Privilege\DepotPrivileges::THESE_SAISIE_DESCRIPTION_VERSION_INITIALE;;;;;;;;;;;;;;;;;;;;;;;;;;1;
+59;1;\Depot\Provider\Privilege\DepotPrivileges::THESE_SAISIE_DESCRIPTION_VERSION_CORRIGEE;;;1:0;;;;;;;;;;;;;;;;;;;;;;;0;Aucune correction n'est attendue pour cette thèse
+60;1;\Depot\Provider\Privilege\DepotPrivileges::THESE_SAISIE_DESCRIPTION_VERSION_CORRIGEE;;;;;;;;;;;;1:1;;;;;;;;;;;;;;0;Opération impossible dès lors que le dépôt de la version corrigée a été validé.
+61;1;\Depot\Provider\Privilege\DepotPrivileges::THESE_SAISIE_DESCRIPTION_VERSION_CORRIGEE;;;;;;;;;;;;;;;;;;;;;;;;;;1;
+62;1;\Depot\Provider\Privilege\DepotPrivileges::THESE_SAISIE_ATTESTATIONS_VERSION_CORRIGEE;;;;;;1:1;;;;;;;;;;;;;;;;;;;;0;Les attestations ont déjà été renseignées.
+63;1;\Depot\Provider\Privilege\DepotPrivileges::THESE_SAISIE_ATTESTATIONS_VERSION_CORRIGEE;;;1:0;;;;;;;;;;;;;;;;;;;;;;;0;Aucune correction n'est attendue pour cette thèse
+64;1;\Depot\Provider\Privilege\DepotPrivileges::THESE_SAISIE_ATTESTATIONS_VERSION_CORRIGEE;;;;;;;;;;1:0;;;;;;;;;;;;;;;;0;Le dépôt d'une version initiale doit être fait au préalable.
+65;1;\Depot\Provider\Privilege\DepotPrivileges::THESE_SAISIE_ATTESTATIONS_VERSION_CORRIGEE;;;;;;;;;;;;1:1;;;;;;;;;;;;;;0;Opération impossible dès lors que le dépôt de la version corrigée a été validé.
+66;1;\Depot\Provider\Privilege\DepotPrivileges::THESE_SAISIE_ATTESTATIONS_VERSION_CORRIGEE;;;;;;;;;;;;;;;;;;;;;;;;;;1;
+67;1;\Depot\Provider\Privilege\DepotPrivileges::THESE_SAISIE_ATTESTATIONS_VERSION_INITIALE;;;;;1:1;;;;;;;;;;;;;;;;;;;;;0;Les attestations ont déjà été renseignées.
+68;1;\Depot\Provider\Privilege\DepotPrivileges::THESE_SAISIE_ATTESTATIONS_VERSION_INITIALE;1:0;;;;;;;;;;;;;;;;;;;;;;;;;0;L’état de la thèse ne permet pas cette opération.
+69;1;\Depot\Provider\Privilege\DepotPrivileges::THESE_SAISIE_ATTESTATIONS_VERSION_INITIALE;;;1:1;;;;;;;;;;;;;;;;;;;;;;;0;Opération impossible dès lors qu’une version corrigée est attendue.
+70;1;\Depot\Provider\Privilege\DepotPrivileges::THESE_SAISIE_ATTESTATIONS_VERSION_INITIALE;;;;;;;;;;;;;1:1;;;;;;;;;;;;;0;Opération impossible dès lors que la bibliothèque universitaire a validé.
+71;1;\Depot\Provider\Privilege\DepotPrivileges::THESE_SAISIE_ATTESTATIONS_VERSION_INITIALE;;;;;;;;;;;;;;;;;;;;;;;;;;1;
+72;1;\Depot\Provider\Privilege\DepotPrivileges::THESE_SAISIE_AUTORISATION_DIFFUSION_VERSION_CORRIGEE;;;1:0;;;;;;;;;;;;;;;;;;;;;;;0;Aucune correction n'est attendue pour cette thèse
+73;1;\Depot\Provider\Privilege\DepotPrivileges::THESE_SAISIE_AUTORISATION_DIFFUSION_VERSION_CORRIGEE;;;;;;;;;;;;2:1;;;;;;;;;;;;;;0;Opération impossible dès lors que le dépôt de la version corrigée a été validé.
+74;1;\Depot\Provider\Privilege\DepotPrivileges::THESE_SAISIE_AUTORISATION_DIFFUSION_VERSION_CORRIGEE;;;;;;;;;;;;;;;;;;;;;;;;;;1;
+75;1;\Depot\Provider\Privilege\DepotPrivileges::THESE_SAISIE_AUTORISATION_DIFFUSION_VERSION_INITIALE;1:0;;;;;;;;;;;;;;;;;;;;;;;;;0;L’état de la thèse ne permet pas cette opération.
+76;1;\Depot\Provider\Privilege\DepotPrivileges::THESE_SAISIE_AUTORISATION_DIFFUSION_VERSION_INITIALE;;;1:1;;;;;;;;;;;;;;;;;;;;;;;0;Opération impossible dès lors qu’une version corrigée est attendue.
+77;1;\Depot\Provider\Privilege\DepotPrivileges::THESE_SAISIE_AUTORISATION_DIFFUSION_VERSION_INITIALE;;;;;;;;;;;;;1:1;;;;;;;;;;;;;0;Opération impossible dès lors que la bibliothèque universitaire a validé.
+78;1;\Depot\Provider\Privilege\DepotPrivileges::THESE_SAISIE_AUTORISATION_DIFFUSION_VERSION_INITIALE;;;;;;;;;;;;;;;;;;;;;;;;;;1;
+79;1;\Depot\Provider\Privilege\DepotPrivileges::THESE_CORREC_AUTORISEE_ACCORDER_SURSIS;;;1:0;;;;;;;;;;;;;;;;;;;;;;;0;Aucune correction n'est attendue pour cette thèse
+80;1;\Depot\Provider\Privilege\DepotPrivileges::THESE_CORREC_AUTORISEE_ACCORDER_SURSIS;;;;1:0;;;;;;;;;;;;;;;;;;;;;;0;La date butoir pour le dépôt de la version corrigée n’est pas dépassée (%s).
+81;1;\Depot\Provider\Privilege\DepotPrivileges::THESE_CORREC_AUTORISEE_ACCORDER_SURSIS;;;;;;;;;;;;;;;;;;;;;;;;;;1;
+82;1;\Depot\Provider\Privilege\DepotPrivileges::THESE_CONSULTATION_CORREC_AUTORISEE_INFORMATIONS;;;;;;;;;;;;;;;;;;;;;;;;;;1;
+83;1;\Depot\Provider\Privilege\DepotPrivileges::THESE_TELECHARGEMENT_FICHIER /* évite UnexpectedPrivilegeException */;;;;;;;;;;;;;;;;;;;;;;;;;;1;
+84;1;\Depot\Provider\Privilege\DepotPrivileges::THESE_SAISIE_CORREC_AUTORISEE_FORCEE /* évite UnexpectedPrivilegeException */;;;;;;;;;;;;;;;;;;;;;;;;;;1;

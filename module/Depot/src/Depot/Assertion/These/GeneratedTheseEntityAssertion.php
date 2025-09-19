@@ -7,11 +7,11 @@ use Application\Assertion\Exception\UnexpectedPrivilegeException as UnexpectedPr
 /**
  * Classe mère d'Assertion.
  *
- * Générée avec la ligne de commande 'bin/assertions/generate-assertion -f
+ * Générée avec la ligne de commande 'bin/assertions/generate-assertion --file
  * module/Depot/data/TheseEntityAssertion.csv'.
  *
  * @author Application\Assertion\Generator\AssertionGenerator
- * @date 19/03/2025 11:26:22
+ * @date 19/09/2025 11:53:09
  */
 abstract class GeneratedTheseEntityAssertion
 {
@@ -276,18 +276,24 @@ abstract class GeneratedTheseEntityAssertion
             }
             /* line 42 */
             $this->linesTrace[] = '/* line 42 */';
-            if ($this->isDepotVersionCorrigeeValide() /* test 16 */) {
-                $this->failureMessage = "Opération impossible dès lors que le dépôt de la version corrigée a été validé.";
+            if (! $this->isExisteFichierTheseVersionCorrigee() /* test 13 */) {
+                $this->failureMessage = "Aucune version corrigée n'a été déposée.";
                 return false;
             }
             /* line 43 */
             $this->linesTrace[] = '/* line 43 */';
-            if ($this->isDateButoirDepotVersionCorrigeeDepassee() /* test 8 */) {
-                $this->failureMessage = "La date butoir pour le dépôt de la version corrigée est dépassée.";
+            if ($this->isDepotVersionCorrigeeValide() /* test 16 */) {
+                $this->failureMessage = "Opération impossible dès lors que le dépôt de la version corrigée a été validé.";
                 return false;
             }
             /* line 44 */
             $this->linesTrace[] = '/* line 44 */';
+            if ($this->isDateButoirDepotVersionCorrigeeDepassee() /* test 8 */) {
+                $this->failureMessage = "La date butoir pour le dépôt de la version corrigée est dépassée.";
+                return false;
+            }
+            /* line 45 */
+            $this->linesTrace[] = '/* line 45 */';
             if ($this->isCorrectionAttendue() /* test 7 */ && 
                 ! $this->isDepotVersionCorrigeeValide() /* test 16 */ && 
                 ! $this->isDateButoirDepotVersionCorrigeeDepassee() /* test 8 */) {
@@ -297,245 +303,245 @@ abstract class GeneratedTheseEntityAssertion
 
         if ($privilege === \Depot\Provider\Privilege\ValidationPrivileges::VALIDATION_DEPOT_THESE_CORRIGEE_SUPPR) {
         //--------------------------------------------------------------------------------------
-            /* line 45 */
-            $this->linesTrace[] = '/* line 45 */';
+            /* line 46 */
+            $this->linesTrace[] = '/* line 46 */';
             if ($this->isExisteValidationCorrectionsThese() /* test 18 */) {
                 return false;
             }
-            /* line 46 */
-            $this->linesTrace[] = '/* line 46 */';
+            /* line 47 */
+            $this->linesTrace[] = '/* line 47 */';
             return true;
         }
 
         if ($privilege === \Depot\Provider\Privilege\ValidationPrivileges::VALIDATION_CORRECTION_THESE) {
         //--------------------------------------------------------------------------------------
-            /* line 47 */
-            $this->linesTrace[] = '/* line 47 */';
+            /* line 48 */
+            $this->linesTrace[] = '/* line 48 */';
             if (! $this->isExisteValidationDepotVersionCorrigee() /* test 19 */) {
                 $this->failureMessage = "Le dépôt de la version corrigée n'a pas encore été validé par le doctorant.";
                 return false;
             }
-            /* line 48 */
-            $this->linesTrace[] = '/* line 48 */';
+            /* line 49 */
+            $this->linesTrace[] = '/* line 49 */';
             if (! $this->isUtilisateurExisteParmiValidateursAttendus() /* test 25 */) {
                 return false;
             }
-            /* line 49 */
-            $this->linesTrace[] = '/* line 49 */';
+            /* line 50 */
+            $this->linesTrace[] = '/* line 50 */';
             return true;
         }
 
         if ($privilege === \Depot\Provider\Privilege\ValidationPrivileges::VALIDATION_CORRECTION_THESE_SUPPR) {
         //--------------------------------------------------------------------------------------
-            /* line 50 */
-            $this->linesTrace[] = '/* line 50 */';
+            /* line 51 */
+            $this->linesTrace[] = '/* line 51 */';
             if (! $this->isUtilisateurExisteParmiValidateursAyantValide() /* test 26 */) {
                 return false;
             }
-            /* line 51 */
-            $this->linesTrace[] = '/* line 51 */';
+            /* line 52 */
+            $this->linesTrace[] = '/* line 52 */';
             return true;
         }
 
         if ($privilege === \Depot\Provider\Privilege\ValidationPrivileges::VALIDATION_VERSION_PAPIER_CORRIGEE) {
         //--------------------------------------------------------------------------------------
-            /* line 52 */
-            $this->linesTrace[] = '/* line 52 */';
+            /* line 53 */
+            $this->linesTrace[] = '/* line 53 */';
             if ($this->isExisteValidationVersionPapierCorrigee() /* test 21 */) {
                 return false;
             }
-            /* line 53 */
-            $this->linesTrace[] = '/* line 53 */';
+            /* line 54 */
+            $this->linesTrace[] = '/* line 54 */';
             return true;
         }
 
         if ($privilege === \Depot\Provider\Privilege\DepotPrivileges::THESE_SAISIE_DESCRIPTION_VERSION_INITIALE) {
         //--------------------------------------------------------------------------------------
-            /* line 54 */
-            $this->linesTrace[] = '/* line 54 */';
+            /* line 55 */
+            $this->linesTrace[] = '/* line 55 */';
             if (! $this->isTheseEnCours() /* test 5 */) {
                 $this->failureMessage = "L’état de la thèse ne permet pas cette opération.";
                 return false;
             }
-            /* line 55 */
-            $this->linesTrace[] = '/* line 55 */';
+            /* line 56 */
+            $this->linesTrace[] = '/* line 56 */';
             if ($this->isCorrectionAttendue() /* test 7 */) {
                 $this->failureMessage = "Opération impossible dès lors qu’une version corrigée est attendue.";
                 return false;
             }
-            /* line 56 */
-            $this->linesTrace[] = '/* line 56 */';
+            /* line 57 */
+            $this->linesTrace[] = '/* line 57 */';
             if ($this->isExisteValidationBU() /* test 17 */) {
                 $this->failureMessage = "Opération impossible dès lors que la bibliothèque universitaire a validé.";
                 return false;
             }
-            /* line 57 */
-            $this->linesTrace[] = '/* line 57 */';
+            /* line 58 */
+            $this->linesTrace[] = '/* line 58 */';
             return true;
         }
 
         if ($privilege === \Depot\Provider\Privilege\DepotPrivileges::THESE_SAISIE_DESCRIPTION_VERSION_CORRIGEE) {
         //--------------------------------------------------------------------------------------
-            /* line 58 */
-            $this->linesTrace[] = '/* line 58 */';
+            /* line 59 */
+            $this->linesTrace[] = '/* line 59 */';
             if (! $this->isCorrectionAttendue() /* test 7 */) {
                 $this->failureMessage = "Aucune correction n'est attendue pour cette thèse";
                 return false;
             }
-            /* line 59 */
-            $this->linesTrace[] = '/* line 59 */';
+            /* line 60 */
+            $this->linesTrace[] = '/* line 60 */';
             if ($this->isDepotVersionCorrigeeValide() /* test 16 */) {
                 $this->failureMessage = "Opération impossible dès lors que le dépôt de la version corrigée a été validé.";
                 return false;
             }
-            /* line 60 */
-            $this->linesTrace[] = '/* line 60 */';
+            /* line 61 */
+            $this->linesTrace[] = '/* line 61 */';
             return true;
         }
 
         if ($privilege === \Depot\Provider\Privilege\DepotPrivileges::THESE_SAISIE_ATTESTATIONS_VERSION_CORRIGEE) {
         //--------------------------------------------------------------------------------------
-            /* line 61 */
-            $this->linesTrace[] = '/* line 61 */';
+            /* line 62 */
+            $this->linesTrace[] = '/* line 62 */';
             if ($this->isAttestationsVersionCorrigeeSaisies() /* test 10 */) {
                 $this->failureMessage = "Les attestations ont déjà été renseignées.";
                 return false;
             }
-            /* line 62 */
-            $this->linesTrace[] = '/* line 62 */';
+            /* line 63 */
+            $this->linesTrace[] = '/* line 63 */';
             if (! $this->isCorrectionAttendue() /* test 7 */) {
                 $this->failureMessage = "Aucune correction n'est attendue pour cette thèse";
                 return false;
             }
-            /* line 63 */
-            $this->linesTrace[] = '/* line 63 */';
+            /* line 64 */
+            $this->linesTrace[] = '/* line 64 */';
             if (! $this->isExisteFichierTheseVersionOriginale() /* test 14 */) {
                 $this->failureMessage = "Le dépôt d'une version initiale doit être fait au préalable.";
                 return false;
             }
-            /* line 64 */
-            $this->linesTrace[] = '/* line 64 */';
+            /* line 65 */
+            $this->linesTrace[] = '/* line 65 */';
             if ($this->isDepotVersionCorrigeeValide() /* test 16 */) {
                 $this->failureMessage = "Opération impossible dès lors que le dépôt de la version corrigée a été validé.";
                 return false;
             }
-            /* line 65 */
-            $this->linesTrace[] = '/* line 65 */';
+            /* line 66 */
+            $this->linesTrace[] = '/* line 66 */';
             return true;
         }
 
         if ($privilege === \Depot\Provider\Privilege\DepotPrivileges::THESE_SAISIE_ATTESTATIONS_VERSION_INITIALE) {
         //--------------------------------------------------------------------------------------
-            /* line 66 */
-            $this->linesTrace[] = '/* line 66 */';
+            /* line 67 */
+            $this->linesTrace[] = '/* line 67 */';
             if ($this->isAttestationsVersionInitialeSaisies() /* test 9 */) {
                 $this->failureMessage = "Les attestations ont déjà été renseignées.";
                 return false;
             }
-            /* line 67 */
-            $this->linesTrace[] = '/* line 67 */';
+            /* line 68 */
+            $this->linesTrace[] = '/* line 68 */';
             if (! $this->isTheseEnCours() /* test 5 */) {
                 $this->failureMessage = "L’état de la thèse ne permet pas cette opération.";
                 return false;
             }
-            /* line 68 */
-            $this->linesTrace[] = '/* line 68 */';
+            /* line 69 */
+            $this->linesTrace[] = '/* line 69 */';
             if ($this->isCorrectionAttendue() /* test 7 */) {
                 $this->failureMessage = "Opération impossible dès lors qu’une version corrigée est attendue.";
                 return false;
             }
-            /* line 69 */
-            $this->linesTrace[] = '/* line 69 */';
+            /* line 70 */
+            $this->linesTrace[] = '/* line 70 */';
             if ($this->isExisteValidationBU() /* test 17 */) {
                 $this->failureMessage = "Opération impossible dès lors que la bibliothèque universitaire a validé.";
                 return false;
             }
-            /* line 70 */
-            $this->linesTrace[] = '/* line 70 */';
+            /* line 71 */
+            $this->linesTrace[] = '/* line 71 */';
             return true;
         }
 
         if ($privilege === \Depot\Provider\Privilege\DepotPrivileges::THESE_SAISIE_AUTORISATION_DIFFUSION_VERSION_CORRIGEE) {
         //--------------------------------------------------------------------------------------
-            /* line 71 */
-            $this->linesTrace[] = '/* line 71 */';
+            /* line 72 */
+            $this->linesTrace[] = '/* line 72 */';
             if (! $this->isCorrectionAttendue() /* test 7 */) {
                 $this->failureMessage = "Aucune correction n'est attendue pour cette thèse";
                 return false;
             }
-            /* line 72 */
-            $this->linesTrace[] = '/* line 72 */';
+            /* line 73 */
+            $this->linesTrace[] = '/* line 73 */';
             if ($this->isDepotVersionCorrigeeValide() /* test 16 */) {
                 $this->failureMessage = "Opération impossible dès lors que le dépôt de la version corrigée a été validé.";
                 return false;
             }
-            /* line 73 */
-            $this->linesTrace[] = '/* line 73 */';
+            /* line 74 */
+            $this->linesTrace[] = '/* line 74 */';
             return true;
         }
 
         if ($privilege === \Depot\Provider\Privilege\DepotPrivileges::THESE_SAISIE_AUTORISATION_DIFFUSION_VERSION_INITIALE) {
         //--------------------------------------------------------------------------------------
-            /* line 74 */
-            $this->linesTrace[] = '/* line 74 */';
+            /* line 75 */
+            $this->linesTrace[] = '/* line 75 */';
             if (! $this->isTheseEnCours() /* test 5 */) {
                 $this->failureMessage = "L’état de la thèse ne permet pas cette opération.";
                 return false;
             }
-            /* line 75 */
-            $this->linesTrace[] = '/* line 75 */';
+            /* line 76 */
+            $this->linesTrace[] = '/* line 76 */';
             if ($this->isCorrectionAttendue() /* test 7 */) {
                 $this->failureMessage = "Opération impossible dès lors qu’une version corrigée est attendue.";
                 return false;
             }
-            /* line 76 */
-            $this->linesTrace[] = '/* line 76 */';
+            /* line 77 */
+            $this->linesTrace[] = '/* line 77 */';
             if ($this->isExisteValidationBU() /* test 17 */) {
                 $this->failureMessage = "Opération impossible dès lors que la bibliothèque universitaire a validé.";
                 return false;
             }
-            /* line 77 */
-            $this->linesTrace[] = '/* line 77 */';
+            /* line 78 */
+            $this->linesTrace[] = '/* line 78 */';
             return true;
         }
 
         if ($privilege === \Depot\Provider\Privilege\DepotPrivileges::THESE_CORREC_AUTORISEE_ACCORDER_SURSIS) {
         //--------------------------------------------------------------------------------------
-            /* line 78 */
-            $this->linesTrace[] = '/* line 78 */';
+            /* line 79 */
+            $this->linesTrace[] = '/* line 79 */';
             if (! $this->isCorrectionAttendue() /* test 7 */) {
                 $this->failureMessage = "Aucune correction n'est attendue pour cette thèse";
                 return false;
             }
-            /* line 79 */
-            $this->linesTrace[] = '/* line 79 */';
+            /* line 80 */
+            $this->linesTrace[] = '/* line 80 */';
             if (! $this->isDateButoirDepotVersionCorrigeeDepassee() /* test 8 */) {
                 $this->failureMessage = "La date butoir pour le dépôt de la version corrigée n’est pas dépassée (%s).";
                 return false;
             }
-            /* line 80 */
-            $this->linesTrace[] = '/* line 80 */';
-            return true;
-        }
-
-        if ($privilege === \Depot\Provider\Privilege\DepotPrivileges::THESE_CONSULTATION_CORREC_AUTORISEE_INFORMATIONS) {
-        //--------------------------------------------------------------------------------------
             /* line 81 */
             $this->linesTrace[] = '/* line 81 */';
             return true;
         }
 
-        if ($privilege === \Depot\Provider\Privilege\DepotPrivileges::THESE_TELECHARGEMENT_FICHIER /* évite UnexpectedPrivilegeException */) {
+        if ($privilege === \Depot\Provider\Privilege\DepotPrivileges::THESE_CONSULTATION_CORREC_AUTORISEE_INFORMATIONS) {
         //--------------------------------------------------------------------------------------
             /* line 82 */
             $this->linesTrace[] = '/* line 82 */';
             return true;
         }
 
-        if ($privilege === \Depot\Provider\Privilege\DepotPrivileges::THESE_SAISIE_CORREC_AUTORISEE_FORCEE /* évite UnexpectedPrivilegeException */) {
+        if ($privilege === \Depot\Provider\Privilege\DepotPrivileges::THESE_TELECHARGEMENT_FICHIER /* évite UnexpectedPrivilegeException */) {
         //--------------------------------------------------------------------------------------
             /* line 83 */
             $this->linesTrace[] = '/* line 83 */';
+            return true;
+        }
+
+        if ($privilege === \Depot\Provider\Privilege\DepotPrivileges::THESE_SAISIE_CORREC_AUTORISEE_FORCEE /* évite UnexpectedPrivilegeException */) {
+        //--------------------------------------------------------------------------------------
+            /* line 84 */
+            $this->linesTrace[] = '/* line 84 */';
             return true;
         }
 
@@ -672,48 +678,49 @@ line;enabled;privilege;isTheseEnCours;isTheseSoutenue;isCorrectionAttendue;isDat
 39;1;\Depot\Provider\Privilege\ValidationPrivileges::THESE_VALIDATION_RDV_BU_SUPPR;;;;;;;;;1:1;;;;;;;2:1;;;;;;;;;;0;
 40;1;\Depot\Provider\Privilege\ValidationPrivileges::THESE_VALIDATION_RDV_BU_SUPPR;;;;;;;;;1:0;;;;;;;2:1;;;;;;;;;;1;
 41;1;\Depot\Provider\Privilege\ValidationPrivileges::VALIDATION_DEPOT_THESE_CORRIGEE;;;1:0;;;;;;;;;;;;;;;;;;;;;;;0;Aucune correction n'est attendue pour cette thèse.
-42;1;\Depot\Provider\Privilege\ValidationPrivileges::VALIDATION_DEPOT_THESE_CORRIGEE;;;;;;;;;;;;1:1;;;;;;;;;;;;;;0;Opération impossible dès lors que le dépôt de la version corrigée a été validé.
-43;1;\Depot\Provider\Privilege\ValidationPrivileges::VALIDATION_DEPOT_THESE_CORRIGEE;;;;1:1;;;;;;;;;;;;;;;;;;;;;;0;La date butoir pour le dépôt de la version corrigée est dépassée.
-44;1;\Depot\Provider\Privilege\ValidationPrivileges::VALIDATION_DEPOT_THESE_CORRIGEE;;;1:1;3:0;;;;;;;;2:0;;;;;;;;;;;;;;1;
-45;1;\Depot\Provider\Privilege\ValidationPrivileges::VALIDATION_DEPOT_THESE_CORRIGEE_SUPPR;;;;;;;;;;;;;;1:1;;;;;;;;;;;;0;
-46;1;\Depot\Provider\Privilege\ValidationPrivileges::VALIDATION_DEPOT_THESE_CORRIGEE_SUPPR;;;;;;;;;;;;;;;;;;;;;;;;;;1;
-47;1;\Depot\Provider\Privilege\ValidationPrivileges::VALIDATION_CORRECTION_THESE;;;;;;;;;;;;;;;1:0;;;;;;;;;;;0;Le dépôt de la version corrigée n'a pas encore été validé par le doctorant.
-48;1;\Depot\Provider\Privilege\ValidationPrivileges::VALIDATION_CORRECTION_THESE;;;;;;;;;;;;;;;;;;;;;1:0;;;;;0;
-49;1;\Depot\Provider\Privilege\ValidationPrivileges::VALIDATION_CORRECTION_THESE;;;;;;;;;;;;;;;;;;;;;;;;;;1;
-50;1;\Depot\Provider\Privilege\ValidationPrivileges::VALIDATION_CORRECTION_THESE_SUPPR;;;;;;;;;;;;;;;;;;;;;;1:0;;;;0;
-51;1;\Depot\Provider\Privilege\ValidationPrivileges::VALIDATION_CORRECTION_THESE_SUPPR;;;;;;;;;;;;;;;;;;;;;;;;;;1;
-52;1;\Depot\Provider\Privilege\ValidationPrivileges::VALIDATION_VERSION_PAPIER_CORRIGEE;;;;;;;;;;;;;;;;;1:1;;;;;;;;;0;
-53;1;\Depot\Provider\Privilege\ValidationPrivileges::VALIDATION_VERSION_PAPIER_CORRIGEE;;;;;;;;;;;;;;;;;;;;;;;;;;1;
-54;1;\Depot\Provider\Privilege\DepotPrivileges::THESE_SAISIE_DESCRIPTION_VERSION_INITIALE;1:0;;;;;;;;;;;;;;;;;;;;;;;;;0;L’état de la thèse ne permet pas cette opération.
-55;1;\Depot\Provider\Privilege\DepotPrivileges::THESE_SAISIE_DESCRIPTION_VERSION_INITIALE;;;1:1;;;;;;;;;;;;;;;;;;;;;;;0;Opération impossible dès lors qu’une version corrigée est attendue.
-56;1;\Depot\Provider\Privilege\DepotPrivileges::THESE_SAISIE_DESCRIPTION_VERSION_INITIALE;;;;;;;;;;;;;1:1;;;;;;;;;;;;;0;Opération impossible dès lors que la bibliothèque universitaire a validé.
-57;1;\Depot\Provider\Privilege\DepotPrivileges::THESE_SAISIE_DESCRIPTION_VERSION_INITIALE;;;;;;;;;;;;;;;;;;;;;;;;;;1;
-58;1;\Depot\Provider\Privilege\DepotPrivileges::THESE_SAISIE_DESCRIPTION_VERSION_CORRIGEE;;;1:0;;;;;;;;;;;;;;;;;;;;;;;0;Aucune correction n'est attendue pour cette thèse
-59;1;\Depot\Provider\Privilege\DepotPrivileges::THESE_SAISIE_DESCRIPTION_VERSION_CORRIGEE;;;;;;;;;;;;1:1;;;;;;;;;;;;;;0;Opération impossible dès lors que le dépôt de la version corrigée a été validé.
-60;1;\Depot\Provider\Privilege\DepotPrivileges::THESE_SAISIE_DESCRIPTION_VERSION_CORRIGEE;;;;;;;;;;;;;;;;;;;;;;;;;;1;
-61;1;\Depot\Provider\Privilege\DepotPrivileges::THESE_SAISIE_ATTESTATIONS_VERSION_CORRIGEE;;;;;;1:1;;;;;;;;;;;;;;;;;;;;0;Les attestations ont déjà été renseignées.
-62;1;\Depot\Provider\Privilege\DepotPrivileges::THESE_SAISIE_ATTESTATIONS_VERSION_CORRIGEE;;;1:0;;;;;;;;;;;;;;;;;;;;;;;0;Aucune correction n'est attendue pour cette thèse
-63;1;\Depot\Provider\Privilege\DepotPrivileges::THESE_SAISIE_ATTESTATIONS_VERSION_CORRIGEE;;;;;;;;;;1:0;;;;;;;;;;;;;;;;0;Le dépôt d'une version initiale doit être fait au préalable.
-64;1;\Depot\Provider\Privilege\DepotPrivileges::THESE_SAISIE_ATTESTATIONS_VERSION_CORRIGEE;;;;;;;;;;;;1:1;;;;;;;;;;;;;;0;Opération impossible dès lors que le dépôt de la version corrigée a été validé.
-65;1;\Depot\Provider\Privilege\DepotPrivileges::THESE_SAISIE_ATTESTATIONS_VERSION_CORRIGEE;;;;;;;;;;;;;;;;;;;;;;;;;;1;
-66;1;\Depot\Provider\Privilege\DepotPrivileges::THESE_SAISIE_ATTESTATIONS_VERSION_INITIALE;;;;;1:1;;;;;;;;;;;;;;;;;;;;;0;Les attestations ont déjà été renseignées.
-67;1;\Depot\Provider\Privilege\DepotPrivileges::THESE_SAISIE_ATTESTATIONS_VERSION_INITIALE;1:0;;;;;;;;;;;;;;;;;;;;;;;;;0;L’état de la thèse ne permet pas cette opération.
-68;1;\Depot\Provider\Privilege\DepotPrivileges::THESE_SAISIE_ATTESTATIONS_VERSION_INITIALE;;;1:1;;;;;;;;;;;;;;;;;;;;;;;0;Opération impossible dès lors qu’une version corrigée est attendue.
-69;1;\Depot\Provider\Privilege\DepotPrivileges::THESE_SAISIE_ATTESTATIONS_VERSION_INITIALE;;;;;;;;;;;;;1:1;;;;;;;;;;;;;0;Opération impossible dès lors que la bibliothèque universitaire a validé.
-70;1;\Depot\Provider\Privilege\DepotPrivileges::THESE_SAISIE_ATTESTATIONS_VERSION_INITIALE;;;;;;;;;;;;;;;;;;;;;;;;;;1;
-71;1;\Depot\Provider\Privilege\DepotPrivileges::THESE_SAISIE_AUTORISATION_DIFFUSION_VERSION_CORRIGEE;;;1:0;;;;;;;;;;;;;;;;;;;;;;;0;Aucune correction n'est attendue pour cette thèse
-72;1;\Depot\Provider\Privilege\DepotPrivileges::THESE_SAISIE_AUTORISATION_DIFFUSION_VERSION_CORRIGEE;;;;;;;;;;;;2:1;;;;;;;;;;;;;;0;Opération impossible dès lors que le dépôt de la version corrigée a été validé.
-73;1;\Depot\Provider\Privilege\DepotPrivileges::THESE_SAISIE_AUTORISATION_DIFFUSION_VERSION_CORRIGEE;;;;;;;;;;;;;;;;;;;;;;;;;;1;
-74;1;\Depot\Provider\Privilege\DepotPrivileges::THESE_SAISIE_AUTORISATION_DIFFUSION_VERSION_INITIALE;1:0;;;;;;;;;;;;;;;;;;;;;;;;;0;L’état de la thèse ne permet pas cette opération.
-75;1;\Depot\Provider\Privilege\DepotPrivileges::THESE_SAISIE_AUTORISATION_DIFFUSION_VERSION_INITIALE;;;1:1;;;;;;;;;;;;;;;;;;;;;;;0;Opération impossible dès lors qu’une version corrigée est attendue.
-76;1;\Depot\Provider\Privilege\DepotPrivileges::THESE_SAISIE_AUTORISATION_DIFFUSION_VERSION_INITIALE;;;;;;;;;;;;;1:1;;;;;;;;;;;;;0;Opération impossible dès lors que la bibliothèque universitaire a validé.
-77;1;\Depot\Provider\Privilege\DepotPrivileges::THESE_SAISIE_AUTORISATION_DIFFUSION_VERSION_INITIALE;;;;;;;;;;;;;;;;;;;;;;;;;;1;
-78;1;\Depot\Provider\Privilege\DepotPrivileges::THESE_CORREC_AUTORISEE_ACCORDER_SURSIS;;;1:0;;;;;;;;;;;;;;;;;;;;;;;0;Aucune correction n'est attendue pour cette thèse
-79;1;\Depot\Provider\Privilege\DepotPrivileges::THESE_CORREC_AUTORISEE_ACCORDER_SURSIS;;;;1:0;;;;;;;;;;;;;;;;;;;;;;0;La date butoir pour le dépôt de la version corrigée n’est pas dépassée (%s).
-80;1;\Depot\Provider\Privilege\DepotPrivileges::THESE_CORREC_AUTORISEE_ACCORDER_SURSIS;;;;;;;;;;;;;;;;;;;;;;;;;;1;
-81;1;\Depot\Provider\Privilege\DepotPrivileges::THESE_CONSULTATION_CORREC_AUTORISEE_INFORMATIONS;;;;;;;;;;;;;;;;;;;;;;;;;;1;
-82;1;\Depot\Provider\Privilege\DepotPrivileges::THESE_TELECHARGEMENT_FICHIER /* évite UnexpectedPrivilegeException */;;;;;;;;;;;;;;;;;;;;;;;;;;1;
-83;1;\Depot\Provider\Privilege\DepotPrivileges::THESE_SAISIE_CORREC_AUTORISEE_FORCEE /* évite UnexpectedPrivilegeException */;;;;;;;;;;;;;;;;;;;;;;;;;;1;
+42;1;\Depot\Provider\Privilege\ValidationPrivileges::VALIDATION_DEPOT_THESE_CORRIGEE;;;;;;;;;1:0;;;;;;;;;;;;;;;;;0;Aucune version corrigée n'a été déposée.
+43;1;\Depot\Provider\Privilege\ValidationPrivileges::VALIDATION_DEPOT_THESE_CORRIGEE;;;;;;;;;;;;1:1;;;;;;;;;;;;;;0;Opération impossible dès lors que le dépôt de la version corrigée a été validé.
+44;1;\Depot\Provider\Privilege\ValidationPrivileges::VALIDATION_DEPOT_THESE_CORRIGEE;;;;1:1;;;;;;;;;;;;;;;;;;;;;;0;La date butoir pour le dépôt de la version corrigée est dépassée.
+45;1;\Depot\Provider\Privilege\ValidationPrivileges::VALIDATION_DEPOT_THESE_CORRIGEE;;;1:1;3:0;;;;;;;;2:0;;;;;;;;;;;;;;1;
+46;1;\Depot\Provider\Privilege\ValidationPrivileges::VALIDATION_DEPOT_THESE_CORRIGEE_SUPPR;;;;;;;;;;;;;;1:1;;;;;;;;;;;;0;
+47;1;\Depot\Provider\Privilege\ValidationPrivileges::VALIDATION_DEPOT_THESE_CORRIGEE_SUPPR;;;;;;;;;;;;;;;;;;;;;;;;;;1;
+48;1;\Depot\Provider\Privilege\ValidationPrivileges::VALIDATION_CORRECTION_THESE;;;;;;;;;;;;;;;1:0;;;;;;;;;;;0;Le dépôt de la version corrigée n'a pas encore été validé par le doctorant.
+49;1;\Depot\Provider\Privilege\ValidationPrivileges::VALIDATION_CORRECTION_THESE;;;;;;;;;;;;;;;;;;;;;1:0;;;;;0;
+50;1;\Depot\Provider\Privilege\ValidationPrivileges::VALIDATION_CORRECTION_THESE;;;;;;;;;;;;;;;;;;;;;;;;;;1;
+51;1;\Depot\Provider\Privilege\ValidationPrivileges::VALIDATION_CORRECTION_THESE_SUPPR;;;;;;;;;;;;;;;;;;;;;;1:0;;;;0;
+52;1;\Depot\Provider\Privilege\ValidationPrivileges::VALIDATION_CORRECTION_THESE_SUPPR;;;;;;;;;;;;;;;;;;;;;;;;;;1;
+53;1;\Depot\Provider\Privilege\ValidationPrivileges::VALIDATION_VERSION_PAPIER_CORRIGEE;;;;;;;;;;;;;;;;;1:1;;;;;;;;;0;
+54;1;\Depot\Provider\Privilege\ValidationPrivileges::VALIDATION_VERSION_PAPIER_CORRIGEE;;;;;;;;;;;;;;;;;;;;;;;;;;1;
+55;1;\Depot\Provider\Privilege\DepotPrivileges::THESE_SAISIE_DESCRIPTION_VERSION_INITIALE;1:0;;;;;;;;;;;;;;;;;;;;;;;;;0;L’état de la thèse ne permet pas cette opération.
+56;1;\Depot\Provider\Privilege\DepotPrivileges::THESE_SAISIE_DESCRIPTION_VERSION_INITIALE;;;1:1;;;;;;;;;;;;;;;;;;;;;;;0;Opération impossible dès lors qu’une version corrigée est attendue.
+57;1;\Depot\Provider\Privilege\DepotPrivileges::THESE_SAISIE_DESCRIPTION_VERSION_INITIALE;;;;;;;;;;;;;1:1;;;;;;;;;;;;;0;Opération impossible dès lors que la bibliothèque universitaire a validé.
+58;1;\Depot\Provider\Privilege\DepotPrivileges::THESE_SAISIE_DESCRIPTION_VERSION_INITIALE;;;;;;;;;;;;;;;;;;;;;;;;;;1;
+59;1;\Depot\Provider\Privilege\DepotPrivileges::THESE_SAISIE_DESCRIPTION_VERSION_CORRIGEE;;;1:0;;;;;;;;;;;;;;;;;;;;;;;0;Aucune correction n'est attendue pour cette thèse
+60;1;\Depot\Provider\Privilege\DepotPrivileges::THESE_SAISIE_DESCRIPTION_VERSION_CORRIGEE;;;;;;;;;;;;1:1;;;;;;;;;;;;;;0;Opération impossible dès lors que le dépôt de la version corrigée a été validé.
+61;1;\Depot\Provider\Privilege\DepotPrivileges::THESE_SAISIE_DESCRIPTION_VERSION_CORRIGEE;;;;;;;;;;;;;;;;;;;;;;;;;;1;
+62;1;\Depot\Provider\Privilege\DepotPrivileges::THESE_SAISIE_ATTESTATIONS_VERSION_CORRIGEE;;;;;;1:1;;;;;;;;;;;;;;;;;;;;0;Les attestations ont déjà été renseignées.
+63;1;\Depot\Provider\Privilege\DepotPrivileges::THESE_SAISIE_ATTESTATIONS_VERSION_CORRIGEE;;;1:0;;;;;;;;;;;;;;;;;;;;;;;0;Aucune correction n'est attendue pour cette thèse
+64;1;\Depot\Provider\Privilege\DepotPrivileges::THESE_SAISIE_ATTESTATIONS_VERSION_CORRIGEE;;;;;;;;;;1:0;;;;;;;;;;;;;;;;0;Le dépôt d'une version initiale doit être fait au préalable.
+65;1;\Depot\Provider\Privilege\DepotPrivileges::THESE_SAISIE_ATTESTATIONS_VERSION_CORRIGEE;;;;;;;;;;;;1:1;;;;;;;;;;;;;;0;Opération impossible dès lors que le dépôt de la version corrigée a été validé.
+66;1;\Depot\Provider\Privilege\DepotPrivileges::THESE_SAISIE_ATTESTATIONS_VERSION_CORRIGEE;;;;;;;;;;;;;;;;;;;;;;;;;;1;
+67;1;\Depot\Provider\Privilege\DepotPrivileges::THESE_SAISIE_ATTESTATIONS_VERSION_INITIALE;;;;;1:1;;;;;;;;;;;;;;;;;;;;;0;Les attestations ont déjà été renseignées.
+68;1;\Depot\Provider\Privilege\DepotPrivileges::THESE_SAISIE_ATTESTATIONS_VERSION_INITIALE;1:0;;;;;;;;;;;;;;;;;;;;;;;;;0;L’état de la thèse ne permet pas cette opération.
+69;1;\Depot\Provider\Privilege\DepotPrivileges::THESE_SAISIE_ATTESTATIONS_VERSION_INITIALE;;;1:1;;;;;;;;;;;;;;;;;;;;;;;0;Opération impossible dès lors qu’une version corrigée est attendue.
+70;1;\Depot\Provider\Privilege\DepotPrivileges::THESE_SAISIE_ATTESTATIONS_VERSION_INITIALE;;;;;;;;;;;;;1:1;;;;;;;;;;;;;0;Opération impossible dès lors que la bibliothèque universitaire a validé.
+71;1;\Depot\Provider\Privilege\DepotPrivileges::THESE_SAISIE_ATTESTATIONS_VERSION_INITIALE;;;;;;;;;;;;;;;;;;;;;;;;;;1;
+72;1;\Depot\Provider\Privilege\DepotPrivileges::THESE_SAISIE_AUTORISATION_DIFFUSION_VERSION_CORRIGEE;;;1:0;;;;;;;;;;;;;;;;;;;;;;;0;Aucune correction n'est attendue pour cette thèse
+73;1;\Depot\Provider\Privilege\DepotPrivileges::THESE_SAISIE_AUTORISATION_DIFFUSION_VERSION_CORRIGEE;;;;;;;;;;;;2:1;;;;;;;;;;;;;;0;Opération impossible dès lors que le dépôt de la version corrigée a été validé.
+74;1;\Depot\Provider\Privilege\DepotPrivileges::THESE_SAISIE_AUTORISATION_DIFFUSION_VERSION_CORRIGEE;;;;;;;;;;;;;;;;;;;;;;;;;;1;
+75;1;\Depot\Provider\Privilege\DepotPrivileges::THESE_SAISIE_AUTORISATION_DIFFUSION_VERSION_INITIALE;1:0;;;;;;;;;;;;;;;;;;;;;;;;;0;L’état de la thèse ne permet pas cette opération.
+76;1;\Depot\Provider\Privilege\DepotPrivileges::THESE_SAISIE_AUTORISATION_DIFFUSION_VERSION_INITIALE;;;1:1;;;;;;;;;;;;;;;;;;;;;;;0;Opération impossible dès lors qu’une version corrigée est attendue.
+77;1;\Depot\Provider\Privilege\DepotPrivileges::THESE_SAISIE_AUTORISATION_DIFFUSION_VERSION_INITIALE;;;;;;;;;;;;;1:1;;;;;;;;;;;;;0;Opération impossible dès lors que la bibliothèque universitaire a validé.
+78;1;\Depot\Provider\Privilege\DepotPrivileges::THESE_SAISIE_AUTORISATION_DIFFUSION_VERSION_INITIALE;;;;;;;;;;;;;;;;;;;;;;;;;;1;
+79;1;\Depot\Provider\Privilege\DepotPrivileges::THESE_CORREC_AUTORISEE_ACCORDER_SURSIS;;;1:0;;;;;;;;;;;;;;;;;;;;;;;0;Aucune correction n'est attendue pour cette thèse
+80;1;\Depot\Provider\Privilege\DepotPrivileges::THESE_CORREC_AUTORISEE_ACCORDER_SURSIS;;;;1:0;;;;;;;;;;;;;;;;;;;;;;0;La date butoir pour le dépôt de la version corrigée n’est pas dépassée (%s).
+81;1;\Depot\Provider\Privilege\DepotPrivileges::THESE_CORREC_AUTORISEE_ACCORDER_SURSIS;;;;;;;;;;;;;;;;;;;;;;;;;;1;
+82;1;\Depot\Provider\Privilege\DepotPrivileges::THESE_CONSULTATION_CORREC_AUTORISEE_INFORMATIONS;;;;;;;;;;;;;;;;;;;;;;;;;;1;
+83;1;\Depot\Provider\Privilege\DepotPrivileges::THESE_TELECHARGEMENT_FICHIER /* évite UnexpectedPrivilegeException */;;;;;;;;;;;;;;;;;;;;;;;;;;1;
+84;1;\Depot\Provider\Privilege\DepotPrivileges::THESE_SAISIE_CORREC_AUTORISEE_FORCEE /* évite UnexpectedPrivilegeException */;;;;;;;;;;;;;;;;;;;;;;;;;;1;
 EOT;
     }
 }

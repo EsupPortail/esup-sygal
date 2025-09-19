@@ -35,7 +35,7 @@ Journal des modifications
 - [FIX] Plantage dans la génération de doc à cause d'une signature de méthode dans AdmissionFinancementTemplateVariable.
 - [FIX] Module Dépôt de thèse : impossibilité de déposer des fichiers hors PDF expurgés pour une version corrigée (aka second dépôt).
 - [FIX] Module Dépôt de thèse : impossibilité de supprimer le fichier de thèse PDF expurgé pour une version corrigée (aka second dépôt).
-- [FIX] Module Dépôt de thèse : impossibilité de supprimer le fichier de thèse PDF expurgé pour une version corrigée (aka second dépôt).
+- [FIX] Module Dépôt de thèse : correction de l'assertion qui autorisait la validation d'une version corrigée non encore déposée.
 - [FIX] Export Excel des formations/sessions/séances : correction de la config pour inclure les colonnes session_statut_inscription et session_nb_heures.
 - [FIX] Module Step-Star : création des répertoires de travail avec les bonnes permissions.
 - [FIX] Modification d'un acteur sur la fiche Thèse : l'affichage du formulaire (bouton 'crayon') plantait (pb dans la vue).
