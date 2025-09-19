@@ -101,10 +101,10 @@ class MembreForm extends Form {
                 ->setLabel("Rôle dans le jury <span class='icon icon-obligatoire' style='color: darkred;font-size: 0.8em;' data-bs-toggle='tooltip' title='Obligatoire'></span> :")
                 ->setLabelOptions([ 'disable_html_escape' => true, ])
                 ->setValueOptions([
-                    Membre::RAPPORTEUR_JURY   => 'rapporteur et membre du jury',
-                    Membre::RAPPORTEUR_VISIO  => 'rapporteur en visioconférence',
-                    Membre::RAPPORTEUR_ABSENT => 'rapporteur non membre du jury',
-                    Membre::MEMBRE_JURY       => 'membre du jury',
+                    Membre::RAPPORTEUR_JURY   => Membre::RAPPORTEUR_JURY,
+                    Membre::RAPPORTEUR_VISIO  => Membre::RAPPORTEUR_VISIO,
+                    Membre::RAPPORTEUR_ABSENT => Membre::RAPPORTEUR_ABSENT . ' (non membre du jury)',
+                    Membre::MEMBRE_JURY       => 'Membre du jury',
                 ])
         );
 

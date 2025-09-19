@@ -40,6 +40,7 @@ Journal des modifications
 - [FIX] Module Step-Star : création des répertoires de travail avec les bonnes permissions.
 - [FIX] Modification d'un acteur sur la fiche Thèse : l'affichage du formulaire (bouton 'crayon') plantait (pb dans la vue).
 - [FIX] Soutenance : la création de plusieurs adresses de soutenance doit être empêchée (màj BDD requise).
+- [FIX] Soutenance : on ne doit pas compter un rapporteur absent dans l'effectif total.
 - [FIX] Module HDR : désactivation du comptage des rapporteurs de rang B sans HDR (les gestionnaires vérifieront manuellement).
 - [FIX] Module HDR : lors de l'association membre-acteur, si un acteur existe déjà avec les mêmes caractéristiques majeures, on modifie/complète l'existant.
 - [FIX] Le rôle Observateur Structure étais éjecté des pages Soutenances (thèses et HDR).

@@ -56,12 +56,18 @@ class PropositionJuryRule implements RuleInterface
 
         /** @var Membre $membre */
         foreach ($this->proposition->getMembres() as $membre) {
-            $nbMembre++;
             if ($membre->getGenre() === "F") $nbFemme++; else $nbHomme++;
             if ($membre->getRang() === "A") $nbRangA++;
             if ($membre->isExterieur()) $nbExterieur++;
             if ($membre->getQualite()->isEmeritat()) $nbEmerites++;
             if ($membre->estRapporteur()) $nbRapporteur++;
+
+            // on ne compte pas les rapporteurs absents dans l'effectif total
+            if ($membre->getRole() === Membre::RAPPORTEUR_ABSENT) {
+                continue;
+            }
+
+            $nbMembre++;
         }
 
         $indicateurs = [];
