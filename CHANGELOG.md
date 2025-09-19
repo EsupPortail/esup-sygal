@@ -49,6 +49,7 @@ Journal des modifications
 - [FIX] Admission : impossibilité de supprimer une PJ (si la précédente du même type avait été supprimée-historisée auparavant).
 - [FIX] Admission : on doit écarter les documents supprimés-historisés.
 - [FIX] Admission : il était impossible de déclarer l'étape 2 (inscription) incomplète (éditeur tinymce initialisé en double).
+- [FIX] Editeur HTML TinyMCE : il était impossible d'insérer un lien hypertexte si l'éditeur était ouvert dans un fenêtre modale. 
 
 10.2.1
 ------
