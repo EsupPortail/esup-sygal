@@ -322,29 +322,4 @@ if($canAccederCommentaires) {
             window.location.reload();
         });
     });
-
-    $(document).ready(function() {
-        tinymce.remove();
-        tinymce.init({
-            selector: '.tinymce',
-            toolbar: 'newdocument undo redo | bold italic removeformat | bullist',
-            menubar: false,
-            height: 210,
-            resize: true,
-            language: 'fr_FR',
-            plugins: 'lists',
-            statusbar: true,
-            browser_spellcheck : true,
-            branding: false,
-            menu: {},
-            body_id: 'description',
-            setup: function (editor) {
-                editor.on("focusout", function () {
-                    console.log(tinymce.get('description').getContent());
-                    $('textarea').val(tinymce.get('description').getContent());
-                });
-            }
-        });
-        $('select').selectpicker();
-    });
 </script>

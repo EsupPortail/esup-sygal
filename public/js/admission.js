@@ -222,7 +222,9 @@ document.addEventListener("DOMContentLoaded", function() {
     const boutonGestionnaireComplet = document.querySelector('.bouton-gestionnaire.complet');
 
     //Activation de tinyMCE pour le champ commentaires des gestionnaires
-    tinymce.remove();
+    tinymce.remove({
+        selector: '.description_commentaires_gestionnaire',
+    });
     tinymce.init({
         selector: '.description_commentaires_gestionnaire',
         menubar: false,

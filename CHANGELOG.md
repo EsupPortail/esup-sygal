@@ -48,6 +48,7 @@ Journal des modifications
 - [FIX] Soutenance : correction des messages indiquant un jury invalide pour le ratio de rang A et le ratio d'extérieurs.
 - [FIX] Admission : impossibilité de supprimer une PJ (si la précédente du même type avait été supprimée-historisée auparavant).
 - [FIX] Admission : on doit écarter les documents supprimés-historisés.
+- [FIX] Admission : il était impossible de déclarer l'étape 2 (inscription) incomplète (éditeur tinymce initialisé en double).
 
 10.2.1
 ------
