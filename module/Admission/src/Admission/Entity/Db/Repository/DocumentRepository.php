@@ -6,13 +6,20 @@ use Application\Entity\Db\Repository\DefaultEntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
 use Fichier\Entity\Db\NatureFichier;
 use Doctrine\ORM\Query\Expr;
+use RuntimeException;
 
 
 class DocumentRepository extends DefaultEntityRepository{
 
     public function findDocumentsByAdmission($id): array
     {
-        return $this->findBy(['admission' => $id]);
+        $queryBuilder = $this->createQueryBuilder('d')
+            ->join('d.fichier', 'f')
+            ->where('d.admission = :admission_id')
+            ->andWhereNotHistorise('d')
+            ->setParameter('admission_id', $id);
+
+        return $queryBuilder->getQuery()->getResult();
     }
 
     /**
