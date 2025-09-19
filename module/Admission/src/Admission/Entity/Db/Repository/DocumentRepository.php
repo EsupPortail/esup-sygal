@@ -23,6 +23,7 @@ class DocumentRepository extends DefaultEntityRepository{
         $queryBuilder = $this->createQueryBuilder('d')
             ->join('d.fichier', 'f') // Supposons que la relation vers Fichier s'appelle "fichier"
             ->where('d.admission = :admission_id')
+            ->andWhereNotHistorise('d')
             ->setParameter('admission_id', $admission->getId());
 
         if ($nature !== null) {

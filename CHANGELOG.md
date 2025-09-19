@@ -45,6 +45,7 @@ Journal des modifications
 - [FIX] Le rôle Observateur Structure étais éjecté des pages Soutenances (thèses et HDR).
 - [FIX] Soutenance : la révocation d'un avis de soutenance est impossible dès lors que le dossier de soutenance est passé à l'état 'Dossier complet'.
 - [FIX] Soutenance : correction des messages indiquant un jury invalide pour le ratio de rang A et le ratio d'extérieurs.
+- [FIX] Admission : impossibilité de supprimer une PJ (si la précédente du même type avait été supprimée-historisée auparavant).
 
 10.2.1
 ------
