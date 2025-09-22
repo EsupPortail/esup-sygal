@@ -57,6 +57,7 @@ class RecapitulatifExporter extends PdfExporter
         $this->getMpdf()->SetMargins(0,0,60);
         $this->setHeaderScript('header.phtml', null, $logos);
         $this->setFooterScript('footer.phtml');
+        $this->setMarginBottom(25);
         $this->addBodyHtml($rendu->getCorps());
 
         return PdfExporter::export($filename, $destination, $memoryLimit);
