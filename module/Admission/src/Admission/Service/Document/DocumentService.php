@@ -61,7 +61,7 @@ class DocumentService extends BaseService
 
     /**
      * @param Admission $admission
-     * @param Fichier $fichiers
+     * @param Fichier $fichier
      * @return Document
      */
     public function createDocumentFromUpload(Admission $admission, Fichier $fichier) : Document
@@ -69,6 +69,10 @@ class DocumentService extends BaseService
         $document = new Document();
         $document->setAdmission($admission);
         $document->setFichier($fichier);
+
+        // Nature redondante avec celle de Fichier mais permet de créer un "index unique" en bdd sur Document
+        // pour garantir 1 fichier max par admisison et nature de fichier.
+        $document->setNature($fichier->getNature());
 
         try {
             $this->fichierService->saveFichiers([$fichier]);

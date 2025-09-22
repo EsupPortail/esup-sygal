@@ -48,3 +48,20 @@ update admission_type_validation
 
 alter table admission_financement
     add autre_financement_que_contrat_doct varchar(1024);
+
+
+update admission_document ad set nature_id = f.nature_id from fichier f where ad.fichier_id = f.id;
+
+create unique index admission_document_uniq
+    on admission_document (admission_id, nature_id)
+    where (histo_destruction IS NULL);
+create unique index admission_document_uniq_histo
+    on admission_document (admission_id, nature_id, histo_destruction)
+    where (histo_destruction IS NOT NULL);
+-- -- Si la création d'index échoue, voici de quoi trouver les admissions en anomalie
+-- -- (i.e. pour lesquelles plusieurs fichiers ont été déposés pour une même nature de fichier) :
+-- select admission_id, nature_id, count(*)
+-- from admission_document
+-- where histo_destruction is null
+-- group by admission_id, nature_id
+-- having count(*) > 1;
