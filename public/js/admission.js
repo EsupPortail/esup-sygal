@@ -26,6 +26,24 @@ function showOrNotDiv(radiobutton, additionnalFields) {
     });
 }
 
+/**
+ * Fonction affichant la div correspondant à la valeur courante de boutons radios, et masquant les autres div.
+ */
+function showOrNotDivUsingDataAttribute(radiobutton, additionnalFields) {
+    radiobutton.forEach(function (radio) {
+        const updateAdditionalFields = function () {
+            if (!radio.checked) {
+                return;
+            }
+            additionnalFields.forEach(function (e) {
+                e.style.display = e.matches("[data-when='"+radio.value+"']") ? 'block' : 'none';
+            });
+        };
+        radio.addEventListener('change', updateAdditionalFields);
+        updateAdditionalFields();
+    });
+}
+
 function updateButtonsState(isButtonDisabled) {
     const previousButton = document.querySelector('.multipage-nav.previous');
     const nextButton = document.querySelector('.multipage-nav.next');
@@ -410,10 +428,9 @@ document.addEventListener("DOMContentLoaded", function() {
      */
     if (currentUrl.indexOf("/admission/financement") !== -1) {
         const contratDoctoralRadios = document.querySelectorAll('input[name="financement[contratDoctoral]"]');
-        const additionalFieldscontratDoctoral = document.getElementById('additional_fields_contrat_doctoral');
+        const additionalFieldscontratDoctoral = document.querySelectorAll('.additional_fields_contrat_doctoral');
 
-        additionalFieldscontratDoctoral.style.display = 'none';
-        showOrNotDiv(contratDoctoralRadios, additionalFieldscontratDoctoral)
+        showOrNotDivUsingDataAttribute(contratDoctoralRadios, additionalFieldscontratDoctoral);
 
         const infosDoctorantSalarieRadios = document.querySelectorAll('input[name="financement[estSalarie]"]');
         const additionalFieldsInfosDoctorantSalarie = document.getElementById('additional_fields_infos_salaries');

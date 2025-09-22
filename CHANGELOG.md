@@ -25,6 +25,7 @@ Journal des modifications
 - Annuaire des thèses/HDR : affichage systématique de l'établissement d'inscription et plus seulement si le filtre est vierge.
 - Formulaire de création de compte local : obligation de choisir une civilité (Mme, M. ou Neutre).
 - Formulaire Admission : mention de la civilité neutre en plus de Mme M.
+- Formulaire Admission : possibilité de préciser le financement autre que contrat doctoral (texte libre), le cas échéant.
 - Recherche textuelle de compte utilisateur : possibilité de chercher 2 mots ou plus, portant aussi sur l'individu lié éventuel.
 - Page listant les comptes utilisateurs : ajout d'un lien hypertexte menant à la fiche de l'individu lié au compte utilisateur.
 - [FIX] Modification d'une structure impossible

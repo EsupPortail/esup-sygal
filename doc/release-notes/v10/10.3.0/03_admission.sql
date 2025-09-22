@@ -44,3 +44,7 @@ update admission_type_validation
 update admission_type_validation
     set libelle  = 'Validation de la convention de formation doctorale par la direction de l''école doctorale'
     where code = 'VALIDATION_CONVENTION_FORMATION_DOCT_DIR_ED';
+
+
+alter table admission_financement
+    add autre_financement_que_contrat_doct varchar(1024);

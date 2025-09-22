@@ -29,7 +29,10 @@ $canAccederCommentaires = $this->isAllowed($admission,AdmissionPrivileges::ADMIS
             </div>
         </div>
         <div class="col-lg-8 col-sm-12">
-            <div id="additional_fields_contrat_doctoral">
+            <div class="additional_fields_contrat_doctoral" data-when="0">
+                <?php echo $this->formControlGroup($fieldset->get('autreFinancementQueContratDoct')) ?>
+            </div>
+            <div class="additional_fields_contrat_doctoral" data-when="1">
                 <div class="row">
                     <div class="col-lg-12 col-sm-12">
                         <?php echo $this->formControlGroup($fieldset->get('financement')) ?>

@@ -10,6 +10,7 @@
 
         <field name="contratDoctoral" type="boolean" column="CONTRAT_DOCTORAL" nullable="true"/>
         <field name="detailContratDoctoral" type="string" column="DETAIL_CONTRAT_DOCTORAL" length="1024" nullable="true"/>
+        <field name="autreFinancementQueContratDoct" type="string" column="autre_financement_que_contrat_doct" length="1024" nullable="true"/>
         <field name="tempsTravail" type="integer" column="TEMPS_TRAVAIL" nullable="true"/>
         <field name="estSalarie" type="boolean" column="EST_SALARIE" nullable="true"/>
         <field name="statutProfessionnel" type="string" column="STATUT_PROFESSIONNEL" nullable="true"/>

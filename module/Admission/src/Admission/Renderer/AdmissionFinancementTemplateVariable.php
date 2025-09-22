@@ -29,7 +29,8 @@ class AdmissionFinancementTemplateVariable extends AbstractTemplateVariable
                     "Oui - " . $financement :
                     'Oui - Aucun employeur choisi';
             } else {
-                return "Aucun contrat doctoral prévu";
+                $precision = $this->financement->getAutreFinancementQueContratDoct();
+                return "Aucun contrat doctoral prévu" . ($precision ? " - $precision" : "");
             }
         }
     }

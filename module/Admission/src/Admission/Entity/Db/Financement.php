@@ -32,6 +32,11 @@ class Financement implements HistoriqueAwareInterface{
     private $detailContratDoctoral;
 
     /**
+     * @var string|null
+     */
+    private $autreFinancementQueContratDoct;
+
+    /**
      * @var int
      */
     private $id;
@@ -167,6 +172,17 @@ class Financement implements HistoriqueAwareInterface{
     public function getDetailContratDoctoral()
     {
         return $this->detailContratDoctoral;
+    }
+
+    public function setAutreFinancementQueContratDoct(?string $autreFinancementQueContratDoct): static
+    {
+        $this->autreFinancementQueContratDoct = $autreFinancementQueContratDoct;
+        return $this;
+    }
+
+    public function getAutreFinancementQueContratDoct(): ?string
+    {
+        return $this->autreFinancementQueContratDoct;
     }
 
     /**

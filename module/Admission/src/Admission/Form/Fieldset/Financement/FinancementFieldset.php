@@ -83,6 +83,11 @@ class FinancementFieldset extends AdmissionBaseFieldset implements InputFilterPr
         );
 
         $this->add(
+            (new Textarea('autreFinancementQueContratDoct'))
+                ->setLabel("Autre financement éventuel")
+        );
+
+        $this->add(
             (new Radio('tempsTravail'))
                 ->setValueOptions([
                     1 => "temps complet",
