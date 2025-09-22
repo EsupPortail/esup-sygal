@@ -52,6 +52,7 @@ Journal des modifications
 - [FIX] Admission : il était impossible de déclarer l'étape 2 (inscription) incomplète (éditeur tinymce initialisé en double).
 - [FIX] Admission : augmentation de la marge du bas dans le récapitulatif du dossier d'admission.
 - [FIX] Admission : enregistrement de la nature de la PJ déposée dans le dossier et ajout d'une contrainte en bdd empêchant le dépôt de plusieurs PJ du même nature.
+- [FIX] Admission : le candidat pouvait valider (atestation sur l'honneur) même si une étape du dossier était déclarée incomplète.
 - [FIX] Editeur HTML TinyMCE : il était impossible d'insérer un lien hypertexte si l'éditeur était ouvert dans un fenêtre modale. 
 
 10.2.1

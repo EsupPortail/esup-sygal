@@ -3,12 +3,15 @@
 namespace Admission\Assertion\Validation;
 
 use Admission\Assertion\AdmissionOperationAbstractAssertion;
+use Admission\Entity\Db\Admission;
 use Admission\Entity\Db\AdmissionValidation;
+use Admission\Entity\Db\Verification;
 use Admission\Provider\Privilege\AdmissionPrivileges;
 use Admission\Rule\Operation\AdmissionOperationRuleAwareTrait;
 use Admission\Service\Admission\AdmissionServiceAwareTrait;
 use Admission\Service\TypeValidation\TypeValidationServiceAwareTrait;
 use Admission\Service\Validation\AdmissionValidationServiceAwareTrait;
+use Admission\Service\Verification\VerificationServiceAwareTrait;
 use Application\Assertion\Exception\FailedAssertionException;
 use Doctrine\ORM\Exception\NotSupported;
 use InvalidArgumentException;
@@ -19,6 +22,7 @@ class AdmissionValidationAssertion extends AdmissionOperationAbstractAssertion
     use AdmissionValidationServiceAwareTrait;
     use TypeValidationServiceAwareTrait;
     use AdmissionServiceAwareTrait;
+    use VerificationServiceAwareTrait;
     use AdmissionOperationRuleAwareTrait;
 
     /**
@@ -64,6 +68,7 @@ class AdmissionValidationAssertion extends AdmissionOperationAbstractAssertion
 
             switch ($action) {
                 case 'valider':
+                    $this->assertDossierComplet($admissionValidation->getAdmission());
                     $nextOperation = $this->findNextExpectedOperation($admissionValidation->getAdmission());
                     $this->assertOperationsMatch($admissionValidation, $nextOperation);
                     $this->assertOperationIsAllowed($nextOperation);
@@ -118,6 +123,7 @@ class AdmissionValidationAssertion extends AdmissionOperationAbstractAssertion
             switch ($privilege) {
                 case AdmissionPrivileges::ADMISSION_VALIDER_SIEN:
                 case AdmissionPrivileges::ADMISSION_VALIDER_TOUT:
+                    $this->assertDossierComplet($admissionValidation->getAdmission());
                     $nextOperation = $this->findNextExpectedOperation($admissionValidation->getAdmission());
                     $this->assertOperationsMatch($admissionValidation, $nextOperation);
                     $this->assertOperationIsAllowed($nextOperation);
@@ -141,5 +147,13 @@ class AdmissionValidationAssertion extends AdmissionOperationAbstractAssertion
         }
 
         return true;
+    }
+
+    private function assertDossierComplet(Admission $admission): void
+    {
+        $verifs = $this->verificationService->getRepository()->findAllByAdmission($admission);
+        $this->assertTrue(
+            count(array_filter($verifs, fn(Verification $v) => !$v->getEstComplet())) === 0
+        );
     }
 }

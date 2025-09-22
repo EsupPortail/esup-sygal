@@ -54,7 +54,11 @@ class VerificationRepository extends DefaultEntityRepository{
         return $this->findOneBy(['document' => $document]);
     }
 
-    public function findAllByAdmission(Admission $admission) {
+    /**
+     * @return Verification[]
+     */
+    public function findAllByAdmission(Admission $admission): array
+    {
         $qb = $this->createQueryBuilder('verif');
 
         return $qb

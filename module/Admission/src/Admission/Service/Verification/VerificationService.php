@@ -135,9 +135,10 @@ class VerificationService extends BaseService
     }
 
     /**
-     * @param Admission $admission
+     * @return Verification[]
+     * @deprecated Appeler explicitement getRepository()->findAllByAdmission($admission)
      */
-    public function getAllVerificationFromAdmission(Admission $admission)
+    public function getAllVerificationFromAdmission(Admission $admission): array
     {
         return $this->getRepository()->findAllByAdmission($admission);
     }

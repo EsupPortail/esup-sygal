@@ -6,6 +6,7 @@ use Admission\Rule\Operation\AdmissionOperationRule;
 use Admission\Service\Admission\AdmissionService;
 use Admission\Service\TypeValidation\TypeValidationService;
 use Admission\Service\Validation\AdmissionValidationService;
+use Admission\Service\Verification\VerificationService;
 use Application\Assertion\AbstractAssertion;
 use Application\Service\UserContextService;
 use Psr\Container\ContainerExceptionInterface;
@@ -42,6 +43,10 @@ class AdmissionValidationAssertionFactory
         /** @var AdmissionValidationService $admissionValidationService */
         $admissionValidationService = $container->get(AdmissionValidationService::class);
         $assertion->setAdmissionValidationService($admissionValidationService);
+
+        /** @var VerificationService $verificationService */
+        $verificationService = $container->get(VerificationService::class);
+        $assertion->setVerificationService($verificationService);
 
         /** @var AdmissionOperationRule $admissionOperationRule */
         $admissionOperationRule = $container->get(AdmissionOperationRule::class);
