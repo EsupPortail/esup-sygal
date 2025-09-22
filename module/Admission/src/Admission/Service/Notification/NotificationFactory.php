@@ -187,8 +187,10 @@ class NotificationFactory extends NF
         $individu = $admission->getIndividu();
 
         $individuTemplateVariable = $this->getIndividuTemplateVariable($individu);
+        $admissionInscriptionTemplateVariable = $this->getAdmissionInscriptionTemplateVariable($admission->getInscription()->first());
         $admissionAdmissionTemplateVariable = $this->getAdmissionAdmissionTemplateVariable($admission);
         $admissionAdmissionTemplateVariable->setOperationAttenduNotificationAnomalies($notificationOperationAttendue?->getAnomalies());
+
         $admissionOperationTemplateVariable = $this->getAdmissionOperationTemplateVariable($operationAttendue);
 
         $this->urlService->setVariables([
@@ -198,9 +200,8 @@ class NotificationFactory extends NF
         return [
             'individu' => $individuTemplateVariable,
             'admission' => $admissionAdmissionTemplateVariable,
-//            'typeValidation' => $operationAttendue, // remplacée par 'admissionOperation'
+            'admissionInscription' => $admissionInscriptionTemplateVariable,
             'admissionOperation' => $admissionOperationTemplateVariable,
-//            'anomalies' => $notificationOperationAttendue // absorbé par 'admission'
             'Url' => $this->urlService,
         ];
     }
