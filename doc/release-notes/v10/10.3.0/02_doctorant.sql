@@ -53,8 +53,7 @@ select privilege__grant_privileges_to_profiles('doctorant', ARRAY['modifier-sien
 update unicaen_privilege_privilege
     set code = 'modifier-email-contact-et-consentement',
         libelle = 'Modifier email de contact et consentement du doctorant'
-    where categorie_id = (select id from unicaen_privilege_categorie where code = 'doctorant') and code = 'modifier-email-contact'
-
+    where categorie_id = (select id from unicaen_privilege_categorie where code = 'doctorant') and code = 'modifier-email-contact';
 
 -- Ajout de l'ORCID pour un doctorant
 alter table individu add orcid varchar(200);
